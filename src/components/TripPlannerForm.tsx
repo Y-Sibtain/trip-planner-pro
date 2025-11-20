@@ -10,6 +10,7 @@ interface TripPlannerFormProps {
 }
 
 export interface TripFormData {
+  source: string;
   destinations: string[];
   budget: string;
   startDate: string;
@@ -17,6 +18,7 @@ export interface TripFormData {
 }
 
 export const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
+  const [source, setSource] = useState("");
   const [destination1, setDestination1] = useState("");
   const [destination2, setDestination2] = useState("");
   const [destination3, setDestination3] = useState("");
@@ -28,11 +30,12 @@ export const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
     e.preventDefault();
     const destinations = [destination1, destination2, destination3].filter(d => d.trim() !== "");
     
-    if (destinations.length === 0 || !budget || !startDate || !endDate) {
+    if (!source.trim() || destinations.length === 0 || !budget || !startDate || !endDate) {
       return;
     }
 
     onSearch({
+      source: source.trim(),
       destinations,
       budget,
       startDate,
@@ -45,6 +48,21 @@ export const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
       <CardContent className="p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="source" className="flex items-center gap-2 text-foreground">
+                <MapPin className="h-4 w-4 text-accent" />
+                Flying From (Source) *
+              </Label>
+              <Input
+                id="source"
+                value={source}
+                onChange={(e) => setSource(e.target.value)}
+                placeholder="e.g., New York"
+                required
+                className="transition-all duration-200 focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="destination1" className="flex items-center gap-2 text-foreground">
                 <MapPin className="h-4 w-4 text-primary" />
@@ -106,7 +124,7 @@ export const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="startDate" className="flex items-center gap-2 text-foreground">
                 <Calendar className="h-4 w-4 text-primary" />
@@ -139,10 +157,9 @@ export const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-primary hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg"
-            size="lg"
+          <Button 
+            type="submit" 
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold transition-all duration-200"
           >
             <Search className="mr-2 h-5 w-5" />
             Plan My Trip
@@ -152,3 +169,5 @@ export const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
     </Card>
   );
 };
+
+export default TripPlannerForm;
