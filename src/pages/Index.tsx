@@ -89,41 +89,156 @@ const Index = () => {
         </section>
       )}
 
-      {/* Features Section */}
+      {/* Popular Destinations Section */}
       {!tripData && (
-        <section className="container mx-auto px-4 pb-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center space-y-3 animate-in fade-in duration-700 delay-500">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Plane className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground">Smart Planning</h3>
-              <p className="text-muted-foreground">
-                Intelligent algorithms to optimize your travel itinerary within budget
-              </p>
+        <>
+          <section className="container mx-auto px-4 pb-16">
+            <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Popular Destinations</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {[
+                { name: 'Paris, France', emoji: '🗼', desc: 'City of lights and romance' },
+                { name: 'Tokyo, Japan', emoji: '🗾', desc: 'Blend of tradition and modernity' },
+                { name: 'New York, USA', emoji: '🗽', desc: 'The city that never sleeps' },
+                { name: 'Bali, Indonesia', emoji: '🏝️', desc: 'Tropical paradise' },
+                { name: 'Dubai, UAE', emoji: '🏙️', desc: 'Luxury and innovation' },
+                { name: 'Rome, Italy', emoji: '🏛️', desc: 'Ancient history and culture' },
+              ].map((dest, idx) => (
+                <div key={idx} className="bg-card border border-border rounded-lg p-6 hover:shadow-card-hover transition-shadow cursor-pointer">
+                  <div className="text-4xl mb-3">{dest.emoji}</div>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">{dest.name}</h3>
+                  <p className="text-muted-foreground text-sm">{dest.desc}</p>
+                </div>
+              ))}
             </div>
-            
-            <div className="text-center space-y-3 animate-in fade-in duration-700 delay-700">
-              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto">
-                <span className="text-3xl">🏨</span>
+          </section>
+
+          {/* Featured Packages Section */}
+          <section className="bg-muted/30 py-16">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Featured Packages</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                {[
+                  {
+                    title: 'European Explorer',
+                    destinations: 'Paris • Rome • Barcelona',
+                    duration: '10 Days',
+                    price: '$2,500',
+                    includes: 'Flights, Hotels, Guided Tours',
+                  },
+                  {
+                    title: 'Asian Adventure',
+                    destinations: 'Tokyo • Bangkok • Singapore',
+                    duration: '14 Days',
+                    price: '$3,200',
+                    includes: 'Flights, Hotels, Local Transport',
+                  },
+                  {
+                    title: 'Beach Getaway',
+                    destinations: 'Maldives • Bali',
+                    duration: '7 Days',
+                    price: '$1,800',
+                    includes: 'Flights, Resorts, Activities',
+                  },
+                  {
+                    title: 'Cultural Journey',
+                    destinations: 'Delhi • Jaipur • Agra',
+                    duration: '8 Days',
+                    price: '$1,500',
+                    includes: 'Flights, Hotels, Heritage Tours',
+                  },
+                ].map((pkg, idx) => (
+                  <div key={idx} className="bg-card border border-border rounded-lg p-6 hover:shadow-card-hover transition-shadow">
+                    <h3 className="text-2xl font-bold text-foreground mb-2">{pkg.title}</h3>
+                    <p className="text-primary font-medium mb-4">{pkg.destinations}</p>
+                    <div className="space-y-2 text-sm text-muted-foreground mb-4">
+                      <p>⏱️ {pkg.duration}</p>
+                      <p>✅ {pkg.includes}</p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-foreground">{pkg.price}</span>
+                      <span className="text-xs text-muted-foreground">per person</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Best Accommodations</h3>
-              <p className="text-muted-foreground">
-                Handpicked hotels and stays that match your preferences and budget
-              </p>
             </div>
-            
-            <div className="text-center space-y-3 animate-in fade-in duration-700 delay-1000">
-              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
-                <span className="text-3xl">🍴</span>
+          </section>
+
+          {/* Sample Itineraries Section */}
+          <section className="container mx-auto px-4 py-16">
+            <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Sample Itineraries</h2>
+            <div className="max-w-4xl mx-auto space-y-8">
+              {[
+                {
+                  destination: 'Paris Weekend',
+                  days: [
+                    { day: 'Day 1', activities: 'Eiffel Tower, Seine River Cruise, Champs-Élysées' },
+                    { day: 'Day 2', activities: 'Louvre Museum, Notre-Dame, Montmartre' },
+                    { day: 'Day 3', activities: 'Versailles Palace, Shopping, Farewell Dinner' },
+                  ],
+                },
+                {
+                  destination: 'Tokyo Experience',
+                  days: [
+                    { day: 'Day 1', activities: 'Shibuya Crossing, Harajuku, Tokyo Tower' },
+                    { day: 'Day 2', activities: 'Senso-ji Temple, Akihabara, Tsukiji Market' },
+                    { day: 'Day 3', activities: 'Mount Fuji Day Trip, Hot Springs' },
+                  ],
+                },
+              ].map((itinerary, idx) => (
+                <div key={idx} className="bg-card border border-border rounded-lg p-6">
+                  <h3 className="text-xl font-bold text-foreground mb-4">{itinerary.destination}</h3>
+                  <div className="space-y-3">
+                    {itinerary.days.map((day, dayIdx) => (
+                      <div key={dayIdx} className="flex gap-4">
+                        <div className="font-semibold text-primary min-w-[60px]">{day.day}</div>
+                        <div className="text-muted-foreground">{day.activities}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* What We Offer Section */}
+          <section className="bg-gradient-hero py-16">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-12 text-primary-foreground">What We Offer</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div className="text-center space-y-3">
+                  <div className="w-16 h-16 bg-primary-foreground/10 rounded-full flex items-center justify-center mx-auto">
+                    <Plane className="h-8 w-8 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-primary-foreground">Smart Planning</h3>
+                  <p className="text-primary-foreground/90">
+                    Intelligent algorithms to optimize your travel itinerary within budget
+                  </p>
+                </div>
+                
+                <div className="text-center space-y-3">
+                  <div className="w-16 h-16 bg-primary-foreground/10 rounded-full flex items-center justify-center mx-auto">
+                    <span className="text-3xl">🏨</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-primary-foreground">Best Accommodations</h3>
+                  <p className="text-primary-foreground/90">
+                    Handpicked hotels and stays that match your preferences and budget
+                  </p>
+                </div>
+                
+                <div className="text-center space-y-3">
+                  <div className="w-16 h-16 bg-primary-foreground/10 rounded-full flex items-center justify-center mx-auto">
+                    <span className="text-3xl">🍴</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-primary-foreground">Local Experiences</h3>
+                  <p className="text-primary-foreground/90">
+                    Discover authentic dining and activities at your destinations
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Local Experiences</h3>
-              <p className="text-muted-foreground">
-                Discover authentic dining and activities at your destinations
-              </p>
             </div>
-          </div>
-        </section>
+          </section>
+        </>
       )}
     </div>
   );
