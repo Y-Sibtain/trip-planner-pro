@@ -10,11 +10,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useBooking } from '@/contexts/BookingContext';
-import { User, Settings, BookOpen, Heart, LogOut, LogIn } from 'lucide-react';
+import { useAdmin } from '@/hooks/useAdmin';
+import { User, Settings, BookOpen, Heart, LogOut, LogIn, Shield } from 'lucide-react';
 
 export const UserMenu = () => {
   const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useBooking();
+  const { isAdmin } = useAdmin();
 
   const handleSignOut = () => {
     setIsAuthenticated(false);
@@ -64,6 +66,20 @@ export const UserMenu = () => {
           <Heart className="mr-2 h-4 w-4" />
           <span>Saved Itineraries</span>
         </DropdownMenuItem>
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Admin</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => navigate('/admin/destinations')}>
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Manage Destinations</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/admin/itineraries')}>
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Manage Itineraries</span>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
