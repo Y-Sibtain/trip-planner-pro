@@ -1,16 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import TripPlannerForm, { TripFormData } from "@/components/TripPlannerForm";
 import TripResults from "@/components/TripResults";
-import { Plane, LogIn, LogOut } from "lucide-react";
-import { useBooking } from "@/contexts/BookingContext";
+import { Plane } from "lucide-react";
+import { UserMenu } from "@/components/UserMenu";
 import heroImage from "@/assets/hero-travel.jpg";
 
 const Index = () => {
   const [tripData, setTripData] = useState<TripFormData | null>(null);
-  const { isAuthenticated, setIsAuthenticated } = useBooking();
-  const navigate = useNavigate();
 
   const handleSearch = (data: TripFormData) => {
     setTripData(data);
@@ -20,36 +17,12 @@ const Index = () => {
     }, 100);
   };
 
-  const handleAuthAction = () => {
-    if (isAuthenticated) {
-      setIsAuthenticated(false);
-    } else {
-      navigate('/auth');
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation Bar */}
       <nav className="absolute top-0 left-0 right-0 z-50 p-4">
         <div className="max-w-7xl mx-auto flex justify-end">
-          <Button
-            variant="outline"
-            onClick={handleAuthAction}
-            className="bg-background/80 backdrop-blur-sm"
-          >
-            {isAuthenticated ? (
-              <>
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
-              </>
-            ) : (
-              <>
-                <LogIn className="w-4 h-4 mr-2" />
-                Sign In
-              </>
-            )}
-          </Button>
+          <UserMenu />
         </div>
       </nav>
 
