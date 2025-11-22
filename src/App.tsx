@@ -11,6 +11,8 @@ import Payment from "./pages/Payment";
 import Profile from "./pages/Profile";
 import MyBookings from "./pages/MyBookings";
 import SavedItineraries from "./pages/SavedItineraries";
+import ManageDestinations from "./pages/admin/ManageDestinations";
+import ManageItineraries from "./pages/admin/ManageItineraries";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/saved-itineraries" element={<SavedItineraries />} />
+            <Route path="/admin/destinations" element={<ManageDestinations />} />
+            <Route path="/admin/itineraries" element={<ManageItineraries />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
