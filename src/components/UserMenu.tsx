@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,49 +12,13 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useBooking } from '@/contexts/BookingContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { User, BookOpen, LogOut, LogIn, Shield } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
 export const UserMenu = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, setIsAuthenticated } = useBooking();
+  const { isAuthenticated, signOut, user } = useBooking();
   const { isAdmin } = useAdmin();
-  const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { data } = await supabase.auth.getUser();
-        setUser(data?.user ?? null);
-      } catch (err) {
-        console.error('Failed to fetch user:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-
-    // Optional: subscribe to auth changes to update UI on sign-out/sign-in
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-    });
-    return () => {
-      listener?.subscription?.unsubscribe?.();
-    };
-  }, [setIsAuthenticated]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    setIsAuthenticated(false);
-    navigate('/');
-  };
-
-  if (!isAuthenticated || loading) {
+  if (!isAuthenticated) {
     return (
       <Button
         variant="outline"
@@ -75,6 +38,11 @@ export const UserMenu = () => {
     .slice(0, 2)
     .join('')
     .toUpperCase();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <DropdownMenu>
