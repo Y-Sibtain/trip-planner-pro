@@ -1,13 +1,35 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import TripPlannerForm, { TripFormData } from "@/components/TripPlannerForm";
 import TripResults from "@/components/TripResults";
 import { Plane } from "lucide-react";
 import { UserMenu } from "@/components/UserMenu";
+import NotificationsMenu from "@/components/NotificationsMenu";
 import heroImage from "@/assets/hero-travel.jpg";
+import { useBooking } from "@/contexts/BookingContext";
 
 const Index = () => {
-  const [tripData, setTripData] = useState<TripFormData | null>(null);
+  const { tripData, setTripData } = useBooking();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Support prefill via navigation state (e.g., from Destinations page)
+    const state: any = location.state as any;
+    if (state?.prefill) {
+      const p = state.prefill as Partial<TripFormData>;
+      setTripData({
+        source: p.source || "",
+        destinations: p.destinations || [],
+        budget: p.budget || "",
+        startDate: p.startDate || "",
+        endDate: p.endDate || "",
+      });
+      // clear history state to avoid repeated prefill
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSearch = (data: TripFormData) => {
     setTripData(data);
@@ -21,198 +43,130 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Navigation Bar */}
       <nav className="absolute top-0 left-0 right-0 z-50 p-4">
-        <div className="max-w-7xl mx-auto flex justify-end">
+        <div className="max-w-7xl mx-auto flex justify-end items-center gap-2">
+          <NotificationsMenu />
           <UserMenu />
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center z-0"
-          style={{ backgroundImage: `url(${heroImage})` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-background" />
-        </div>
-        
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <div className="flex items-center justify-center mb-6 animate-in fade-in slide-in-from-top duration-700">
-            <Plane className="h-12 w-12 text-primary-foreground mr-3" />
-            <h1 className="text-5xl md:text-6xl font-bold text-primary-foreground">
-              TripPlanner
-            </h1>
+      <section className="relative">
+        <div className="h-96 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }} />
+        <div className="max-w-7xl mx-auto -mt-32 px-4">
+          <div className="bg-background/80 backdrop-blur rounded-lg p-6 shadow-lg grid md:grid-cols-3 gap-6">
+            <div className="md:col-span-2">
+              <h1 className="text-3xl font-bold mb-2">Plan your next adventure</h1>
+              <p className="text-muted-foreground mb-4">Get personalized itineraries, budgets, and recommendations.</p>
+              <TripPlannerForm onSearch={handleSearch} />
+            </div>
+
+            <div className="hidden md:block">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-primary-foreground/10 rounded-full flex items-center justify-center text-2xl">✈️</div>
+                <div>
+                  <div className="font-semibold">Why use Trip Planner</div>
+                  <div className="text-sm text-muted-foreground">Tailored itineraries, cost estimates and easy saves.</div>
+                </div>
+              </div>
+
+              <div className="border rounded p-4">
+                <h4 className="font-medium">Quick tips</h4>
+                <ul className="list-disc ml-5 text-sm text-muted-foreground mt-2">
+                  <li>Select up to 3 destinations</li>
+                  <li>Provide realistic budget to get better results</li>
+                  <li>Save itineraries to access them later</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <p className="text-xl md:text-2xl text-primary-foreground/90 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom duration-700 delay-150">
-            Plan your perfect adventure with personalized itineraries that fit your budget
-          </p>
         </div>
       </section>
 
-      {/* Trip Planner Form */}
-      <section className="container mx-auto px-4 -mt-16 relative z-20 mb-16">
-        <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom duration-700 delay-300">
-          <TripPlannerForm onSearch={handleSearch} />
+      {/* Features */}
+      <section className="max-w-7xl mx-auto px-4 mt-8">
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="bg-card p-6 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center">🏨</div>
+              <div className="font-semibold">Best Accommodations</div>
+            </div>
+            <p className="text-sm text-muted-foreground">Handpicked hotels and stays that match your preferences and budget.</p>
+          </div>
+
+          <div className="bg-card p-6 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center">🍴</div>
+              <div className="font-semibold">Local Experiences</div>
+            </div>
+            <p className="text-sm text-muted-foreground">Discover authentic dining and activities at your destinations.</p>
+          </div>
+
+          <div className="bg-card p-6 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center">🗺️</div>
+              <div className="font-semibold">Smart Itineraries</div>
+            </div>
+            <p className="text-sm text-muted-foreground">Day-by-day plans with estimated costs so you can plan with confidence.</p>
+          </div>
         </div>
       </section>
 
-      {/* Results Section */}
-      {tripData && (
-        <section id="results" className="container mx-auto px-4 pb-16">
-          <TripResults tripData={tripData} />
-        </section>
-      )}
-
-      {/* Popular Destinations Section */}
-      {!tripData && (
-        <>
-          <section className="container mx-auto px-4 pb-16">
-            <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Popular Destinations</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {[
-                { name: 'Paris, France', emoji: '🗼', desc: 'City of lights and romance' },
-                { name: 'Tokyo, Japan', emoji: '🗾', desc: 'Blend of tradition and modernity' },
-                { name: 'New York, USA', emoji: '🗽', desc: 'The city that never sleeps' },
-                { name: 'Bali, Indonesia', emoji: '🏝️', desc: 'Tropical paradise' },
-                { name: 'Dubai, UAE', emoji: '🏙️', desc: 'Luxury and innovation' },
-                { name: 'Rome, Italy', emoji: '🏛️', desc: 'Ancient history and culture' },
-              ].map((dest, idx) => (
-                <div key={idx} className="bg-card border border-border rounded-lg p-6 hover:shadow-card-hover transition-shadow cursor-pointer">
-                  <div className="text-4xl mb-3">{dest.emoji}</div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">{dest.name}</h3>
-                  <p className="text-muted-foreground text-sm">{dest.desc}</p>
-                </div>
-              ))}
+      {/* How it works */}
+      <section className="max-w-7xl mx-auto px-4 mt-10">
+        <div className="bg-background rounded-lg p-6">
+          <h2 className="text-2xl font-semibold mb-4">How it works</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="p-4">
+              <div className="font-semibold mb-2">1. Tell us where you want to go</div>
+              <div className="text-sm text-muted-foreground">Pick up to three destinations, dates and budget.</div>
             </div>
-          </section>
-
-          {/* Featured Packages Section */}
-          <section className="bg-muted/30 py-16">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Featured Packages</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                {[
-                  {
-                    title: 'European Explorer',
-                    destinations: 'Paris • Rome • Barcelona',
-                    duration: '10 Days',
-                    price: '$2,500',
-                    includes: 'Flights, Hotels, Guided Tours',
-                  },
-                  {
-                    title: 'Asian Adventure',
-                    destinations: 'Tokyo • Bangkok • Singapore',
-                    duration: '14 Days',
-                    price: '$3,200',
-                    includes: 'Flights, Hotels, Local Transport',
-                  },
-                  {
-                    title: 'Beach Getaway',
-                    destinations: 'Maldives • Bali',
-                    duration: '7 Days',
-                    price: '$1,800',
-                    includes: 'Flights, Resorts, Activities',
-                  },
-                  {
-                    title: 'Cultural Journey',
-                    destinations: 'Delhi • Jaipur • Agra',
-                    duration: '8 Days',
-                    price: '$1,500',
-                    includes: 'Flights, Hotels, Heritage Tours',
-                  },
-                ].map((pkg, idx) => (
-                  <div key={idx} className="bg-card border border-border rounded-lg p-6 hover:shadow-card-hover transition-shadow">
-                    <h3 className="text-2xl font-bold text-foreground mb-2">{pkg.title}</h3>
-                    <p className="text-primary font-medium mb-4">{pkg.destinations}</p>
-                    <div className="space-y-2 text-sm text-muted-foreground mb-4">
-                      <p>⏱️ {pkg.duration}</p>
-                      <p>✅ {pkg.includes}</p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-foreground">{pkg.price}</span>
-                      <span className="text-xs text-muted-foreground">per person</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="p-4">
+              <div className="font-semibold mb-2">2. Get a tailored itinerary</div>
+              <div className="text-sm text-muted-foreground">We generate day-by-day plans with cost estimates.</div>
             </div>
-          </section>
-
-          {/* Sample Itineraries Section */}
-          <section className="container mx-auto px-4 py-16">
-            <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Sample Itineraries</h2>
-            <div className="max-w-4xl mx-auto space-y-8">
-              {[
-                {
-                  destination: 'Paris Weekend',
-                  days: [
-                    { day: 'Day 1', activities: 'Eiffel Tower, Seine River Cruise, Champs-Élysées' },
-                    { day: 'Day 2', activities: 'Louvre Museum, Notre-Dame, Montmartre' },
-                    { day: 'Day 3', activities: 'Versailles Palace, Shopping, Farewell Dinner' },
-                  ],
-                },
-                {
-                  destination: 'Tokyo Experience',
-                  days: [
-                    { day: 'Day 1', activities: 'Shibuya Crossing, Harajuku, Tokyo Tower' },
-                    { day: 'Day 2', activities: 'Senso-ji Temple, Akihabara, Tsukiji Market' },
-                    { day: 'Day 3', activities: 'Mount Fuji Day Trip, Hot Springs' },
-                  ],
-                },
-              ].map((itinerary, idx) => (
-                <div key={idx} className="bg-card border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-bold text-foreground mb-4">{itinerary.destination}</h3>
-                  <div className="space-y-3">
-                    {itinerary.days.map((day, dayIdx) => (
-                      <div key={dayIdx} className="flex gap-4">
-                        <div className="font-semibold text-primary min-w-[60px]">{day.day}</div>
-                        <div className="text-muted-foreground">{day.activities}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+            <div className="p-4">
+              <div className="font-semibold mb-2">3. Save, edit, and book</div>
+              <div className="text-sm text-muted-foreground">Save itineraries to your account and fine-tune costs and activities.</div>
             </div>
-          </section>
+          </div>
+        </div>
+      </section>
 
-          {/* What We Offer Section */}
-          <section className="bg-gradient-hero py-16">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center mb-12 text-primary-foreground">What We Offer</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div className="text-center space-y-3">
-                  <div className="w-16 h-16 bg-primary-foreground/10 rounded-full flex items-center justify-center mx-auto">
-                    <Plane className="h-8 w-8 text-primary-foreground" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-primary-foreground">Smart Planning</h3>
-                  <p className="text-primary-foreground/90">
-                    Intelligent algorithms to optimize your travel itinerary within budget
-                  </p>
-                </div>
-                
-                <div className="text-center space-y-3">
-                  <div className="w-16 h-16 bg-primary-foreground/10 rounded-full flex items-center justify-center mx-auto">
-                    <span className="text-3xl">🏨</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-primary-foreground">Best Accommodations</h3>
-                  <p className="text-primary-foreground/90">
-                    Handpicked hotels and stays that match your preferences and budget
-                  </p>
-                </div>
-                
-                <div className="text-center space-y-3">
-                  <div className="w-16 h-16 bg-primary-foreground/10 rounded-full flex items-center justify-center mx-auto">
-                    <span className="text-3xl">🍴</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-primary-foreground">Local Experiences</h3>
-                  <p className="text-primary-foreground/90">
-                    Discover authentic dining and activities at your destinations
-                  </p>
-                </div>
-              </div>
+      {/* Results */}
+      <div id="results" className="mt-8 max-w-7xl mx-auto p-4">
+        <TripResults tripData={tripData ?? null} />
+      </div>
+
+      {/* Footer */}
+      <footer className="mt-12 border-t bg-background">
+        <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-start gap-6">
+          <div>
+            <div className="font-bold text-lg">Trip Planner</div>
+            <div className="text-sm text-muted-foreground mt-2">Plan better trips with smart suggestions and simple budgeting tools.</div>
+            <div className="text-sm text-muted-foreground mt-4">© {new Date().getFullYear()} Trip Planner</div>
+          </div>
+
+          <div className="flex gap-6">
+            <div>
+              <div className="font-semibold">Product</div>
+              <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                <li>Itineraries</li>
+                <li>Destinations</li>
+                <li>Saved Plans</li>
+              </ul>
             </div>
-          </section>
-        </>
-      )}
+
+            <div>
+              <div className="font-semibold">Support</div>
+              <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                <li>Help & FAQs</li>
+                <li>Contact</li>
+                <li>Privacy</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
