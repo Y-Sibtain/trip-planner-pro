@@ -11,6 +11,8 @@ type BookingContextType = {
   setTripData?: (d: any) => void;
   selectedItems?: any[];
   setSelectedItems?: (d: any[]) => void;
+  removeItem?: (id: string) => void;
+  clearSelection?: () => void;
 };
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
@@ -72,6 +74,15 @@ export const BookingProvider = ({ children }: { children: React.ReactNode }) => 
     }
   };
 
+  const removeItem = (id: string) => {
+    setSelectedItems(selectedItems.filter(item => item.id !== id));
+  };
+
+  const clearSelection = () => {
+    setSelectedItems([]);
+    setTripData(null);
+  };
+
   return (
     <BookingContext.Provider
       value={{
@@ -83,6 +94,8 @@ export const BookingProvider = ({ children }: { children: React.ReactNode }) => 
         setTripData,
         selectedItems,
         setSelectedItems,
+        removeItem,
+        clearSelection,
       }}
     >
       {children}
