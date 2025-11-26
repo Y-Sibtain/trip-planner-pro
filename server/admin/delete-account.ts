@@ -23,71 +23,72 @@
  *  - ADMIN_SECRET (a server-side secret used to protect this endpoint)
  */
 
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { createClient } from '@supabase/supabase-js';
 
 const app = express();
 app.use(bodyParser.json());
 
-const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const ADMIN_SECRET = process.env.ADMIN_SECRET!;
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-if (!SUPABASE_URL || !SERVICE_ROLE_KEY || !ADMIN_SECRET) {
-  console.error('Missing required environment variables. Exiting.');
-  process.exit(1);
+// Extend Express Request to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email?: string;
+      };
+    }
+  }
 }
 
-const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
-  auth: { persistSession: false },
-});
-
-app.post('/admin/delete-account', async (req, res) => {
+// Admin endpoint to permanently delete a user account
+app.post('/admin/delete-account', async (req: Request, res: Response): Promise<void> => {
   try {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader) return res.status(401).json({ error: 'Missing authorization header' });
-    // Example protection: simple secret token in Authorization header
-    // Authorization: Bearer <ADMIN_SECRET>
-    const token = authHeader.split(' ')[1];
-    if (token !== ADMIN_SECRET) return res.status(403).json({ error: 'Forbidden' });
-
     const { userId } = req.body;
-    if (!userId) return res.status(400).json({ error: 'Missing userId in request body' });
 
-    // 1) Delete profile row (public.profiles)
-    const { error: delProfileError } = await supabaseAdmin.from('profiles').delete().eq('id', userId);
-    if (delProfileError) {
-      console.warn('Failed to delete profile row:', delProfileError);
-      // continue to attempt deleting auth user
+    if (!userId) {
+      res.status(400).json({ error: 'userId is required' });
+      return;
     }
 
-    // 2) Delete other related rows (saved_itineraries etc.) if you have them
-    // await supabaseAdmin.from('saved_itineraries').delete().eq('owner_id', userId);
-
-    // 3) Permanently delete user from auth via Admin API
-    const adminResp = await fetch(`${SUPABASE_URL}/admin/v1/users/${userId}`, {
-      method: 'DELETE',
-      headers: {
-        apiKey: SERVICE_ROLE_KEY,
-        Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
-      },
-    });
-
-    if (!adminResp.ok) {
-      const text = await adminResp.text();
-      console.error('Failed to delete auth user via admin API:', text);
-      return res.status(500).json({ error: 'Failed to delete user in auth' });
+    // Verify the requester is an admin
+    const adminId = req.user?.id;
+    if (!adminId) {
+      res.status(401).json({ error: 'Unauthorized: Not authenticated' });
+      return;
     }
 
-    return res.json({ ok: true, message: 'User permanently deleted' });
+    const { data: adminData, error: adminError } = await supabase
+      .from('user_roles')
+      .select('*')
+      .eq('user_id', adminId)
+      .eq('role', 'admin')
+      .single();
+
+    if (adminError || !adminData) {
+      res.status(403).json({ error: 'Unauthorized: Admin access required' });
+      return;
+    }
+
+    // Delete user auth record (this cascades to profiles and other related data)
+    const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
+
+    if (deleteError) {
+      res.status(500).json({ error: deleteError.message });
+      return;
+    }
+
+    res.json({ message: 'User account permanently deleted' });
   } catch (err: any) {
-    console.error('delete-account error:', err);
-    return res.status(500).json({ error: err?.message ?? 'Server error' });
+    console.error('Delete account error:', err);
+    res.status(500).json({ error: err?.message ?? 'Failed to delete account' });
   }
 });
 
-const PORT = process.env.PORT || 8888;
-app.listen(PORT, () => {
-  console.log(`Admin delete-account server running on port ${PORT}`);
-});
+export default app;

@@ -129,6 +129,30 @@ const SavedItineraries = () => {
     }
   };
 
+  const handleSave = async (itineraryData: any) => {
+    try {
+      const { error } = await supabase.from('saved_itineraries').insert([itineraryData]);
+      if (error) {
+        // Don't expose internal error details to users
+        toast({
+          title: 'Save failed',
+          description: 'Unable to save itinerary. Please try again later.',
+          variant: 'destructive'
+        });
+        console.error('Save error (admin only):', error); // Log for debugging
+        return;
+      }
+      toast({ title: 'Saved', description: 'Itinerary saved successfully.' });
+      fetchSaved();
+    } catch (err) {
+      toast({
+        title: 'Save failed',
+        description: 'Unable to save itinerary. Please try again later.',
+        variant: 'destructive'
+      });
+    }
+  };
+
   if (!isAuthenticated) return null;
 
   return (

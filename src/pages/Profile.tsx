@@ -58,9 +58,10 @@ const Profile = () => {
           .eq('id', user.id)
           .maybeSingle();
 
-        if (error) {
+        if (error && error.code !== 'PGRST116') {
           console.error('Error fetching profile:', error);
           toast({ title: 'Error', description: 'Failed to load profile.', variant: 'destructive' });
+          return;
         }
 
         if (profileData) {
@@ -71,7 +72,7 @@ const Profile = () => {
             phone: profileData.phone || '',
             location: profileData.location || '',
             avatar_url: profileData.avatar_url || '',
-            preferences: (profileData.preferences as Preferences) || {},
+            preferences: profileData.preferences || {},
           });
         } else {
           // no profile row yet: create a minimal profile row for this user
@@ -79,24 +80,20 @@ const Profile = () => {
             id: user.id,
             full_name: user.user_metadata?.full_name || '',
             phone: user.user_metadata?.phone || '',
-            location: user.user_metadata?.location || '',
+            location: '',
+            avatar_url: '',
             preferences: {},
           };
-          const { error: insertErr } = await supabase.from('profiles').insert([newProfile]);
-          if (insertErr) {
-            console.error('Error creating profile row:', insertErr);
-            toast({ title: 'Error', description: 'Failed to create profile record.', variant: 'destructive' });
-          } else {
-            setFormData({
-              id: newProfile.id,
-              name: newProfile.full_name,
-              email: user.email || '',
-              phone: newProfile.phone || '',
-              location: newProfile.location || '',
-              avatar_url: '',
-              preferences: {},
-            });
-          }
+          await supabase.from('profiles').insert([newProfile]);
+          setFormData({
+            id: user.id,
+            name: newProfile.full_name,
+            email: user.email || '',
+            phone: newProfile.phone,
+            location: newProfile.location,
+            avatar_url: newProfile.avatar_url,
+            preferences: newProfile.preferences,
+          });
         }
       } catch (err) {
         console.error('Load profile error:', err);
