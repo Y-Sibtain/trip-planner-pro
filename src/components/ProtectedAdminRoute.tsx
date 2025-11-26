@@ -8,8 +8,13 @@ interface ProtectedAdminRouteProps {
 export const ProtectedAdminRoute = ({ children }: ProtectedAdminRouteProps) => {
   const { isAdmin, loading } = useAdmin();
 
+  console.log('ProtectedAdminRoute - isAdmin:', isAdmin, 'loading:', loading);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (!isAdmin) return <Navigate to="/" replace />;
+  if (!isAdmin) {
+    console.log('Not admin, redirecting to home');
+    return <Navigate to="/" replace />;
+  }
 
   return <>{children}</>;
 };

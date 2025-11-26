@@ -9,20 +9,24 @@ export const useAdmin = () => {
     const checkAdmin = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
+        console.log('Current user:', user?.id);
+
         if (!user) {
+          console.log('No user found');
           setIsAdmin(false);
           setLoading(false);
           return;
         }
 
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', user.id)
           .eq('role', 'admin')
           .maybeSingle();
 
-        setIsAdmin(!!data);
+        console.log('Admin check result:', data, error);
+        setIsAdmin(!!data && !error);
       } catch (err) {
         console.error('Error checking admin status:', err);
         setIsAdmin(false);
