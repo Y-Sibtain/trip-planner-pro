@@ -8,6 +8,13 @@ import ManageDestinations from '@/pages/admin/ManageDestinations';
 import ManageItineraries from '@/pages/admin/ManageItineraries';
 import AdminUsers from '@/pages/admin/AdminUsers';
 import { ProtectedAdminRoute } from '@/components/ProtectedAdminRoute';
+import Index from './pages/Index';
+import Booking from './pages/Booking';
+import Destinations from './pages/Destinations';
+import SavedItineraries from './pages/SavedItineraries';
+import Payment from './pages/Payment';
+import MyBookings from './pages/MyBookings';
+import NotFound from './pages/NotFound';
 
 function AppRoutes() {
   return (
@@ -15,9 +22,16 @@ function AppRoutes() {
         <Sidebar />
         <main className="flex-1">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/bookings" element={<Booking />} />
+            <Route path="/destinations" element={<Destinations />} />
+            <Route path="/my-bookings" element={<MyBookings />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/saved-itineraries" element={<SavedItineraries />} />
+            <Route path="/nf" element={<NotFound />} />
             
             <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
             <Route path="/admin/destinations" element={<ProtectedAdminRoute><ManageDestinations /></ProtectedAdminRoute>} />

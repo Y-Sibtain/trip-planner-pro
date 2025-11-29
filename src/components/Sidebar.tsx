@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, Settings } from 'lucide-react';
+import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane } from 'lucide-react';
 import { useBooking } from '@/contexts/BookingContext';
+import { useAdmin } from '@/hooks/useAdmin';
 import { Button } from '@/components/ui/button';
 
 export const Sidebar = () => {
@@ -9,6 +10,7 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useBooking();
+  const { isAdmin, loading } = useAdmin();
 
   const handleSignOut = async () => {
     await signOut();
@@ -19,6 +21,8 @@ export const Sidebar = () => {
   const navItems = [
     { path: '/', icon: Home, label: 'Home', public: true },
     { path: '/auth', icon: LogIn, label: 'Sign In', public: true, hideIfAuth: true },
+    { path: '/destinations', icon: MapPin, label: 'Destinations', public: false },
+    { path: '/bookings', icon: BookOpen, label: 'Bookings', public: false },
     { path: '/profile', icon: User, label: 'Profile', public: false },
     { path: '/admin', icon: LayoutDashboard, label: 'Admin Dashboard', admin: true },
     { path: '/admin/destinations', icon: MapPin, label: 'Manage Destinations', admin: true },
@@ -42,7 +46,7 @@ export const Sidebar = () => {
       <div
         className={`fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white shadow-lg transform transition-transform duration-300 z-40 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 md:relative md:h-screen overflow-y-auto`}
+        } md:translate-x-0 md:relative md:h-screen md:sticky md:top-0 overflow-y-auto`}
       >
         {/* Logo */}
         <div className="p-6 border-b border-gray-700">
@@ -51,19 +55,22 @@ export const Sidebar = () => {
             <h1 className="text-xl font-bold">Trip Planner</h1>
           </div>
           {isAuthenticated && (
-            <p className="text-sm text-gray-400">{user?.email}</p>
+            <>
+              <p className="text-sm text-gray-400">{user?.email}</p>
+              {isAdmin && <p className="text-xs text-indigo-400 font-semibold">Admin</p>}
+            </>
           )}
         </div>
 
         {/* Navigation */}
         <nav className="p-4 space-y-2">
           {navItems.map((item) => {
-            // Skip if public only and authenticated
+            // Skip if hideIfAuth is true and user is authenticated
             if (item.hideIfAuth && isAuthenticated) return null;
-            // Skip if requires auth and not authenticated
+            // Skip if not public and user is not authenticated
             if (!item.public && !isAuthenticated) return null;
-            // Skip admin items for non-admins (we'll check this properly with useAdmin hook later)
-            if (item.admin && !isAuthenticated) return null;
+            // Skip admin items if user is not an admin
+            if (item.admin && !isAdmin) return null;
 
             const Icon = item.icon;
             return (
