@@ -20,9 +20,15 @@ const Auth = () => {
   const { setIsAuthenticated } = useBooking();
   const { toast } = useToast();
 
+  // Signup form fields
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [location, setLocation] = useState('');
+
   const validate = (email: string, password: string) => {
     if (!emailRegex.test(email)) return 'Please enter a valid email address.';
-    if (!isLogin && password.length < 8) return 'Password must be at least 8 characters.';
+    if (password.length < 8) return 'Password must be at least 8 characters.';
+    if (!isLogin && !fullName.trim()) return 'Full name is required.';
     return null;
   };
 
@@ -46,30 +52,87 @@ const Auth = () => {
         toast({ title: 'Welcome back!', description: "You've successfully logged in." });
         navigate('/');
       } else {
-        const { data, error } = await supabase.auth.signUp({ email, password });
-        if (error) {
-          toast({ title: 'Sign up failed', description: error.message, variant: 'destructive' });
+        // Sign up with auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+        if (authError) {
+          toast({ title: 'Sign up failed', description: authError.message, variant: 'destructive' });
           return;
         }
-        // If Supabase auto-signs in, data.user will be present. Otherwise an email confirmation will be required.
-        if (data?.user) {
-          setIsAuthenticated(true);
-          toast({
-            title: 'Account created!',
-            description: 'Your account has been created and you are now signed in.',
-          });
-          navigate('/');
+
+        if (authData?.user) {
+          try {
+            console.log('New user created:', authData.user.id);
+            
+            // Create user profile FIRST before updating metadata
+            const profileData = {
+              id: authData.user.id,
+              full_name: fullName || '',
+              phone: phone || '',
+              location: location || '',
+              avatar_url: null,
+              preferences: {},
+            };
+
+            console.log('Inserting profile:', profileData);
+
+            const { data: insertedProfile, error: profileError } = await supabase
+              .from('profiles')
+              .insert([profileData])
+              .select()
+              .single();
+
+            if (profileError) {
+              console.error('Profile creation error:', profileError);
+              toast({
+                title: 'Warning',
+                description: 'Account created but profile setup needs to be completed. Please update your profile.',
+                variant: 'destructive',
+              });
+            } else {
+              console.log('Profile created successfully:', insertedProfile);
+            }
+
+            // Update auth user metadata
+            const { error: metadataError } = await supabase.auth.updateUser({
+              data: {
+                full_name: fullName,
+                phone: phone,
+                location: location,
+              },
+            });
+
+            if (metadataError) {
+              console.warn('Failed to update metadata:', metadataError);
+            }
+
+            setIsAuthenticated(true);
+            toast({
+              title: 'Account created!',
+              description: 'Your account has been created and you are now signed in.',
+            });
+            navigate('/');
+          } catch (err: any) {
+            console.error('Signup error:', err);
+            toast({
+              title: 'Error',
+              description: err?.message ?? 'Failed to create account.',
+              variant: 'destructive',
+            });
+          }
         } else {
           toast({
             title: 'Account created!',
             description: 'Please check your email to confirm your account.',
           });
-          // keep on auth page; user must confirm email
         }
       }
     } catch (err: any) {
       console.error('Auth error:', err);
-      toast({ title: 'Unexpected error', description: err?.message ?? 'Something went wrong.', variant: 'destructive' });
+      toast({
+        title: 'Unexpected error',
+        description: err?.message ?? 'Something went wrong.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -77,7 +140,11 @@ const Auth = () => {
 
   const handlePasswordReset = async () => {
     if (!emailRegex.test(email)) {
-      toast({ title: 'Invalid email', description: 'Enter a valid email to reset password', variant: 'destructive' });
+      toast({
+        title: 'Invalid email',
+        description: 'Enter a valid email to reset password',
+        variant: 'destructive',
+      });
       return;
     }
     setResetting(true);
@@ -92,7 +159,11 @@ const Auth = () => {
       }
     } catch (err: any) {
       console.error('Reset error:', err);
-      toast({ title: 'Unexpected error', description: err?.message ?? 'Failed to request password reset.', variant: 'destructive' });
+      toast({
+        title: 'Unexpected error',
+        description: err?.message ?? 'Failed to request password reset.',
+        variant: 'destructive',
+      });
     } finally {
       setResetting(false);
     }
@@ -109,6 +180,44 @@ const Auth = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Signup-only fields */}
+            {!isLogin && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input
+                    id="fullName"
+                    type="text"
+                    placeholder="John Doe"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone (Optional)</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+1 (555) 123-4567"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location (Optional)</Label>
+                  <Input
+                    id="location"
+                    type="text"
+                    placeholder="City, Country"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Login/Signup common fields */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -125,10 +234,10 @@ const Auth = () => {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder={isLogin ? '' : 'At least 8 characters'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required={isLogin ? false : true}
+                required
               />
             </div>
             <div className="flex items-center justify-between">
