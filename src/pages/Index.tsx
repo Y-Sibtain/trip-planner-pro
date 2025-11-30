@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import TripPlannerForm, { TripFormData } from "@/components/TripPlannerForm";
-import TripResults from "@/components/TripResults";
 import { Plane } from "lucide-react";
 import { UserMenu } from "@/components/UserMenu";
 import NotificationsMenu from "@/components/NotificationsMenu";
@@ -44,10 +43,8 @@ const Index = () => {
   const handleSearch = (data: TripFormData) => {
     console.log("Search data with travellers:", { ...data, travellers });
     setTripData({ ...data, travellers });
-    // Scroll to results
-    setTimeout(() => {
-      document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    // Navigate to city planner page
+    navigate('/city-planner', { state: { tripData: { ...data, travellers } } });
   };
 
   return (
@@ -147,7 +144,7 @@ const Index = () => {
 
       {/* Results */}
       <div id="results" className="mt-8 max-w-7xl mx-auto p-4">
-        <TripResults tripData={tripData ?? null} />
+        {/* Removed TripResults - users now see results on city-planner page */}
       </div>
 
       {/* Footer */}

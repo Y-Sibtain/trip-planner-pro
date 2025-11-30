@@ -84,10 +84,11 @@ const tripData = {
 interface TripPlanProps {
   city: string;
   numPeople: number;
+  numDays?: number;
   onFinalize: () => void;
 }
 
-const TripPlan = ({ city, numPeople, onFinalize }: TripPlanProps) => {
+const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) => {
   const cityData = tripData[city as keyof typeof tripData];
   const [selectedPlan, setSelectedPlan] = useState<{ [key: number]: { activity: any; restaurant: any } }>(() => {
     const initial: { [key: number]: { activity: any; restaurant: any } } = {};
@@ -126,7 +127,7 @@ const TripPlan = ({ city, numPeople, onFinalize }: TripPlanProps) => {
 
   return (
     <div className="space-y-4">
-      {[1, 2, 3, 4, 5, 6, 7].map((day) => {
+      {Array.from({ length: numDays }, (_, i) => i + 1).map((day) => {
         const plan = selectedPlan[day];
         return (
           <Collapsible

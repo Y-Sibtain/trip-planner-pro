@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -54,12 +55,52 @@ const hotels = {
 };
 
 const CityPlanner = () => {
+  const location = useLocation();
   const [step, setStep] = useState<"city" | "flight" | "hotel" | "plan">("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [numPeople, setNumPeople] = useState<number>(1);
   const [selectedFlight, setSelectedFlight] = useState<any>(null);
   const [selectedHotel, setSelectedHotel] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [numDays, setNumDays] = useState<number>(7);
+
+  // Calculate number of days from trip data
+  useEffect(() => {
+    const state = location.state as any;
+    console.log("CityPlanner state tripData:", state?.tripData);
+    console.log("Travellers value:", state?.tripData?.travellers, "Type:", typeof state?.tripData?.travellers);
+    
+    if (state?.tripData) {
+      const { startDate, endDate, travellers } = state.tripData;
+      
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        console.log("Days calculated:", days);
+        setNumDays(Math.max(1, days));
+      }
+
+      // Set number of people from travellers field
+      if (travellers) {
+        const numTravellers = Number(travellers);
+        console.log("Setting numPeople to:", numTravellers);
+        if (!isNaN(numTravellers)) {
+          setNumPeople(numTravellers);
+        }
+      }
+
+      // Auto-select first destination if provided
+      if (state.tripData.destinations && state.tripData.destinations.length > 0) {
+        const firstDest = state.tripData.destinations[0];
+        const matchedCity = cities.find(c => c.name.toLowerCase() === firstDest.toLowerCase());
+        if (matchedCity) {
+          setSelectedCity(matchedCity.name);
+          setStep("flight");
+        }
+      }
+    }
+  }, []);
 
   const handleCitySelect = (city: string) => {
     setSelectedCity(city);
@@ -85,7 +126,7 @@ const CityPlanner = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold">City Trip Planner</h1>
-            <p className="text-muted-foreground mt-1">Plan your perfect 7-day adventure</p>
+            <p className="text-muted-foreground mt-1">Plan your perfect {numDays}-day adventure</p>
           </div>
           <Link to="/">
             <Button variant="outline">← Back to Home</Button>
@@ -115,7 +156,7 @@ const CityPlanner = () => {
                       <CardContent className="p-6 text-center">
                         <div className="text-5xl mb-3">{city.emoji}</div>
                         <h3 className="font-semibold text-lg">{city.name}</h3>
-                        <Badge className="mt-2" variant="secondary">7 Days</Badge>
+                        <Badge className="mt-2" variant="secondary">{numDays} Days</Badge>
                       </CardContent>
                     </Card>
                   ))}
@@ -136,7 +177,6 @@ const CityPlanner = () => {
                       <Plane className="h-6 w-6" />
                       Select Your Flight to {selectedCity}
                     </CardTitle>
-                    <CardDescription>{numPeople} {numPeople === 1 ? "traveler" : "travelers"}</CardDescription>
                   </div>
                   <Button variant="outline" onClick={() => setStep("city")}>
                     ← Back
@@ -190,7 +230,7 @@ const CityPlanner = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-2xl">Your 7-Day Itinerary</CardTitle>
+                    <CardTitle className="text-2xl">Your {numDays}-Day Itinerary</CardTitle>
                     <CardDescription>Activities and dining recommendations</CardDescription>
                   </div>
                   <Button variant="outline" onClick={() => setStep("hotel")}>
@@ -203,6 +243,7 @@ const CityPlanner = () => {
             <TripPlan
               city={selectedCity}
               numPeople={numPeople}
+              numDays={numDays}
               onFinalize={() => setShowSummary(true)}
             />
           </>
