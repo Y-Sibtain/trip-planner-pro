@@ -21,6 +21,8 @@ interface TripPlannerFormProps {
 
 const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
   const [source, setSource] = useState("");
+  const [sourceInput, setSourceInput] = useState("");
+  const [sourceSuggestions, setSourceSuggestions] = useState<string[]>([]);
   const [destinationInput, setDestinationInput] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [destinations, setDestinations] = useState<string[]>([]);
@@ -42,10 +44,10 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
   const { toast } = useToast();
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
-  // Fetch all destination names for autocomplete suggestions (cached on mount)
+  // Fetch all destination names and source airports for autocomplete suggestions (cached on mount)
   useEffect(() => {
     let mounted = true;
-    const fetchDestinations = async () => {
+    const fetchSuggestions = async () => {
       setLoadingSuggestions(true);
       try {
         const { data, error } = await supabase
@@ -58,13 +60,15 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
         }
         if (!mounted) return;
         setSuggestions((data || []).map((d: any) => d.name));
+        // For now, also use destination names as possible source airports
+        setSourceSuggestions((data || []).map((d: any) => d.name));
       } catch (err) {
         console.error("Error loading suggestions:", err);
       } finally {
         setLoadingSuggestions(false);
       }
     };
-    fetchDestinations();
+    fetchSuggestions();
     return () => {
       mounted = false;
     };
@@ -144,6 +148,11 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
     ? suggestions.filter((s) => s.toLowerCase().includes(destinationInput.toLowerCase()) && !destinations.includes(s)).slice(0, 6)
     : [];
 
+  // Filtered source suggestions for source dropdown (single-select)
+  const filteredSourceSuggestions = sourceInput
+    ? sourceSuggestions.filter((s) => s.toLowerCase().includes(sourceInput.toLowerCase())).slice(0, 6)
+    : [];
+
   return (
     <Card className="w-full">
       <CardContent>
@@ -152,12 +161,54 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
             <Label htmlFor="source" className="flex items-center gap-2">
               <MapPin className="w-4 h-4" /> Source
             </Label>
-            <Input
-              id="source"
-              placeholder="e.g., Jinnah International Airport(KHI), Islamabad International Airport(ISB)"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                id="source"
+                placeholder="Type a source city or airport"
+                value={sourceInput}
+                onChange={(e) => setSourceInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (filteredSourceSuggestions.length > 0) {
+                      setSource(filteredSourceSuggestions[0]);
+                      setSourceInput("");
+                    }
+                  }
+                }}
+              />
+              {source && (
+                <div className="mt-2 inline-flex items-center gap-2 bg-muted px-3 py-1 rounded-full">
+                  <span className="text-sm">{source}</span>
+                  <button type="button" onClick={() => setSource("")} aria-label={`Remove ${source}`} className="p-0.5">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+              {sourceInput && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
+                <div className="absolute z-20 mt-1 w-full bg-gray-200 border rounded-md shadow">
+                  {loadingSuggestions ? (
+                    <div className="p-2 text-sm text-muted-foreground">Loading...</div>
+                  ) : filteredSourceSuggestions.length > 0 ? (
+                    filteredSourceSuggestions.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        className="w-full text-left p-2 hover:bg-muted/50"
+                        onClick={() => {
+                          setSource(s);
+                          setSourceInput("");
+                        }}
+                      >
+                        {s}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="p-2 text-sm text-muted-foreground">No sources match your search</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           <div>
