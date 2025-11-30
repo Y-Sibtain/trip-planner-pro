@@ -25,7 +25,7 @@ export const Sidebar = () => {
     { path: '/profile', icon: User, label: 'Profile', public: false },
     { path: '/saved-itineraries', icon: Bookmark, label: 'Saved Itineraries', public: false },
     { path: '/admin', icon: LayoutDashboard, label: 'Admin Dashboard', admin: true },
-    { path: '/admin/bookings', icon: BookOpen, label: 'Bookings', admin: true },
+    { path: '/admin/admin-bookings', icon: BookOpen, label: 'Manage Bookings', admin: true },
     { path: '/admin/destinations', icon: MapPin, label: 'Manage Destinations', admin: true },
     { path: '/admin/itineraries', icon: Calendar, label: 'Manage Itineraries', admin: true },
     { path: '/admin/users', icon: Users, label: 'Manage Users', admin: true },

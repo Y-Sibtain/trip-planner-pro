@@ -9,13 +9,12 @@ import ManageItineraries from '@/pages/admin/ManageItineraries';
 import AdminUsers from '@/pages/admin/AdminUsers';
 import { ProtectedAdminRoute } from '@/components/ProtectedAdminRoute';
 import Index from './pages/Index';
-import Booking from './pages/admin/Bookings';
+import AdminBookings from './pages/admin/AdminBookings';
 import Destinations from './pages/Destinations';
 import SavedItineraries from './pages/SavedItineraries';
 import Payment from './pages/Payment';
 import MyBookings from './pages/MyBookings';
 import NotFound from './pages/NotFound';
-import Bookings from './pages/admin/Bookings';
 
 function AppRoutes() {
   return (
@@ -37,7 +36,7 @@ function AppRoutes() {
             <Route path="/admin/destinations" element={<ProtectedAdminRoute><ManageDestinations /></ProtectedAdminRoute>} />
             <Route path="/admin/itineraries" element={<ProtectedAdminRoute><ManageItineraries /></ProtectedAdminRoute>} />
             <Route path="/admin/users" element={<ProtectedAdminRoute><AdminUsers /></ProtectedAdminRoute>} />
-            <Route path="/admin/bookings" element={<ProtectedAdminRoute><Bookings /></ProtectedAdminRoute>} />
+            <Route path="/admin/admin-bookings" element={<ProtectedAdminRoute><AdminBookings /></ProtectedAdminRoute>} />
             
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
