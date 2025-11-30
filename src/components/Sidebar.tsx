@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane } from 'lucide-react';
+import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane, Bookmark } from 'lucide-react';
 import { useBooking } from '@/contexts/BookingContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Button } from '@/components/ui/button';
@@ -22,9 +22,10 @@ export const Sidebar = () => {
     { path: '/', icon: Home, label: 'Home', public: true },
     { path: '/auth', icon: LogIn, label: 'Sign In', public: true, hideIfAuth: true },
     { path: '/destinations', icon: MapPin, label: 'Destinations', public: false },
-    { path: '/bookings', icon: BookOpen, label: 'Bookings', public: false },
     { path: '/profile', icon: User, label: 'Profile', public: false },
+    { path: '/saved-itineraries', icon: Bookmark, label: 'Saved Itineraries', public: false },
     { path: '/admin', icon: LayoutDashboard, label: 'Admin Dashboard', admin: true },
+    { path: '/admin/bookings', icon: BookOpen, label: 'Bookings', admin: true },
     { path: '/admin/destinations', icon: MapPin, label: 'Manage Destinations', admin: true },
     { path: '/admin/itineraries', icon: Calendar, label: 'Manage Itineraries', admin: true },
     { path: '/admin/users', icon: Users, label: 'Manage Users', admin: true },

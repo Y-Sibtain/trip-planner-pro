@@ -72,16 +72,14 @@ const Destinations = () => {
     // Start query
     let q: any = supabase.from("destinations").select("id, name, country, description, image_url, base_price, highlights, type");
 
-    // Text search (name or highlights text)
+    // Text search (name or description only - remove highlights::text cast)
     if (queryText.trim()) {
       const t = queryText.trim();
-      // Try to search name or highlights (highlights is an array -> use Postgres array/text contains approach via ilike on highlights::text)
-      q = q.or(`name.ilike.%${t}%,highlights::text.ilike.%${t}%`);
+      q = q.or(`name.ilike.%${t}%,description.ilike.%${t}%`);
     }
 
     // Category filter
     if (selectedCategories.length > 0) {
-      // .in expects array; ensure using server-side enum/text match
       q = q.in("type", selectedCategories);
     }
 
@@ -107,18 +105,57 @@ const Destinations = () => {
   const runSearch = async () => {
     setLoading(true);
     try {
-      const q = buildQuery();
+      let q: any = supabase
+        .from("destinations")
+        .select("id, name, country, description, image_url, base_price, highlights, type");
+
+      // Text search
+      if (queryText.trim()) {
+        const t = queryText.trim();
+        q = q.or(`name.ilike.%${t}%,description.ilike.%${t}%`);
+      }
+
+      // Category filter
+      if (selectedCategories.length > 0) {
+        q = q.in("type", selectedCategories);
+      }
+
+      // Country filter
+      if (country) {
+        q = q.eq("country", country);
+      }
+
+      // Price filters
+      if (minPrice && !isNaN(Number(minPrice))) {
+        q = q.gte("base_price", Number(minPrice));
+      }
+      if (maxPrice && !isNaN(Number(maxPrice))) {
+        q = q.lte("base_price", Number(maxPrice));
+      }
+
+      q = q.order("name", { ascending: true }).limit(200);
+
       const { data, error } = await q;
+
       if (error) {
-        console.error("Search error:", error);
-        toast({ title: "Search failed", description: "Could not fetch destinations", variant: "destructive" });
+        console.error("Search error:", error.message, error.details);
+        toast({
+          title: "Search failed",
+          description: error.message || "Could not fetch destinations",
+          variant: "destructive",
+        });
         setResults([]);
         return;
       }
+
       setResults((data || []) as DestinationRow[]);
     } catch (err) {
       console.error("Run search error:", err);
-      toast({ title: "Search failed", description: "Unexpected error", variant: "destructive" });
+      toast({
+        title: "Search failed",
+        description: "Unexpected error",
+        variant: "destructive",
+      });
       setResults([]);
     } finally {
       setLoading(false);
