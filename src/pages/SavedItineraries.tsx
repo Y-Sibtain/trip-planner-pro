@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { ShoppingCart } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useBooking } from '@/contexts/BookingContext';
@@ -165,7 +166,7 @@ const SavedItineraries = () => {
         <CardContent>
           <div className="mb-4 flex justify-between items-center">
             <div>
-              <strong>{saved.length}</strong> saved itinerary{saved.length !== 1 ? 's' : ''}
+              <strong>{saved.length}</strong> saved itineraries{saved.length !== 1 ? '' : ''}
             </div>
             <div>
               <Button onClick={fetchSaved} disabled={loading}>
@@ -195,7 +196,6 @@ const SavedItineraries = () => {
                     <TableCell>
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => {
-                          // load plan into planner
                           setTripData({
                             source: row.plan?.meta?.source || '',
                             destinations: row.plan?.meta?.destinations || (row.plan?.days?.map((d: any) => d.destination) || []),
@@ -207,6 +207,11 @@ const SavedItineraries = () => {
                           navigate('/');
                         }}>
                           <Play className="w-4 h-4 mr-2" /> Load
+                        </Button>
+                        <Button size="sm" onClick={() => {
+                          navigate('/payment', { state: { itinerary: row } });
+                        }}>
+                          <ShoppingCart className="w-4 h-4 mr-2" /> Book
                         </Button>
                         <Button size="sm" variant="outline" onClick={() => handleRename(row.id)}>
                           <Edit className="w-4 h-4 mr-2" /> Rename
