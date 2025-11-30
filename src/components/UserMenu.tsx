@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+// Avatar component removed — render initials instead
 import { useBooking } from '@/contexts/BookingContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { User, BookOpen, LogOut, LogIn, Shield } from 'lucide-react';
@@ -51,11 +51,9 @@ export const UserMenu = () => {
           variant="outline"
           className="bg-background/80 backdrop-blur-sm flex items-center gap-2"
         >
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-medium">
+            {initials}
+          </span>
           <span className="hidden md:inline">{displayName}</span>
         </Button>
       </DropdownMenuTrigger>

@@ -19,28 +19,33 @@ const Auth = () => {
   const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [signupSuccess, setSignupSuccess] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { setIsAuthenticated } = useBooking();
   const { toast } = useToast();
 
-  // Check for recovery token in URL
+  // Check for recovery token or email confirmation in URL
   useEffect(() => {
     const type = searchParams.get('type');
     if (type === 'recovery') {
       setIsRecoveryMode(true);
+    } else if (type === 'email-confirm') {
+      // Email confirmation link clicked - user is already confirmed by Supabase
+      // Show success message and redirect to login
+      toast({
+        title: 'Email confirmed!',
+        description: 'Your email has been confirmed. You can now sign in.',
+      });
+      setIsLogin(true);
+      // Clear the URL params
+      navigate('/auth');
     }
-  }, [searchParams]);
-
-  // Signup form fields
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [location, setLocation] = useState('');
+  }, [searchParams, navigate, toast]);
 
   const validate = (email: string, password: string) => {
     if (!emailRegex.test(email)) return 'Please enter a valid email address.';
     if (password.length < 8) return 'Password must be at least 8 characters.';
-    if (!isLogin && !fullName.trim()) return 'Full name is required.';
     return null;
   };
 
@@ -55,85 +60,56 @@ const Auth = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        // Try to sign in
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           toast({ title: 'Sign in failed', description: error.message, variant: 'destructive' });
           return;
         }
+
+        // Check if email is confirmed
+        if (!data.user?.email_confirmed_at) {
+          toast({
+            title: 'Email not confirmed',
+            description: 'Please confirm your email via the link sent to your inbox.',
+            variant: 'destructive',
+          });
+          return;
+        }
+
         setIsAuthenticated(true);
         toast({ title: 'Welcome back!', description: "You've successfully logged in." });
         navigate('/');
       } else {
-        // Sign up with auth
-        const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+        // Sign up - only ask for email and password
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth?type=email-confirm`,
+          },
+        });
+
         if (authError) {
-          toast({ title: 'Sign up failed', description: authError.message, variant: 'destructive' });
+          if (authError.message?.includes('already registered')) {
+            toast({
+              title: 'Email already registered',
+              description: 'The email is already registered. Please sign in or use a different email.',
+              variant: 'destructive',
+            });
+          } else {
+            toast({ title: 'Sign up failed', description: authError.message, variant: 'destructive' });
+          }
           return;
         }
 
         if (authData?.user) {
-          try {
-            console.log('New user created:', authData.user.id);
-            
-            // Create user profile FIRST before updating metadata
-            const profileData = {
-              id: authData.user.id,
-              full_name: fullName || '',
-              phone: phone || '',
-              location: location || '',
-              avatar_url: null,
-              preferences: {},
-            };
-
-            console.log('Inserting profile:', profileData);
-
-            const { data: insertedProfile, error: profileError } = await supabase
-              .from('profiles')
-              .insert([profileData])
-              .select();
-
-            if (profileError) {
-              console.error('Profile creation error:', profileError);
-              toast({
-                title: 'Warning',
-                description: 'Account created but profile setup needs to be completed. Please update your profile.',
-                variant: 'destructive',
-              });
-            } else {
-              console.log('Profile created successfully:', insertedProfile);
-            }
-
-            // Update auth user metadata
-            const { error: metadataError } = await supabase.auth.updateUser({
-              data: {
-                full_name: fullName,
-                phone: phone,
-                location: location,
-              },
-            });
-
-            if (metadataError) {
-              console.warn('Failed to update metadata:', metadataError);
-            }
-
-            setIsAuthenticated(true);
-            toast({
-              title: 'Account created!',
-              description: 'Your account has been created and you are now signed in.',
-            });
-            navigate('/');
-          } catch (err: any) {
-            console.error('Signup error:', err);
-            toast({
-              title: 'Error',
-              description: err?.message ?? 'Failed to create account.',
-              variant: 'destructive',
-            });
-          }
-        } else {
+          setSignupSuccess(true);
+          setEmail('');
+          setPassword('');
           toast({
             title: 'Account created!',
-            description: 'Please check your email to confirm your account.',
+            description: 'Please check your email for the confirmation link.',
           });
         }
       }
@@ -280,44 +256,7 @@ const Auth = () => {
             </form>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Signup-only fields */}
-              {!isLogin && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="John Doe"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone (Optional)</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location (Optional)</Label>
-                    <Input
-                      id="location"
-                      type="text"
-                      placeholder="City, Country"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* Login/Signup common fields */}
+              {/* Login/Signup common fields only */}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -348,10 +287,22 @@ const Auth = () => {
             </form>
           )}
 
+          {signupSuccess && !isRecoveryMode && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-900">
+                <strong>Check your email!</strong> A confirmation link has been sent to <strong>{email}</strong>. 
+                Please click the link to confirm your email before signing in.
+              </p>
+            </div>
+          )}
+
           <div className="mt-4 flex items-center justify-between">
             <button
               type="button"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setSignupSuccess(false);
+              }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
