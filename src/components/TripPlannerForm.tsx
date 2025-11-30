@@ -132,7 +132,7 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
             </Label>
             <Input
               id="source"
-              placeholder="e.g., New York, JFK"
+              placeholder="e.g., Jinnah International Airport(KHI), Islamabad International Airport(ISB)"
               value={source}
               onChange={(e) => setSource(e.target.value)}
             />
