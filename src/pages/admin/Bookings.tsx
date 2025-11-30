@@ -66,7 +66,7 @@ const Booking = () => {
               <CardContent className="space-y-4">
                 <div className="text-sm text-muted-foreground">
                   <p>Dates: {tripData.startDate} to {tripData.endDate}</p>
-                  <p>Budget: ${tripData.budget}</p>
+                  <p>Budget: PKR {tripData.budget}</p>
                 </div>
               </CardContent>
             </Card>
@@ -86,7 +86,7 @@ const Booking = () => {
                       <p className="text-sm text-muted-foreground capitalize">{item.type}</p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="font-bold">${item.price}</span>
+                      <span className="font-bold">PKR {item.price}</span>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -111,12 +111,12 @@ const Booking = () => {
                   {selectedItems.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span className="text-muted-foreground">{item.type}</span>
-                      <span>${item.price}</span>
+                      <span>PKR {item.price}</span>
                     </div>
                   ))}
                   <div className="border-t pt-2 flex justify-between font-bold">
                     <span>Total</span>
-                    <span>${totalAmount}</span>
+                    <span>PKR {totalAmount}</span>
                   </div>
                 </div>
                 <Button onClick={handlePayment} className="w-full">

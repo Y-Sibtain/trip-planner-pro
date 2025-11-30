@@ -60,7 +60,7 @@ const DEFAULTS = {
 };
 
 const formatCurrency = (v: number) =>
-  v.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+  v.toLocaleString(undefined, { style: "currency", currency: "PKR", maximumFractionDigits: 2 });
 
 const daysBetweenInclusive = (start: string, end: string) => {
   const s = new Date(start);
@@ -563,7 +563,7 @@ const TripResults = ({ tripData, allowSave = true }: TripResultsProps) => {
                 <div>
                   <h3 className="font-medium">Budget Control</h3>
                   <div className="space-y-2">
-                    <label className="text-sm text-muted-foreground">Set target budget (USD)</label>
+                    <label className="text-sm text-muted-foreground">Set target budget (PKR)</label>
                     <div className="flex gap-2">
                       <input
                         type="number"

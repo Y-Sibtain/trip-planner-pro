@@ -286,7 +286,7 @@ export default function ManageItineraries() {
                 <TableRow key={itinerary.id}>
                   <TableCell>{itinerary.title}</TableCell>
                   <TableCell>{itinerary.duration_days} days</TableCell>
-                  <TableCell>${itinerary.price.toFixed(2)}</TableCell>
+                  <TableCell>PKR {itinerary.price.toFixed(2)}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button

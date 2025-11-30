@@ -93,7 +93,7 @@ const MyBookings = () => {
         <div className="flex items-center justify-between pt-2 border-t">
           <div className="flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-muted-foreground" />
-            <span className="font-bold text-foreground">${booking.amount}</span>
+            <span className="font-bold text-foreground">PKR {booking.amount}</span>
           </div>
           <Button size="sm" variant="outline">
             View Details

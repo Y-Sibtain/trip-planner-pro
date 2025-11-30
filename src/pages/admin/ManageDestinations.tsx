@@ -239,7 +239,7 @@ export default function ManageDestinations() {
                 <TableRow key={destination.id}>
                   <TableCell>{destination.name}</TableCell>
                   <TableCell>{destination.country}</TableCell>
-                  <TableCell>${destination.base_price?.toFixed(2)}</TableCell>
+                  <TableCell>PKR {destination.base_price?.toFixed(2)}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button
