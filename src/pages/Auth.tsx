@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,9 +16,21 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [isRecoveryMode, setIsRecoveryMode] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { setIsAuthenticated } = useBooking();
   const { toast } = useToast();
+
+  // Check for recovery token in URL
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (type === 'recovery') {
+      setIsRecoveryMode(true);
+    }
+  }, [searchParams]);
 
   // Signup form fields
   const [fullName, setFullName] = useState('');
@@ -149,7 +161,7 @@ const Auth = () => {
     setResetting(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth`,
+        redirectTo: `${window.location.origin}/auth?type=recovery`,
       });
       if (error) {
         toast({ title: 'Reset failed', description: error.message, variant: 'destructive' });
@@ -168,83 +180,173 @@ const Auth = () => {
     }
   };
 
+  const handleRecoveryPasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      toast({
+        title: 'Validation error',
+        description: 'Password must be at least 8 characters.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: 'Validation error',
+        description: 'Passwords do not match.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        toast({
+          title: 'Update failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Password updated',
+          description: 'Your password has been reset successfully.',
+        });
+        setIsRecoveryMode(false);
+        setNewPassword('');
+        setConfirmPassword('');
+        setIsLogin(true);
+        navigate('/auth');
+      }
+    } catch (err: any) {
+      console.error('Recovery error:', err);
+      toast({
+        title: 'Unexpected error',
+        description: err?.message ?? 'Failed to update password.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{isLogin ? 'Welcome Back' : 'Create Account'}</CardTitle>
-          <CardDescription>
-            {isLogin ? 'Sign in to continue booking' : 'Sign up to start planning your trip'}
-          </CardDescription>
+          {isRecoveryMode ? (
+            <>
+              <CardTitle>Reset Password</CardTitle>
+              <CardDescription>Enter your new password</CardDescription>
+            </>
+          ) : (
+            <>
+              <CardTitle>{isLogin ? 'Welcome Back' : 'Create Account'}</CardTitle>
+              <CardDescription>
+                {isLogin ? 'Sign in to continue booking' : 'Sign up to start planning your trip'}
+              </CardDescription>
+            </>
+          )}
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Signup-only fields */}
-            {!isLogin && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="John Doe"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone (Optional)</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+1 (555) 123-4567"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location (Optional)</Label>
-                  <Input
-                    id="location"
-                    type="text"
-                    placeholder="City, Country"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
-                </div>
-              </>
-            )}
-
-            {/* Login/Signup common fields */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder={isLogin ? '' : 'At least 8 characters'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="flex items-center justify-between">
+          {isRecoveryMode ? (
+            <form onSubmit={handleRecoveryPasswordUpdate} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">New Password</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  placeholder="At least 8 characters"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {isLogin ? 'Sign In' : 'Sign Up'}
+                {loading ? 'Updating...' : 'Update Password'}
               </Button>
-            </div>
-          </form>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Signup-only fields */}
+              {!isLogin && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="John Doe"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone (Optional)</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location (Optional)</Label>
+                    <Input
+                      id="location"
+                      type="text"
+                      placeholder="City, Country"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Login/Signup common fields */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder={isLogin ? '' : 'At least 8 characters'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {isLogin ? 'Sign In' : 'Sign Up'}
+                </Button>
+              </div>
+            </form>
+          )}
 
           <div className="mt-4 flex items-center justify-between">
             <button
@@ -266,7 +368,7 @@ const Auth = () => {
               </button>
             )}
           </div>
-        </CardContent>
+          </CardContent>
       </Card>
     </div>
   );
