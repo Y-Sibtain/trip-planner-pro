@@ -78,8 +78,7 @@ const Auth = () => {
             const { data: insertedProfile, error: profileError } = await supabase
               .from('profiles')
               .insert([profileData])
-              .select()
-              .single();
+              .select();
 
             if (profileError) {
               console.error('Profile creation error:', profileError);
