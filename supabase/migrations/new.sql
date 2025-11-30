@@ -4,7 +4,6 @@ CREATE TABLE profiles (
   full_name TEXT,
   phone TEXT,
   location TEXT,
-  avatar_url TEXT,
   preferences JSONB DEFAULT '{}',
   deleted_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT NOW(),

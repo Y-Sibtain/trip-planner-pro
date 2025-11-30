@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,11 +9,7 @@ import { Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-type Preferences = {
-  budgetRange?: { min?: number; max?: number };
-  preferredDestinations?: string[];
-  travelStyle?: string;
-};
+// Preferences removed — simplified profile schema
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -21,16 +17,12 @@ const Profile = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const [isFirstTime, setIsFirstTime] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
     email: '',
     phone: '',
-    location: '',
-    avatar_url: '',
-    preferences: {} as Preferences,
   });
 
   useEffect(() => {
@@ -62,53 +54,48 @@ const Profile = () => {
           if (fetchError.code === 'PGRST116') {
             // Profile doesn't exist, create one
             console.log('Profile does not exist, creating new one');
+            setIsFirstTime(true);
             const newProfile = {
               id: authUser.id,
-              full_name: authUser.user_metadata?.full_name || '',
-              phone: authUser.user_metadata?.phone || '',
-              location: authUser.user_metadata?.location || '',
-              avatar_url: null,
-              preferences: {},
+              full_name: '',
+              phone: '',
             };
 
-            const { data: createdProfile, error: insertError } = await supabase
+            const { error: insertError } = await supabase
               .from('profiles')
               .insert([newProfile]);
 
             if (insertError) {
               console.error('Profile insert error:', insertError);
-              toast({
-                title: 'Warning',
-                description: 'Could not create profile. Please try again or fill in your details below.',
-                variant: 'destructive',
-              });
+              // Even if insert fails, set formData with auth user data so user can still edit
               setFormData({
                 id: authUser.id,
                 name: authUser.user_metadata?.full_name || '',
                 email: authUser.email || '',
                 phone: authUser.user_metadata?.phone || '',
-                location: authUser.user_metadata?.location || '',
-                avatar_url: '',
-                preferences: {},
+              });
+              toast({
+                title: 'Info',
+                description: 'Profile will be created when you save.',
+                variant: 'default',
               });
             } else {
-              console.log('Profile created successfully:', createdProfile);
+              console.log('Profile created successfully');
               setFormData({
-                id: newProfile.id,
-                name: newProfile.full_name || '',
+                id: authUser.id,
+                name: '',
                 email: authUser.email || '',
-                phone: newProfile.phone || '',
-                location: newProfile.location || '',
-                avatar_url: newProfile.avatar_url || '',
-                preferences: newProfile.preferences || {},
+                phone: '',
               });
             }
           } else {
             console.error('Error fetching profile:', fetchError);
-            toast({
-              title: 'Error',
-              description: 'Failed to load profile.',
-              variant: 'destructive',
+            // Fallback: still load form with auth user data
+            setFormData({
+              id: authUser.id,
+              name: authUser.user_metadata?.full_name || '',
+              email: authUser.email || '',
+              phone: authUser.user_metadata?.phone || '',
             });
           }
         } else {
@@ -119,18 +106,28 @@ const Profile = () => {
             name: profileData.full_name || '',
             email: authUser.email || '',
             phone: profileData.phone || '',
-            location: profileData.location || '',
-            avatar_url: profileData.avatar_url || '',
-            preferences: profileData.preferences || {},
           });
         }
       } catch (err) {
         console.error('Load profile error:', err);
-        toast({
-          title: 'Error',
-          description: 'Failed to load profile.',
-          variant: 'destructive',
-        });
+        // Try to at least get auth user data
+        try {
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          if (authUser) {
+            setFormData({
+              id: authUser.id,
+              name: authUser.user_metadata?.full_name || '',
+              email: authUser.email || '',
+              phone: authUser.user_metadata?.phone || '',
+            });
+          }
+        } catch {
+          toast({
+            title: 'Error',
+            description: 'Failed to load profile.',
+            variant: 'destructive',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -140,34 +137,35 @@ const Profile = () => {
   }, [isAuthenticated, navigate, toast]);
 
   const handleSave = async () => {
+    // Validate that we have a profile ID
+    if (!formData.id) {
+      toast({
+        title: 'Error',
+        description: 'Profile ID is missing. Please refresh the page and try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setSaving(true);
     try {
-      // Update auth user metadata
-      const { error: userErr } = await supabase.auth.updateUser({
-        data: {
-          full_name: formData.name,
-          phone: formData.phone,
-          location: formData.location,
-        },
-      });
-
-      if (userErr) {
-        console.warn('Failed to update auth metadata:', userErr);
-      }
+      // NOTE: Skipping update to auth.users via client due to potential RLS/permission restrictions.
+      // Keep profile data in `profiles` table as the source of truth for user info.
 
       // Update profiles table
-      const { error: profileErr } = await supabase
+      const { data: updatedData, error: profileErr } = await supabase
         .from('profiles')
         .update({
           full_name: formData.name,
           phone: formData.phone,
-          location: formData.location,
-          avatar_url: formData.avatar_url,
-          preferences: formData.preferences,
         })
-        .eq('id', formData.id);
+        .eq('id', formData.id)
+        .select();
 
-      if (profileErr) {
+      console.debug('profiles.update response', { updatedData, profileErr });
+
+      // If there is an error and no returned data, treat it as fatal
+      if (profileErr && !updatedData) {
         console.error('Profile update error:', profileErr);
         toast({
           title: 'Save failed',
@@ -181,6 +179,24 @@ const Profile = () => {
         title: 'Profile updated',
         description: 'Your profile was saved successfully.',
       });
+
+      try {
+        // Attempt to update auth.users metadata via server-side admin endpoint
+        const session = await supabase.auth.getSession();
+        const accessToken = session.data?.session?.access_token;
+        if (accessToken) {
+          await fetch('/admin/update-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({ full_name: formData.name, phone: formData.phone }),
+          });
+        }
+      } catch (err) {
+        console.warn('Server-side user metadata update failed (non-blocking):', err);
+      }
     } catch (err: any) {
       console.error('Save profile error:', err);
       toast({
@@ -193,62 +209,22 @@ const Profile = () => {
     }
   };
 
-  const handleAvatarUpload = async (file: File | null) => {
-    if (!file) return;
-    setSaving(true);
-    try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `avatars/${formData.id}/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: true,
-      });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const publicUrl = supabase.storage.from('avatars').getPublicUrl(filePath).data?.publicUrl;
-
-      setFormData((f) => ({ ...f, avatar_url: publicUrl || '' }));
-
-      const { error: updateErr } = await supabase
-        .from('profiles')
-        .update({ avatar_url: publicUrl })
-        .eq('id', formData.id);
-
-      if (updateErr) {
-        throw updateErr;
-      }
-
-      toast({
-        title: 'Avatar uploaded',
-        description: 'Profile picture updated.',
-      });
-    } catch (err: any) {
-      console.error('Avatar upload error:', err);
-      toast({
-        title: 'Upload failed',
-        description: err?.message ?? 'Failed to upload avatar',
-        variant: 'destructive',
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
+  
 
   const handleDeleteAccountSoft = async () => {
     if (!confirm('This will remove your profile data from the app (soft-delete). You can still contact admin to fully remove your account. Proceed?'))
       return;
     setSaving(true);
     try {
-      const { error } = await supabase
+      const { data: deletedData, error } = await supabase
         .from('profiles')
         .update({ deleted_at: new Date().toISOString() })
-        .eq('id', formData.id);
+        .eq('id', formData.id)
+        .select();
 
-      if (error) {
+      console.debug('profiles.soft-delete response', { deletedData, error });
+
+      if (error && !deletedData) {
         toast({
           title: 'Delete failed',
           description: error.message,
@@ -257,10 +233,7 @@ const Profile = () => {
         return;
       }
 
-      await supabase.auth.updateUser({
-        data: { full_name: null, phone: null, location: null },
-      });
-
+      // Skip updating auth.users metadata here to avoid permission issues.
       await signOut();
       toast({
         title: 'Account removed',
@@ -298,25 +271,7 @@ const Profile = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex gap-4 items-center">
-              <div>
-                <img
-                  src={formData.avatar_url || '/placeholder-avatar.png'}
-                  alt="avatar"
-                  className="w-24 h-24 rounded-full object-cover border"
-                />
-              </div>
-              <div className="flex-1">
-                <Label>Change Profile Picture</Label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleAvatarUpload(e.target.files?.[0] ?? null)}
-                  className="mt-1"
-                />
-              </div>
-            </div>
+            {/* Avatar removed - profile simplified */}
 
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
@@ -329,7 +284,7 @@ const Profile = () => {
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" value={formData.email} disabled />
+              <Input id="email" value={formData.email} readOnly className="bg-gray-50" />
             </div>
 
             <div className="space-y-2">

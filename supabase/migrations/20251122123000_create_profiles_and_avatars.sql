@@ -1,11 +1,7 @@
--- Migration: create profiles table + storage bucket (avatars) + RLS policies
--- Timestamped file name: 20251122123000_create_profiles_and_avatars.sql
-
--- 1) Create profiles table (one-to-one with auth.users)
+-- Migration: create profiles table + RLS policies
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name TEXT,
-  avatar_url TEXT,
   phone TEXT,
   location TEXT,
   preferences JSONB DEFAULT '{}'::jsonb, -- store budget range, preferred destinations, etc.
@@ -50,12 +46,6 @@ TO authenticated
 USING (public.has_role(auth.uid(), 'admin'))
 WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
--- 4) Create a storage bucket for avatars (note: storage bucket creation is usually done via dashboard/CLI)
--- Instruction: Create a storage bucket named "avatars" via Supabase dashboard or CLI.
--- Recommended bucket settings:
--- - Name: avatars
--- - Public: false (recommended). Use signed URLs to serve images.
-
 -- 5) Trigger to update updated_at automatically
 CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS TRIGGER
@@ -74,6 +64,5 @@ FOR EACH ROW
 EXECUTE FUNCTION public.set_updated_at();
 
 -- Notes:
--- - After applying this migration, create the "avatars" storage bucket in the Supabase dashboard (or via Storage API/CLI).
 -- - The profiles table uses auth.users.id as its primary key for a 1:1 relationship.
 -- - RLS policies ensure only the owner (auth.uid()) or admins (using public.has_role) can operate on profiles.
