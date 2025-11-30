@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { CreditCard } from 'lucide-react';
+import { CreditCard, AlertCircle } from 'lucide-react';
 
 const Payment = () => {
   const location = useLocation();
@@ -62,19 +62,19 @@ const Payment = () => {
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateCard()) return;
-    if (!booking) {
-      toast({ title: 'Error', description: 'No booking found.', variant: 'destructive' });
+    if (!booking || !user?.id) {
+      toast({ title: 'Error', description: 'No booking or user found.', variant: 'destructive' });
       return;
     }
 
     setLoading(true);
     try {
-      // Simulate payment processing (in production, integrate Stripe/Payment Gateway)
-      const transactionId = `TXN-${Date.now()}`;
+      // Simulate payment processing with dummy gateway
+      const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
       // Create confirmed booking
       const confirmedBooking = {
-        user_id: user?.id,
+        user_id: user.id,
         itinerary_title: booking.itinerary_title,
         total_amount: booking.total_amount,
         itinerary_data: booking.itinerary_data,
@@ -90,55 +90,63 @@ const Payment = () => {
         .select();
 
       if (error) {
-        console.error('Payment error:', error);
-        toast({ title: 'Payment failed', description: 'Unable to process payment.', variant: 'destructive' });
+        console.error('Booking creation error:', error);
+        toast({ title: 'Error', description: `Failed to create booking: ${error.message}`, variant: 'destructive' });
+        setLoading(false);
         return;
       }
 
-      // Send receipt email
-      try {
-        await supabase.functions.invoke('send-receipt-email', {
-          body: {
-            email: user?.email,
-            bookingId: data[0].id,
-            amount: booking.total_amount,
-            transactionId,
-            itineraryTitle: booking.itinerary_title,
-          },
-        });
-      } catch (emailErr) {
-        console.warn('Failed to send receipt email:', emailErr);
-      }
+      console.log('Booking created:', data);
 
       // Delete from pending bookings if exists
       if (booking.id && !booking.id.startsWith('booking-')) {
-        await supabase.from('bookings').delete().eq('id', booking.id);
+        try {
+          await supabase.from('bookings').delete().eq('id', booking.id);
+        } catch (delErr) {
+          console.warn('Failed to delete pending booking:', delErr);
+        }
       }
 
-      toast({ title: 'Payment successful', description: 'Booking confirmed. Receipt sent to your email.' });
-      navigate('/');
+      toast({
+        title: 'Payment Successful!',
+        description: `Transaction ID: ${transactionId}. Your booking is confirmed.`,
+      });
+
+      // Redirect to bookings page or home after 2 seconds
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (err) {
       console.error('Payment processing error:', err);
-      toast({ title: 'Error', description: 'Payment processing failed.', variant: 'destructive' });
+      toast({ title: 'Error', description: 'Payment processing failed. Please try again.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
   };
 
   if (!booking) {
-    return <div className="text-center p-8">Loading...</div>;
+    return <div className="text-center p-8">Loading payment details...</div>;
   }
 
   return (
-    <div className="min-h-screen p-4 flex items-center justify-center">
+    <div className="min-h-screen p-4 flex items-center justify-center bg-gray-50">
       <Card className="max-w-md w-full">
         <CardHeader>
           <CardTitle>Payment</CardTitle>
-          <CardDescription>Complete your booking payment</CardDescription>
+          <CardDescription>Complete your booking payment (Demo Mode)</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-6 p-4 bg-gray-50 rounded">
-            <p className="text-sm font-medium">{booking.itinerary_title}</p>
+          {/* Demo warning */}
+          <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded flex gap-2">
+            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-blue-800">
+              <strong>Demo Mode:</strong> Use any 16-digit card number, future expiry date, and any 3-digit CVV.
+            </div>
+          </div>
+
+          <div className="mb-6 p-4 bg-gray-50 rounded border">
+            <p className="text-sm font-medium text-gray-600">Itinerary</p>
+            <p className="font-semibold mb-2">{booking.itinerary_title}</p>
             <p className="text-2xl font-bold text-indigo-600">PKR {Number(booking.total_amount).toFixed(2)}</p>
           </div>
 
@@ -148,6 +156,7 @@ const Payment = () => {
               <input
                 type="text"
                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="John Doe"
                 value={cardData.cardName}
                 onChange={(e) => setCardData({ ...cardData, cardName: e.target.value })}
                 required
@@ -160,7 +169,7 @@ const Payment = () => {
                 type="text"
                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="1234 5678 9012 3456"
-                value={cardData.cardNumber}
+                value={cardData.cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ')}
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, '').slice(0, 16);
                   setCardData({ ...cardData, cardNumber: val });
@@ -190,7 +199,7 @@ const Payment = () => {
               <div>
                 <label className="block text-sm font-medium mb-1">CVV</label>
                 <input
-                  type="text"
+                  type="password"
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="123"
                   value={cardData.cvv}
@@ -200,7 +209,7 @@ const Payment = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={loading}>
               <CreditCard className="w-4 h-4 mr-2" />
               {loading ? 'Processing...' : 'Pay Now'}
             </Button>
