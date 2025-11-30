@@ -212,8 +212,8 @@ const Destinations = () => {
             <div className="space-y-3">
               <Label>Price filter (base price)</Label>
               <div className="flex gap-2">
-                <Input placeholder="Min (USD)" type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
-                <Input placeholder="Max (USD)" type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+                <Input placeholder="Min (PKR)" type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+                <Input placeholder="Max (PKR)" type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
               </div>
 
               <div className="flex gap-2 mt-2">
@@ -257,7 +257,7 @@ const Destinations = () => {
                         </div>
                         <div className="text-right">
                           <div className="text-sm text-muted-foreground">From</div>
-                          <div className="font-medium">{d.base_price != null ? `$${Number(d.base_price).toFixed(2)}` : "—"}</div>
+                          <div className="font-medium">{d.base_price != null ? `PKR ${Number(d.base_price).toFixed(2)}` : "—"}</div>
                         </div>
                       </div>
 

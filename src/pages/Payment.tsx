@@ -70,7 +70,7 @@ const Payment = () => {
           <CardContent className="space-y-4">
             <div className="text-sm text-muted-foreground space-y-1">
               <p>Confirmation email sent to your inbox</p>
-              <p className="font-medium">Total paid: ${totalAmount}</p>
+              <p className="font-medium">Total paid: PKR {totalAmount}</p>
             </div>
             <p className="text-sm">Redirecting to home page...</p>
           </CardContent>
@@ -95,7 +95,7 @@ const Payment = () => {
           <CardHeader>
             <CardTitle>Payment Information</CardTitle>
             <CardDescription>
-              Total Amount: ${totalAmount}
+              Total Amount: PKR {totalAmount}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -151,7 +151,7 @@ const Payment = () => {
               </div>
 
               <Button type="submit" className="w-full" disabled={processing}>
-                {processing ? 'Processing...' : `Pay $${totalAmount}`}
+                {processing ? 'Processing...' : `Pay PKR ${totalAmount}`}
               </Button>
             </form>
           </CardContent>

@@ -191,7 +191,7 @@ const SavedItineraries = () => {
                   <TableRow key={row.id}>
                     <TableCell>{row.title}</TableCell>
                     <TableCell>{row.created_at ? new Date(row.created_at).toLocaleString() : '-'}</TableCell>
-                    <TableCell>{row.total_price != null ? `$${Number(row.total_price).toFixed(2)}` : '-'}</TableCell>
+                    <TableCell>{row.total_price != null ? `PKR ${Number(row.total_price).toFixed(2)}` : '-'}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => {
