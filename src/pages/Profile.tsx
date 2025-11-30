@@ -341,92 +341,6 @@ const Profile = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Preferences</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div>
-                  <Label>Budget range (min)</Label>
-                  <Input
-                    type="number"
-                    value={(formData.preferences?.budgetRange?.min ?? '') as any}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        preferences: {
-                          ...(formData.preferences || {}),
-                          budgetRange: {
-                            ...(formData.preferences?.budgetRange || {}),
-                            min: e.target.value ? Number(e.target.value) : undefined,
-                          },
-                        },
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label>Budget range (max)</Label>
-                  <Input
-                    type="number"
-                    value={(formData.preferences?.budgetRange?.max ?? '') as any}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        preferences: {
-                          ...(formData.preferences || {}),
-                          budgetRange: {
-                            ...(formData.preferences?.budgetRange || {}),
-                            max: e.target.value ? Number(e.target.value) : undefined,
-                          },
-                        },
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="mt-2">
-                <Label>Preferred destinations (up to 3)</Label>
-                <Input
-                  placeholder="Comma-separated (e.g., Paris, Tokyo)"
-                  value={(formData.preferences?.preferredDestinations || []).join(', ')}
-                  onChange={(e) => {
-                    const list = e.target
-                      .value.split(',')
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                      .slice(0, 3);
-                    setFormData({
-                      ...formData,
-                      preferences: { ...(formData.preferences || {}), preferredDestinations: list },
-                    });
-                  }}
-                />
-              </div>
-
-              <div className="mt-2">
-                <Label>Travel style</Label>
-                <Input
-                  placeholder="e.g., adventure, relaxation, cultural"
-                  value={formData.preferences?.travelStyle || ''}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      preferences: { ...(formData.preferences || {}), travelStyle: e.target.value },
-                    })
-                  }
-                />
-              </div>
-            </div>
-
             <div className="flex gap-2">
               <Button onClick={handleSave} className="w-full" disabled={saving}>
                 Save Changes
@@ -439,9 +353,9 @@ const Profile = () => {
             <div className="mt-4 border-t pt-4">
               <Label>Account</Label>
               <div className="flex gap-2 mt-2">
-                <Button variant="destructive" onClick={handleDeleteAccountSoft} disabled={saving}>
-                  <Trash2 className="w-4 h-4 mr-2" /> Remove my profile (soft-delete)
-                </Button>
+              <Button variant="destructive" onClick={handleDeleteAccountSoft} disabled={saving}>
+                <Trash2 className="w-4 h-4 mr-2" /> Delete Profile
+              </Button>
               </div>
             </div>
           </div>
