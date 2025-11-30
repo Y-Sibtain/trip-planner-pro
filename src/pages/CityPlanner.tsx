@@ -61,9 +61,8 @@ const CityPlanner = () => {
   const [selectedHotel, setSelectedHotel] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState(false);
 
-  const handleCitySelect = (city: string, people: number) => {
+  const handleCitySelect = (city: string) => {
     setSelectedCity(city);
-    setNumPeople(people);
     setStep("flight");
   };
 
@@ -101,25 +100,9 @@ const CityPlanner = () => {
                 <MapPin className="h-5 w-5" />
                 Choose Your Destination
               </CardTitle>
-              <CardDescription>Select a city and number of travelers</CardDescription>
+              <CardDescription>Select a city</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div>
-                <Label htmlFor="travelers" className="flex items-center gap-2 mb-2">
-                  <Users className="h-4 w-4" />
-                  Number of Travelers
-                </Label>
-                <Input
-                  id="travelers"
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={numPeople}
-                  onChange={(e) => setNumPeople(parseInt(e.target.value) || 1)}
-                  className="max-w-xs"
-                />
-              </div>
-
               <div>
                 <h3 className="font-semibold mb-3">Select Destination</h3>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -127,7 +110,7 @@ const CityPlanner = () => {
                     <Card
                       key={city.name}
                       className="cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
-                      onClick={() => handleCitySelect(city.name, numPeople)}
+                      onClick={() => handleCitySelect(city.name)}
                     >
                       <CardContent className="p-6 text-center">
                         <div className="text-5xl mb-3">{city.emoji}</div>

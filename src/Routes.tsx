@@ -15,6 +15,7 @@ import SavedItineraries from './pages/SavedItineraries';
 import Payment from './pages/Payment';
 import MyBookings from './pages/MyBookings';
 import NotFound from './pages/NotFound';
+import CityPlanner from './pages/CityPlanner';
 
 function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ function AppRoutes() {
             <Route path="/payment" element={<Payment />} />
             <Route path="/saved-itineraries" element={<SavedItineraries />} />
             <Route path="/nf" element={<NotFound />} />
+            <Route path="/city-planner" element={<CityPlanner />} />
             
             <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
             <Route path="/admin/destinations" element={<ProtectedAdminRoute><ManageDestinations /></ProtectedAdminRoute>} />

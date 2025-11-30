@@ -13,6 +13,7 @@ export interface TripFormData {
   budget: string;
   startDate: string;
   endDate: string;
+  travellers?: string;
 }
 
 interface TripPlannerFormProps {
@@ -27,6 +28,7 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [destinations, setDestinations] = useState<string[]>([]);
   const [budget, setBudget] = useState("");
+  const [travellers, setTravellers] = useState("");
   // Helper to format a Date as YYYY-MM-DD (safe for `input[type=date]`)
   const formatDate = (date: Date) => {
     const y = date.getFullYear();
@@ -139,6 +141,7 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
       budget: budget.trim(),
       startDate,
       endDate,
+      travellers: travellers.trim(),
     });
   };
 
@@ -260,7 +263,7 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
               <Label className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4" /> Budget (optional)
@@ -285,6 +288,19 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
                 <Calendar className="w-4 h-4" /> End Date
               </Label>
               <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={minDate} />
+            </div>
+            <div>
+              <Label className="flex items-center gap-2">
+                👥 Travellers
+              </Label>
+              <Input
+                placeholder="Number of people"
+                value={travellers}
+                onChange={(e) => setTravellers(e.target.value)}
+                type="number"
+                min="1"
+                max="20"
+              />
             </div>
           </div>
 

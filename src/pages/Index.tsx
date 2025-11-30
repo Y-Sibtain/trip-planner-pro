@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import TripPlannerForm, { TripFormData } from "@/components/TripPlannerForm";
 import TripResults from "@/components/TripResults";
@@ -12,6 +12,7 @@ const Index = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { tripData, setTripData } = useBooking();
+  const [travellers, setTravellers] = useState('');
 
   useEffect(() => {
     // Support prefill via navigation state (e.g., from Destinations page)
@@ -41,8 +42,8 @@ const Index = () => {
   }, [location.state]);
 
   const handleSearch = (data: TripFormData) => {
-    console.log("Search data:", data);
-    setTripData(data);
+    console.log("Search data with travellers:", { ...data, travellers });
+    setTripData({ ...data, travellers });
     // Scroll to results
     setTimeout(() => {
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
@@ -141,6 +142,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+
 
       {/* Results */}
       <div id="results" className="mt-8 max-w-7xl mx-auto p-4">
