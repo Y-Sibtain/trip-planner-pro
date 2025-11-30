@@ -25,6 +25,18 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [destinations, setDestinations] = useState<string[]>([]);
   const [budget, setBudget] = useState("");
+  // Helper to format a Date as YYYY-MM-DD (safe for `input[type=date]`)
+  const formatDate = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  // Minimum selectable date: tomorrow (disallow today and any past date)
+  const today = new Date();
+  const minDate = formatDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const { toast } = useToast();
@@ -95,6 +107,15 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
     }
     if (!startDate || !endDate) {
       toast({ title: "Validation error", description: "Please enter both start and end dates.", variant: "destructive" });
+      return;
+    }
+    // Ensure selected dates are after today (disallow today and any past date)
+    if (startDate < minDate) {
+      toast({ title: "Validation error", description: "Start date must be after today.", variant: "destructive" });
+      return;
+    }
+    if (endDate < minDate) {
+      toast({ title: "Validation error", description: "End date must be after today.", variant: "destructive" });
       return;
     }
     if (new Date(startDate) > new Date(endDate)) {
@@ -191,7 +212,7 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
                 <DollarSign className="w-4 h-4" /> Budget (optional)
               </Label>
               <Input
-                placeholder="Total budget (USD)"
+                placeholder="Total budget (PKR)"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
                 type="number"
@@ -203,13 +224,13 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
               <Label className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" /> Start Date
               </Label>
-              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} min={minDate} />
             </div>
             <div>
               <Label className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" /> End Date
               </Label>
-              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={minDate} />
             </div>
           </div>
 

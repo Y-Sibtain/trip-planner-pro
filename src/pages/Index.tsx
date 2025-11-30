@@ -73,7 +73,7 @@ const Index = () => {
                 <h4 className="font-medium">Quick tips</h4>
                 <ul className="list-disc ml-5 text-sm text-muted-foreground mt-2">
                   <li>Select up to 3 destinations</li>
-                  <li>Provide realistic budget to get better results</li>
+                  <li>Provide your budget to get customised results that suits you</li>
                   <li>Save itineraries to access them later</li>
                 </ul>
               </div>
