@@ -9,9 +9,9 @@ import heroImage from "@/assets/hero-travel.jpg";
 import { useBooking } from "@/contexts/BookingContext";
 
 const Index = () => {
-  const { tripData, setTripData } = useBooking();
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { tripData, setTripData } = useBooking();
 
   useEffect(() => {
     // Support prefill via navigation state (e.g., from Destinations page)
@@ -25,13 +25,23 @@ const Index = () => {
         startDate: p.startDate || "",
         endDate: p.endDate || "",
       });
+
+      // Scroll to planner section
+      setTimeout(() => {
+        const plannerSection = document.getElementById("trip-planner");
+        if (plannerSection) {
+          plannerSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+
       // clear history state to avoid repeated prefill
       navigate(location.pathname, { replace: true, state: {} });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location.state]);
 
   const handleSearch = (data: TripFormData) => {
+    console.log("Search data:", data);
     setTripData(data);
     // Scroll to results
     setTimeout(() => {

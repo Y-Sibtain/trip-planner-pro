@@ -13,21 +13,9 @@ type DestinationRow = {
   id: string;
   name: string;
   country: string | null;
-  description: string | null;
   image_url: string | null;
   base_price: number | null;
-  highlights: string[] | null;
-  type?: string | null;
 };
-
-const CATEGORY_OPTIONS = [
-  "adventure",
-  "cultural",
-  "relaxation",
-  "family",
-  "romance",
-  "business",
-];
 
 const Destinations = () => {
   const navigate = useNavigate();
@@ -70,17 +58,12 @@ const Destinations = () => {
 
   const buildQuery = () => {
     // Start query
-    let q: any = supabase.from("destinations").select("id, name, country, description, image_url, base_price, highlights, type");
+    let q: any = supabase.from("destinations").select("id, name, country, image_url, base_price, highlights, type");
 
     // Text search (name or description only - remove highlights::text cast)
     if (queryText.trim()) {
       const t = queryText.trim();
-      q = q.or(`name.ilike.%${t}%,description.ilike.%${t}%`);
-    }
-
-    // Category filter
-    if (selectedCategories.length > 0) {
-      q = q.in("type", selectedCategories);
+      q = q.or(`name.ilike.%${t}%`);
     }
 
     // Country filter
@@ -107,17 +90,12 @@ const Destinations = () => {
     try {
       let q: any = supabase
         .from("destinations")
-        .select("id, name, country, description, image_url, base_price, highlights, type");
+        .select("id, name, country, image_url, base_price");
 
       // Text search
       if (queryText.trim()) {
         const t = queryText.trim();
-        q = q.or(`name.ilike.%${t}%,description.ilike.%${t}%`);
-      }
-
-      // Category filter
-      if (selectedCategories.length > 0) {
-        q = q.in("type", selectedCategories);
+        q = q.or(`name.ilike.%${t}%`);
       }
 
       // Country filter
@@ -138,7 +116,7 @@ const Destinations = () => {
       const { data, error } = await q;
 
       if (error) {
-        console.error("Search error:", error.message, error.details);
+        console.error("Search error:", error.message, error.details, error.hint);
         toast({
           title: "Search failed",
           description: error.message || "Could not fetch destinations",
@@ -153,7 +131,6 @@ const Destinations = () => {
       console.error("Run search error:", err);
       toast({
         title: "Search failed",
-        description: "Unexpected error",
         variant: "destructive",
       });
       setResults([]);
@@ -170,25 +147,6 @@ const Destinations = () => {
     setMaxPrice("");
     runSearch();
   };
-
-  const toggleCategory = (c: string) => {
-    setSelectedCategories((prev) => (prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]));
-  };
-
-  const categoryBadges = useMemo(
-    () =>
-      CATEGORY_OPTIONS.map((c) => (
-        <button
-          key={c}
-          type="button"
-          onClick={() => toggleCategory(c)}
-          className={`inline-flex items-center px-3 py-1 rounded-full border ${selectedCategories.includes(c) ? "bg-primary text-primary-foreground" : "bg-muted"}`}
-        >
-          {c}
-        </button>
-      )),
-    [selectedCategories]
-  );
 
   return (
     <div className="min-h-screen p-4">
@@ -220,11 +178,6 @@ const Destinations = () => {
                     <Search className="w-4 h-4 mr-2" /> Search
                   </Button>
                 </div>
-              </div>
-
-              <div>
-                <Label>Categories</Label>
-                <div className="flex gap-2 flex-wrap mt-2">{categoryBadges}</div>
               </div>
 
               <div>
@@ -298,18 +251,7 @@ const Destinations = () => {
                         </div>
                       </div>
 
-                      <div className="mt-3 space-y-2">
-                        <div className="flex flex-wrap gap-2">
-                          {d.highlights?.slice(0, 4).map((h, i) => (
-                            <Badge key={i}>{h}</Badge>
-                          ))}
-                          {d.type && <Badge>{d.type}</Badge>}
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{d.description}</p>
-                      </div>
-
                       <div className="mt-4 flex gap-2">
-                        <Button onClick={() => navigate(`/destination/${d.id}`)}>View</Button>
                         <Button variant="outline" onClick={() => {
                           // Pre-fill planner with this destination (quick start)
                           navigate("/", { state: { prefill: { source: "", destinations: [d.name], budget: "", startDate: "", endDate: "" } } });
