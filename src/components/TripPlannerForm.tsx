@@ -139,9 +139,10 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
   };
 
   // Filtered suggestion list for autocomplete dropdown
+  // Only show dropdown when user is typing (destinationInput is not empty)
   const filteredSuggestions = destinationInput
     ? suggestions.filter((s) => s.toLowerCase().includes(destinationInput.toLowerCase()) && !destinations.includes(s)).slice(0, 6)
-    : suggestions.filter((s) => !destinations.includes(s)).slice(0, 6);
+    : [];
 
   return (
     <Card className="w-full">
@@ -185,11 +186,11 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
                   }
                 }}
               />
-              {(filteredSuggestions.length > 0 || loadingSuggestions) && (
-                <div className="absolute z-20 mt-1 w-full bg-background border rounded-md shadow">
+              {destinationInput && (filteredSuggestions.length > 0 || loadingSuggestions) && (
+                <div className="absolute z-20 mt-1 w-full bg-gray-200 border rounded-md shadow">
                   {loadingSuggestions ? (
                     <div className="p-2 text-sm text-muted-foreground">Loading...</div>
-                  ) : (
+                  ) : filteredSuggestions.length > 0 ? (
                     filteredSuggestions.map((s) => (
                       <button
                         key={s}
@@ -200,6 +201,8 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
                         {s}
                       </button>
                     ))
+                  ) : (
+                    <div className="p-2 text-sm text-muted-foreground">No destinations match your search</div>
                   )}
                 </div>
               )}
