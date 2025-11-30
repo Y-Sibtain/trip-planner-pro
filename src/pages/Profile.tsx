@@ -73,9 +73,7 @@ const Profile = () => {
 
             const { data: createdProfile, error: insertError } = await supabase
               .from('profiles')
-              .insert([newProfile])
-              .select()
-              .single();
+              .insert([newProfile]);
 
             if (insertError) {
               console.error('Profile insert error:', insertError);
@@ -96,13 +94,13 @@ const Profile = () => {
             } else {
               console.log('Profile created successfully:', createdProfile);
               setFormData({
-                id: createdProfile.id,
-                name: createdProfile.full_name || '',
+                id: newProfile.id,
+                name: newProfile.full_name || '',
                 email: authUser.email || '',
-                phone: createdProfile.phone || '',
-                location: createdProfile.location || '',
-                avatar_url: createdProfile.avatar_url || '',
-                preferences: createdProfile.preferences || {},
+                phone: newProfile.phone || '',
+                location: newProfile.location || '',
+                avatar_url: newProfile.avatar_url || '',
+                preferences: newProfile.preferences || {},
               });
             }
           } else {
