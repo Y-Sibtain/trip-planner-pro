@@ -715,7 +715,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               onChange={(e) => setTravellers(e.target.value)}
               type="number"
               min="1"
-              max="20"
+              max="50"
               required
               className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
