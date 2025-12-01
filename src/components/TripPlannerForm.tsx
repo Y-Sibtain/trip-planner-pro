@@ -382,7 +382,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
             <Button
               type="button"
               onClick={onAskAI}
-              className="glass border border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-6 py-2 rounded-lg font-semibold transition-all-smooth hover:shadow-md"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg hover:shadow-lg transition-all-smooth"
             >
               {t('ask_ai')}
             </Button>
