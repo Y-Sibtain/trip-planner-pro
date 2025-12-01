@@ -118,7 +118,7 @@ const AdminBookings = () => {
   };
 
   if (adminLoading) {
-    return <div className="text-center p-8">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">Loading...</div>;
   }
 
   if (!isAdmin) {
@@ -126,51 +126,51 @@ const AdminBookings = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 bg-gray-50">
-      <Card className="max-w-7xl mx-auto">
+    <div className="min-h-screen p-4 bg-white dark:bg-gray-900">
+      <Card className="max-w-7xl mx-auto border-0 dark:bg-gray-800 dark:border-gray-700">
         <CardHeader>
-          <CardTitle>Manage Bookings</CardTitle>
-          <CardDescription>View and process user bookings</CardDescription>
+          <CardTitle className="text-gray-900 dark:text-white">Manage Bookings</CardTitle>
+          <CardDescription className="text-gray-600 dark:text-gray-400">View and process user bookings</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center p-8">Loading bookings...</div>
+            <div className="text-center p-8 text-gray-600 dark:text-gray-400">Loading bookings...</div>
           ) : bookings.length === 0 ? (
-            <div className="text-center p-8 text-muted-foreground">No bookings found.</div>
+            <div className="text-center p-8 text-gray-500 dark:text-gray-500">No bookings found.</div>
           ) : (
             <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User ID</TableHead>
-                    <TableHead>Itinerary</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Transaction ID</TableHead>
-                    <TableHead>Card</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Actions</TableHead>
+              <Table className="dark:bg-gray-800">
+                <TableHeader className="dark:bg-gray-700">
+                  <TableRow className="dark:border-gray-700 dark:hover:bg-gray-600">
+                    <TableHead className="text-gray-700 dark:text-gray-300">User ID</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Itinerary</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Amount</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Transaction ID</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Card</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Status</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Date</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {bookings.map((booking) => (
-                    <TableRow key={booking.id}>
-                      <TableCell className="font-mono text-sm">{booking.user_id.slice(0, 8)}...</TableCell>
-                      <TableCell>{booking.itinerary_title}</TableCell>
-                      <TableCell>PKR {Number(booking.total_amount).toFixed(2)}</TableCell>
-                      <TableCell className="text-sm font-mono">{booking.transaction_id}</TableCell>
-                      <TableCell>****{booking.card_last_four}</TableCell>
+                    <TableRow key={booking.id} className="dark:border-gray-700 dark:hover:bg-gray-700/50">
+                      <TableCell className="font-mono text-sm text-gray-900 dark:text-gray-200">{booking.user_id.slice(0, 8)}...</TableCell>
+                      <TableCell className="text-gray-900 dark:text-gray-200">{booking.itinerary_title}</TableCell>
+                      <TableCell className="text-gray-900 dark:text-gray-200">PKR {Number(booking.total_amount).toFixed(2)}</TableCell>
+                      <TableCell className="text-sm font-mono text-gray-900 dark:text-gray-200">{booking.transaction_id}</TableCell>
+                      <TableCell className="text-gray-900 dark:text-gray-200">****{booking.card_last_four}</TableCell>
                       <TableCell>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          booking.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                          booking.status === 'processed' ? 'bg-green-100 text-green-800' :
-                          booking.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
+                          booking.status === 'confirmed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                          booking.status === 'processed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                          booking.status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                          'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                         }`}>
                           {booking.status}
                         </span>
                       </TableCell>
-                      <TableCell>{new Date(booking.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell className="text-gray-900 dark:text-gray-200">{new Date(booking.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button 
@@ -211,50 +211,50 @@ const AdminBookings = () => {
 
       {/* Booking Details Dialog */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl dark:bg-gray-800 dark:border-gray-700">
           <DialogHeader>
-            <DialogTitle>Booking Details</DialogTitle>
-            <DialogDescription>Complete information about this booking</DialogDescription>
+            <DialogTitle className="text-gray-900 dark:text-white">Booking Details</DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">Complete information about this booking</DialogDescription>
           </DialogHeader>
 
           {selectedBooking && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Booking ID</p>
-                  <p className="font-mono text-sm">{selectedBooking.id}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Booking ID</p>
+                  <p className="font-mono text-sm text-gray-900 dark:text-gray-200">{selectedBooking.id}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">User ID</p>
-                  <p className="font-mono text-sm">{selectedBooking.user_id}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">User ID</p>
+                  <p className="font-mono text-sm text-gray-900 dark:text-gray-200">{selectedBooking.user_id}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Itinerary</p>
-                  <p className="font-semibold">{selectedBooking.itinerary_title}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Itinerary</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{selectedBooking.itinerary_title}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Amount</p>
-                  <p className="font-semibold">PKR {Number(selectedBooking.total_amount).toFixed(2)}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Amount</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">PKR {Number(selectedBooking.total_amount).toFixed(2)}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Transaction ID</p>
-                  <p className="font-mono text-sm">{selectedBooking.transaction_id}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Transaction ID</p>
+                  <p className="font-mono text-sm text-gray-900 dark:text-gray-200">{selectedBooking.transaction_id}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Card Last 4</p>
-                  <p className="font-mono text-sm">****{selectedBooking.card_last_four}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Card Last 4</p>
+                  <p className="font-mono text-sm text-gray-900 dark:text-gray-200">****{selectedBooking.card_last_four}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Status</p>
-                  <p className="font-semibold">{selectedBooking.status}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Status</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{selectedBooking.status}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Payment Status</p>
-                  <p className="font-semibold">{selectedBooking.payment_status}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Payment Status</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{selectedBooking.payment_status}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Created At</p>
-                  <p className="text-sm">{new Date(selectedBooking.created_at).toLocaleString()}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Created At</p>
+                  <p className="text-sm text-gray-900 dark:text-gray-200">{new Date(selectedBooking.created_at).toLocaleString()}</p>
                 </div>
               </div>
             </div>

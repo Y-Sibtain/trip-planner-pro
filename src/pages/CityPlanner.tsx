@@ -105,7 +105,8 @@ const CityPlanner = () => {
       }
     }
   }, []);
-
+  
+  // tried something 
   // Open summary when navigated back from Payment or when booking state is provided
   useEffect(() => {
     const state = location.state as any;
@@ -149,11 +150,11 @@ const CityPlanner = () => {
   const cityHotels = selectedCity ? hotels[selectedCity as keyof typeof hotels] : [];
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
+    <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20 dark:opacity-10"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10 dark:opacity-5"></div>
       </div>
 
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">
@@ -200,10 +201,10 @@ const CityPlanner = () => {
             <div className="glass p-8 rounded-2xl border border-cyan-500/20 dark:border-cyan-500/10 backdrop-blur-xl dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold text-gradient mb-2">
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                     Select Your Flight
                   </h2>
-                  <p className="text-gray-900 dark:text-gray-300">Departing to {selectedCity} for {numDays} days</p>
+                  <p className="text-gray-700 dark:text-gray-300">Departing to {selectedCity} for {numDays} days</p>
                 </div>
                 <Button 
                   onClick={() => navigate('/')}
@@ -231,7 +232,7 @@ const CityPlanner = () => {
                   <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                     Select Your Hotel
                   </h2>
-                  <p className="text-gray-900 dark:text-gray-300">Choose from our curated accommodations in {selectedCity}</p>
+                  <p className="text-gray-700 dark:text-gray-300">Choose from our curated accommodations in {selectedCity}</p>
                 </div>
                 <Button 
                   onClick={() => setStep("flight")}
@@ -264,7 +265,7 @@ const CityPlanner = () => {
                   <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                     Your {numDays}-Day Itinerary
                   </h2>
-                  <p className="text-gray-900 dark:text-gray-300">Activities and dining recommendations</p>
+                  <p className="text-gray-700 dark:text-gray-300">Activities and dining recommendations</p>
                 </div>
                 <Button 
                   onClick={() => setStep("hotel")}
@@ -286,10 +287,10 @@ const CityPlanner = () => {
 
         {/* Summary Modal */}
         <Dialog open={showSummary} onOpenChange={setShowSummary}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto glass border border-blue-400/20 bg-gradient-to-b from-slate-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 dark:border-blue-400/10 backdrop-blur-sm shadow-2xl">
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto glass border border-blue-400/20 dark:border-blue-400/10 bg-gradient-to-b from-slate-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 backdrop-blur-sm shadow-2xl">
             <DialogHeader>
               <DialogTitle className="text-4xl font-bold text-gray-900 dark:text-white">Booking Summary</DialogTitle>
-              <DialogDescription className="text-blue-600 dark:text-blue-400 text-base font-medium mt-2">Review your complete {selectedCity} trip</DialogDescription>
+              <DialogDescription className="text-blue-600 dark:text-white-400 text-base font-medium mt-2">Review your complete {selectedCity} trip</DialogDescription>
             </DialogHeader>
             
             <div className="space-y-4 mt-6">
@@ -360,7 +361,7 @@ const CityPlanner = () => {
                 </Button>
                 <Button 
                   onClick={() => setShowSummary(false)}
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-base rounded-lg hover:scale-105 transition-all-smooth shadow-md dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800"
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-base rounded-lg hover:scale-105 transition-all-smooth shadow-md"
                 >
                   Edit Trip
                 </Button>
