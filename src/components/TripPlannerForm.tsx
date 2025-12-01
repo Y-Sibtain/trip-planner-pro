@@ -209,7 +209,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Source Field */}
         <div>
-          <Label htmlFor="source" className="flex items-center gap-2 text-gray-900 font-semibold mb-2">
+          <Label htmlFor="source" className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2">
             <MapPin className="w-4 h-4 text-blue-500" /> {t('source')}
           </Label>
           <div className="relative">
@@ -265,7 +265,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
 
         {/* Destinations Field */}
         <div>
-          <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2">
+          <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2">
             <Search className="w-4 h-4 text-blue-500" /> {t('destinations_label')}
           </Label>
           <div className="flex gap-2 flex-wrap mb-3">
@@ -318,7 +318,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           {/* Budget */}
           <div>
-            <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
+            <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2 text-sm">
                 <DollarSign className="w-4 h-4 text-blue-500" /> {t('budget_optional')}
               </Label>
               <Input
@@ -334,7 +334,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
 
           {/* Start Date */}
           <div>
-            <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
+            <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2 text-sm">
                 <Calendar className="w-4 h-4 text-blue-500" /> {t('start_date')}
               </Label>
             <Input
@@ -348,7 +348,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
 
           {/* End Date */}
           <div>
-            <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
+            <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2 text-sm">
               <Calendar className="w-4 h-4 text-blue-500" /> {t('end_date')}
             </Label>
             <Input
@@ -362,7 +362,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
 
           {/* Travellers */}
           <div>
-            <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
+            <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2 text-sm">
                 👥 {t('travellers')}
               </Label>
               <Input
