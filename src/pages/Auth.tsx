@@ -209,15 +209,15 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 p-4 relative overflow-hidden">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10"></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 shadow-md overflow-hidden">
+        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-md overflow-hidden dark:bg-gray-800/50">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 md:px-8 py-8">
             {isRecoveryMode ? (
@@ -240,7 +240,7 @@ const Auth = () => {
             {isRecoveryMode ? (
               <form onSubmit={handleRecoveryPasswordUpdate} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="newPassword" className="text-gray-900 font-semibold">New Password</Label>
+                  <Label htmlFor="newPassword" className="text-gray-900 dark:text-gray-100 font-semibold">New Password</Label>
                   <Input
                     id="newPassword"
                     type="password"
@@ -248,11 +248,11 @@ const Auth = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
-                    className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                    className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-gray-900 font-semibold">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-gray-900 dark:text-gray-100 font-semibold">Confirm Password</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -260,7 +260,7 @@ const Auth = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                    className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   />
                 </div>
                 <Button 

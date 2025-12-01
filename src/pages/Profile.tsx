@@ -268,15 +268,15 @@ const Profile = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-white p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 relative overflow-hidden">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10"></div>
       </div>
 
       <div className="relative z-10 max-w-3xl mx-auto">
-        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 shadow-md overflow-hidden">
+        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-md overflow-hidden dark:bg-gray-800/50">
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 md:px-8 py-8">
             <h1 className="text-3xl font-bold text-white mb-2">Profile</h1>
             <p className="text-blue-100">Manage your personal information and preferences</p>
@@ -286,34 +286,34 @@ const Profile = () => {
             <div className="space-y-6">
               {/* Full Name */}
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-gray-900 font-semibold">Full Name</Label>
+                <Label htmlFor="name" className="text-gray-900 dark:text-gray-100 font-semibold">Full Name</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                  className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                 />
               </div>
 
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-900 font-semibold">Email</Label>
+                <Label htmlFor="email" className="text-gray-900 dark:text-gray-100 font-semibold">Email</Label>
                 <Input 
                   id="email" 
                   value={formData.email} 
                   readOnly 
-                  className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-700 bg-gray-50 cursor-not-allowed"
+                  className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-400 bg-gray-50 dark:bg-gray-600 cursor-not-allowed"
                 />
               </div>
 
               {/* Phone */}
               <div className="space-y-2">
-                <Label htmlFor="phone" className="text-gray-900 font-semibold">Phone</Label>
+                <Label htmlFor="phone" className="text-gray-900 dark:text-gray-100 font-semibold">Phone</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                  className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                 />
               </div>
 
@@ -335,10 +335,10 @@ const Profile = () => {
               </div>
 
               {/* Account Management */}
-              <div className="mt-8 pt-8 border-t border-gray-300">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Account Management</h3>
-                <div className="p-4 rounded-lg bg-red-50 border border-red-200">
-                  <p className="text-sm text-red-800 mb-3">Deleting your profile will remove all your personal data from the app.</p>
+              <div className="mt-8 pt-8 border-t border-gray-300 dark:border-gray-700">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Account Management</h3>
+                <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                  <p className="text-sm text-red-800 dark:text-red-200 mb-3">Deleting your profile will remove all your personal data from the app.</p>
                   <Button 
                     onClick={handleDeleteAccountSoft} 
                     disabled={saving}

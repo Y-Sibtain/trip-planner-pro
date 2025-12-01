@@ -157,25 +157,25 @@ const SavedItineraries = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden p-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden p-4">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10"></div>
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-gray-900 mb-2">Saved Itineraries</h1>
-          <p className="text-gray-600">View, load, edit, or remove your previously saved trip plans</p>
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-2">Saved Itineraries</h1>
+          <p className="text-gray-600 dark:text-gray-300">View, load, edit, or remove your previously saved trip plans</p>
         </div>
 
         {/* Stats Bar */}
-        <div className="glass p-4 rounded-lg border border-gray-200 backdrop-blur-sm shadow-md mb-6 flex justify-between items-center">
+        <div className="glass p-4 rounded-lg border border-gray-200 dark:border-gray-700 backdrop-blur-sm shadow-md mb-6 flex justify-between items-center dark:bg-gray-800/50">
           <div>
-            <p className="text-gray-600 text-sm">Total Saved</p>
-            <p className="text-3xl font-bold text-blue-600">{saved.length}</p>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Total Saved</p>
+            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{saved.length}</p>
           </div>
           <Button 
             onClick={fetchSaved}

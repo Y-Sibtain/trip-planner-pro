@@ -151,34 +151,34 @@ const Destinations = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden p-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden p-4">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-gray-900 mb-2">Explore Destinations</h1>
-          <p className="text-gray-600">Search and filter destinations by name, country, or price</p>
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-2">Explore Destinations</h1>
+          <p className="text-gray-600 dark:text-gray-300">Search and filter destinations by name, country, or price</p>
         </div>
 
         {/* Search & Filters Section */}
-        <div className="glass p-8 rounded-lg border border-gray-200 backdrop-blur-sm shadow-md mb-8">
+        <div className="glass p-8 rounded-lg border border-gray-200 dark:border-gray-700 backdrop-blur-sm shadow-md mb-8 dark:bg-gray-800/50">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Search */}
             <div className="md:col-span-2 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">{t('search')}</label>
+                <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">{t('search')}</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     placeholder={t('search_by_name')}
                     value={queryText}
                     onChange={(e) => setQueryText(e.target.value)}
-                    className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                    className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   />
                   <Button 
                     onClick={runSearch}
@@ -191,12 +191,12 @@ const Destinations = () => {
 
               {/* Country Filter */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">{t('country_region')}</label>
+                <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">{t('country_region')}</label>
                 <div className="flex gap-2">
                   <select 
                     value={country} 
                     onChange={(e) => setCountry(e.target.value)}
-                    className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                    className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   >
                     <option value="">{t('all_countries')}</option>
                     {availableCountries.map((c) => (
@@ -217,21 +217,21 @@ const Destinations = () => {
 
             {/* Price Filter */}
             <div className="space-y-4">
-              <label className="block text-sm font-semibold text-gray-900 mb-2">Price Range</label>
+              <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Price Range</label>
               <div className="flex gap-2">
                 <input 
                   type="number" 
                   placeholder="Min (PKR)" 
                   value={minPrice} 
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth text-sm"
+                  className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth text-sm"
                 />
                 <input 
                   type="number" 
                   placeholder="Max (PKR)" 
                   value={maxPrice} 
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth text-sm"
+                  className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth text-sm"
                 />
               </div>
 
