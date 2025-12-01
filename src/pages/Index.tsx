@@ -124,66 +124,15 @@ const Index = () => {
 
         {/* Content */}
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-            {/* Left: Main Form - Glass Card */}
-            <div className="lg:col-span-2 animate-slide-in-up">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 md:gap-8">
+            {/* Main Form - Glass Card */}
+            <div className="animate-slide-in-up">
               <div className="glass p-6 md:p-8 rounded-lg backdrop-blur-md border border-white/20 shadow-lg bg-white/95">
                 <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">
                   Plan Your<br />Next Adventure
                 </h1>
                 <p className="text-gray-600 text-lg mb-8">AI-powered travel planning with personalized itineraries, smart budgeting, and instant bookings.</p>
                 <TripPlannerForm onSearch={handleSearch} onFormStateChange={setCurrentFormData} onAskAI={askAI} />
-              </div>
-            </div>
-
-            {/* Right: Quick Tips - Glass Card */}
-            <div className="lg:col-span-1 animate-slide-in-up" style={{ animationDelay: '0.2s' }}>
-              <div className="glass p-6 md:p-8 rounded-lg backdrop-blur-md border border-white/20 shadow-lg bg-white/95 h-full flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-2xl shadow-md">
-                      ✨
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900">Why Trip Planner?</h3>
-                      <p className="text-xs text-gray-600">Powered by AI</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900 text-sm">Up to 3 Destinations</p>
-                        <p className="text-xs text-gray-600">Explore multiple cities</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900 text-sm">Smart Budget</p>
-                        <p className="text-xs text-gray-600">Tailored recommendations</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900 text-sm">Save & Revisit</p>
-                        <p className="text-xs text-gray-600">Access anytime, anywhere</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-gray-300">
-                  <p className="text-xs text-gray-600 text-center">🚀 Next-Gen Travel Planning</p>
-                </div>
               </div>
             </div>
           </div>
