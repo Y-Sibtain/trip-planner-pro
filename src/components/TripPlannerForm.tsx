@@ -37,9 +37,9 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
     return `${y}-${m}-${d}`;
   };
 
-  // Minimum selectable date: tomorrow (disallow today and any past date)
+  // Minimum selectable date: today (allow today and any future date)
   const today = new Date();
-  const minDate = formatDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
+  const minDate = formatDate(today);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -115,13 +115,13 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
       toast({ title: "Validation error", description: "Please enter both start and end dates.", variant: "destructive" });
       return;
     }
-    // Ensure selected dates are after today (disallow today and any past date)
+    // Ensure selected dates are today or in the future
     if (startDate < minDate) {
-      toast({ title: "Validation error", description: "Start date must be after today.", variant: "destructive" });
+      toast({ title: "Validation error", description: "Start date must be today or in the future.", variant: "destructive" });
       return;
     }
     if (endDate < minDate) {
-      toast({ title: "Validation error", description: "End date must be after today.", variant: "destructive" });
+      toast({ title: "Validation error", description: "End date must be today or in the future.", variant: "destructive" });
       return;
     }
     if (new Date(startDate) > new Date(endDate)) {

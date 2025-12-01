@@ -117,6 +117,9 @@ const TripResults = ({ tripData, allowSave = true }: TripResultsProps) => {
     try {
       const totalDays = daysBetweenInclusive(data.startDate, data.endDate);
 
+      // Parse number of travelers
+      const numTravelers = Math.max(1, parseInt(data.travellers || "1", 10) || 1);
+
       // Try to enrich with destination metadata
       const { data: destRows, error: destErr } = await supabase
         .from("destinations")
@@ -209,10 +212,10 @@ const TripResults = ({ tripData, allowSave = true }: TripResultsProps) => {
           ];
           localActivityIdx++;
 
-          const accommodation = Number(accommodationPerNight || DEFAULTS.defaultAccommodationPerNight);
-          const food = DEFAULTS.foodPerDay;
-          const activitiesCost = DEFAULTS.activityPerDay;
-          const transport = i === 0 ? transportEstimate : 0;
+          const accommodation = Number(accommodationPerNight || DEFAULTS.defaultAccommodationPerNight) * numTravelers;
+          const food = DEFAULTS.foodPerDay * numTravelers;
+          const activitiesCost = DEFAULTS.activityPerDay * numTravelers;
+          const transport = i === 0 ? transportEstimate * numTravelers : 0;
 
           const dayCost = accommodation + food + activitiesCost + transport;
           destTotalEstimated += dayCost;
@@ -534,6 +537,7 @@ const TripResults = ({ tripData, allowSave = true }: TripResultsProps) => {
                 <div>
                   <h3 className="font-medium">Summary</h3>
                   <p>Total days: {itinerary.totalDays}</p>
+                  <p>Travelers: {itinerary.meta.tripInput?.travellers || 1} {(itinerary.meta.tripInput?.travellers || 1) === 1 ? "person" : "people"}</p>
                   <p>
                     Estimated cost: <strong>{formatCurrency(itinerary.totals.grandTotal)}</strong>
                   </p>
