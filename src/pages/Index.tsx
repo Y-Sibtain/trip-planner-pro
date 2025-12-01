@@ -96,11 +96,11 @@ const Index = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-white dark:bg-gray-900">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10"></div>
       </div>
 
       {/* Navigation Bar */}
@@ -129,11 +129,11 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 md:gap-8">
             {/* Main Form - Glass Card */}
             <div className="animate-slide-in-up">
-              <div className="glass p-6 md:p-8 rounded-lg backdrop-blur-md border border-white/20 shadow-lg bg-white/95">
-                <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">
+              <div className="glass p-6 md:p-8 rounded-lg backdrop-blur-md border border-white/20 shadow-lg bg-white/95 dark:bg-gray-800/90 dark:border-gray-700/30">
+                <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gray-900 dark:text-white">
                   {t('hero_title')}
                 </h1>
-                <p className="text-gray-600 text-lg mb-8">{t('hero_sub')}</p>
+                <p className="text-gray-600 dark:text-gray-300 text-lg mb-8">{t('hero_sub')}</p>
                 <TripPlannerForm onSearch={handleSearch} onFormStateChange={setCurrentFormData} onAskAI={askAI} />
               </div>
             </div>
@@ -142,11 +142,11 @@ const Index = () => {
       </section>
 
       {/* Features Section - Modern Grid */}
-      <section className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-gray-50">
+      <section className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{t('trip_planner')}</h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">{t('hero_sub')}</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">{t('trip_planner')}</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">{t('hero_sub')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

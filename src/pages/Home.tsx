@@ -9,14 +9,14 @@ export default function Home() {
   const { isAuthenticated } = useBooking();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Plan Your Perfect Trip
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             Discover amazing destinations, create custom itineraries, and save your favorite trips
           </p>
           {!isAuthenticated && (
@@ -28,37 +28,37 @@ export default function Home() {
 
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-8 mb-20">
-          <Card className="hover:shadow-lg transition">
+          <Card className="hover:shadow-lg transition dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
               <MapPin className="w-8 h-8 text-indigo-600 mb-2" />
-              <CardTitle>Explore Destinations</CardTitle>
+              <CardTitle className="dark:text-white">Explore Destinations</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Browse hundreds of curated destinations from around the world
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition">
+          <Card className="hover:shadow-lg transition dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
               <Calendar className="w-8 h-8 text-indigo-600 mb-2" />
-              <CardTitle>Create Itineraries</CardTitle>
+              <CardTitle className="dark:text-white">Create Itineraries</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Build custom day-by-day itineraries tailored to your preferences
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition">
+          <Card className="hover:shadow-lg transition dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
               <DollarSign className="w-8 h-8 text-indigo-600 mb-2" />
-              <CardTitle>Budget Planning</CardTitle>
+              <CardTitle className="dark:text-white">Budget Planning</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Track costs and plan your trip within your budget constraints
               </p>
             </CardContent>

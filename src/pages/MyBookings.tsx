@@ -74,18 +74,18 @@ const MyBookings = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden p-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden p-4">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10"></div>
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-gray-900 mb-2">My Bookings</h1>
-          <p className="text-gray-600">Your confirmed and paid bookings</p>
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-2">My Bookings</h1>
+          <p className="text-gray-600 dark:text-gray-300">Your confirmed and paid bookings</p>
         </div>
 
         {/* Content */}
