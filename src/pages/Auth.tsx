@@ -275,7 +275,7 @@ const Auth = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Login/Signup common fields only */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-900 font-semibold">Email</Label>
+                  <Label htmlFor="email" className="text-gray-900 dark:text-gray-100 font-semibold">Email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -283,11 +283,11 @@ const Auth = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                    className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-900 font-semibold">Password</Label>
+                  <Label htmlFor="password" className="text-gray-900 dark:text-gray-100 font-semibold">Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -295,7 +295,7 @@ const Auth = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                    className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -311,22 +311,22 @@ const Auth = () => {
             )}
 
             {signupSuccess && !isRecoveryMode && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-300 rounded-lg">
-                <p className="text-sm text-blue-900">
+              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-700 rounded-lg">
+                <p className="text-sm text-blue-900 dark:text-blue-100">
                   <strong>Check your email!</strong> A confirmation link has been sent to <strong>{email}</strong>. 
                   Please click the link to confirm your email before signing in.
                 </p>
               </div>
             )}
 
-            <div className="mt-6 space-y-3 border-t border-gray-200 pt-6">
+            <div className="mt-6 space-y-3 border-t border-gray-200 dark:border-gray-700 pt-6">
               <button
                 type="button"
                 onClick={() => {
                   setIsLogin(!isLogin);
                   setSignupSuccess(false);
                 }}
-                className="w-full text-sm text-gray-600 hover:text-blue-600 font-semibold transition-colors"
+                className="w-full text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition-colors"
               >
                 {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
               </button>
@@ -335,7 +335,7 @@ const Auth = () => {
                 <button
                   type="button"
                   onClick={handlePasswordReset}
-                  className="w-full text-sm text-gray-600 hover:text-blue-600 font-semibold transition-colors disabled:opacity-50"
+                  className="w-full text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition-colors disabled:opacity-50"
                   disabled={resetting}
                 >
                   {resetting ? 'Sending reset link...' : 'Forgot password?'}
