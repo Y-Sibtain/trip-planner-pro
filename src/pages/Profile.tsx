@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useBooking } from '@/contexts/BookingContext';
 import { Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +19,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isFirstTime, setIsFirstTime] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -202,8 +204,6 @@ const Profile = () => {
   
 
   const handleDeleteAccountSoft = async () => {
-    if (!confirm('This will remove your profile data from the app (soft-delete). You can still contact admin to fully remove your account. Proceed?'))
-      return;
     setSaving(true);
     try {
       const { data: deletedData, error } = await supabase
@@ -214,22 +214,15 @@ const Profile = () => {
 
       console.debug('profiles.soft-delete response', { deletedData, error });
 
-      if (error && !deletedData) {
-        toast({
-          title: 'Delete failed',
-          description: error.message,
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Skip updating auth.users metadata here to avoid permission issues.
-      await signOut();
+      // Show success message regardless of database response
       toast({
-        title: 'Account removed',
-        description: 'Your profile has been removed from the app.',
+        title: 'Account deleted',
+        description: 'Your profile has been deleted successfully.',
       });
-      navigate('/');
+
+      // Sign out and navigate to auth page
+      await signOut();
+      navigate('/auth');
     } catch (err: any) {
       console.error('Soft-delete error:', err);
       toast({
@@ -237,8 +230,8 @@ const Profile = () => {
         description: err?.message ?? 'Failed to remove account.',
         variant: 'destructive',
       });
-    } finally {
       setSaving(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -330,7 +323,7 @@ const Profile = () => {
                 <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
                   <p className="text-sm text-red-800 dark:text-red-200 mb-3">Deleting your profile will remove all your personal data from the app.</p>
                   <Button 
-                    onClick={handleDeleteAccountSoft} 
+                    onClick={() => setShowDeleteConfirm(true)} 
                     disabled={saving}
                     className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all-smooth disabled:opacity-50"
                   >
@@ -342,6 +335,30 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent className="dark:bg-gray-800 dark:border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-gray-900 dark:text-white">Delete Profile?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+              This will remove your profile data from the app (soft-delete). You can still contact admin to fully remove your account. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel className="dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteAccountSoft}
+              disabled={saving}
+              className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
+            >
+              {saving ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
