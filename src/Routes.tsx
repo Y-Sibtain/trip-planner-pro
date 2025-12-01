@@ -30,7 +30,6 @@ function AppRoutes() {
             <Route path="/destinations" element={<Destinations />} />
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/payment" element={<Payment />} />
-            <Route path="/saved-itineraries" element={<SavedItineraries />} />
             <Route path="/nf" element={<NotFound />} />
             <Route path="/city-planner" element={<CityPlanner />} />
             

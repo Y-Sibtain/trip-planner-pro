@@ -29,7 +29,6 @@ export const Sidebar = () => {
     { path: '/auth', icon: LogIn, label: t('sign_in'), public: true, hideIfAuth: true },
     { path: '/destinations', icon: MapPin, label: t('destinations'), public: false },
     { path: '/profile', icon: User, label: t('profile'), public: false },
-    { path: '/saved-itineraries', icon: Bookmark, label: t('saved_itineraries'), public: false },
     { path: '/admin', icon: LayoutDashboard, label: t('admin_dashboard'), admin: true },
     { path: '/admin/admin-bookings', icon: BookOpen, label: t('manage_bookings'), admin: true },
     { path: '/admin/destinations', icon: MapPin, label: t('manage_destinations'), admin: true },
