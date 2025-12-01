@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane, Bookmark, Sun, Moon, ChevronLeft, ChevronRight, AlignLeft } from 'lucide-react';
+import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane, Bookmark, Sun, Moon, ChevronLeft, ChevronRight, AlignLeft, Globe } from 'lucide-react';
 import { useBooking } from '@/contexts/BookingContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import ThemeSwitch from './ThemeSwitch';
 
@@ -15,6 +16,7 @@ export const Sidebar = () => {
   const { isAuthenticated, user, signOut } = useBooking();
   const { isAdmin, loading } = useAdmin();
   const { theme, toggleTheme } = useTheme();
+  const { lang, setLang, t } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
@@ -23,16 +25,16 @@ export const Sidebar = () => {
   };
 
   const navItems = [
-    { path: '/', icon: Home, label: 'Home', public: true },
-    { path: '/auth', icon: LogIn, label: 'Sign In', public: true, hideIfAuth: true },
-    { path: '/destinations', icon: MapPin, label: 'Destinations', public: false },
-    { path: '/profile', icon: User, label: 'Profile', public: false },
-    { path: '/saved-itineraries', icon: Bookmark, label: 'Saved Itineraries', public: false },
-    { path: '/admin', icon: LayoutDashboard, label: 'Admin Dashboard', admin: true },
-    { path: '/admin/admin-bookings', icon: BookOpen, label: 'Manage Bookings', admin: true },
-    { path: '/admin/destinations', icon: MapPin, label: 'Manage Destinations', admin: true },
-    { path: '/admin/itineraries', icon: Calendar, label: 'Manage Itineraries', admin: true },
-    { path: '/admin/users', icon: Users, label: 'Manage Users', admin: true },
+    { path: '/', icon: Home, label: t('home'), public: true },
+    { path: '/auth', icon: LogIn, label: t('sign_in'), public: true, hideIfAuth: true },
+    { path: '/destinations', icon: MapPin, label: t('destinations'), public: false },
+    { path: '/profile', icon: User, label: t('profile'), public: false },
+    { path: '/saved-itineraries', icon: Bookmark, label: t('saved_itineraries'), public: false },
+    { path: '/admin', icon: LayoutDashboard, label: t('admin_dashboard'), admin: true },
+    { path: '/admin/admin-bookings', icon: BookOpen, label: t('manage_bookings'), admin: true },
+    { path: '/admin/destinations', icon: MapPin, label: t('manage_destinations'), admin: true },
+    { path: '/admin/itineraries', icon: Calendar, label: t('manage_itineraries'), admin: true },
+    { path: '/admin/users', icon: Users, label: t('manage_users'), admin: true },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -126,9 +128,42 @@ export const Sidebar = () => {
 
         {/* Sign Out Button & Theme Switch */}
         <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-          {/* Theme Switch */}
-          <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-center'} p-4 border-b border-gray-200 dark:border-gray-700`}>
-            <ThemeSwitch />
+          {/* Language above Theme Switch */}
+          <div className="flex flex-col items-center p-4 border-b border-gray-200 dark:border-gray-700">
+            {/* Language selector - collapsed shows globe that cycles languages */}
+            {isCollapsed ? (
+              <button
+                onClick={() => {
+                  const order: Array<typeof lang> = ['en', 'ur', 'es', 'ar'];
+                  const idx = order.indexOf(lang);
+                  const next = order[(idx + 1) % order.length];
+                  setLang(next);
+                }}
+                title={`Language: ${lang} (click to cycle)`}
+                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <Globe className="w-5 h-5" />
+              </button>
+            ) : (
+              <div className="w-full flex items-center gap-2">
+                <label className="text-xs text-muted-foreground mr-1">Language</label>
+                <select
+                  value={lang}
+                  onChange={(e) => setLang(e.target.value as any)}
+                  className="h-8 rounded-md border border-input bg-background px-2 text-sm text-foreground w-full"
+                >
+                  <option value="en">English</option>
+                  <option value="ur">اردو</option>
+                  <option value="es">Español</option>
+                  <option value="ar">العربية</option>
+                </select>
+              </div>
+            )}
+
+            {/* Theme switch below language */}
+            <div className="mt-3">
+              <ThemeSwitch />
+            </div>
           </div>
 
           {/* Sign Out Button */}
@@ -139,7 +174,7 @@ export const Sidebar = () => {
                 className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg transition-all-smooth hover:shadow-lg flex items-center gap-2 justify-center"
               >
                 <LogOut className="w-4 h-4" />
-                {!isCollapsed && 'Sign Out'}
+                {!isCollapsed && t('sign_out')}
               </Button>
             </div>
           )}

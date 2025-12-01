@@ -7,6 +7,7 @@ import NotificationsMenu from "@/components/NotificationsMenu";
 import { useBooking } from "@/contexts/BookingContext";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from '@/contexts/LanguageContext';
 import analyzeTrip, { generateTripPackage, TripPackage } from "@/lib/aiHelper";
 import heroImage from "@/assets/hero-travel.jpg";
 import {
@@ -27,6 +28,7 @@ const Index = () => {
   const [aiOpen, setAiOpen] = useState(false);
   const [packageResult, setPackageResult] = useState<TripPackage | null>(null);
   const [currentFormData, setCurrentFormData] = useState<TripFormData | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const state: any = location.state as any;
@@ -129,9 +131,9 @@ const Index = () => {
             <div className="animate-slide-in-up">
               <div className="glass p-6 md:p-8 rounded-lg backdrop-blur-md border border-white/20 shadow-lg bg-white/95">
                 <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">
-                  Plan Your<br />Next Adventure
+                  {t('hero_title')}
                 </h1>
-                <p className="text-gray-600 text-lg mb-8">AI-powered travel planning with personalized itineraries, smart budgeting, and instant bookings.</p>
+                <p className="text-gray-600 text-lg mb-8">{t('hero_sub')}</p>
                 <TripPlannerForm onSearch={handleSearch} onFormStateChange={setCurrentFormData} onAskAI={askAI} />
               </div>
             </div>
@@ -143,8 +145,8 @@ const Index = () => {
       <section className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Why Choose Trip Planner?</h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">Everything you need for the perfect journey, powered by cutting-edge AI technology</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{t('trip_planner')}</h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">{t('hero_sub')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -234,10 +236,10 @@ const Index = () => {
       <section className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <div className="glass p-8 md:p-12 rounded-lg backdrop-blur-sm border border-gray-200 text-center shadow-md">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Ready to Plan Your Next Adventure?</h2>
-            <p className="text-gray-600 mb-8 text-lg">Join thousands of travelers already planning smarter trips with AI</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t('hero_title')}</h2>
+            <p className="text-gray-600 mb-8 text-lg">{t('hero_sub')}</p>
             <Button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold px-8 py-6 rounded-lg text-lg hover:shadow-lg transition-all-smooth">
-              Start Planning Now ✈️
+              {t('plan_my_trip')}
             </Button>
           </div>
         </div>

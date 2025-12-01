@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, DollarSign, Calendar, Search, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface TripFormData {
   source: string;
@@ -66,6 +67,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   const [endDate, setEndDate] = useState("");
   const { toast } = useToast();
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const { t } = useLanguage();
 
   // Fetch all destination names and source airports for autocomplete suggestions (cached on mount)
   useEffect(() => {
@@ -208,12 +210,12 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
         {/* Source Field */}
         <div>
           <Label htmlFor="source" className="flex items-center gap-2 text-gray-900 font-semibold mb-2">
-            <MapPin className="w-4 h-4 text-blue-500" /> Departing From
+            <MapPin className="w-4 h-4 text-blue-500" /> {t('source')}
           </Label>
           <div className="relative">
             <Input
               id="source"
-              placeholder="Type your departure city..."
+              placeholder={t('source_placeholder')}
               value={sourceInput}
               onChange={(e) => setSourceInput(e.target.value)}
               onKeyDown={(e) => {
@@ -264,7 +266,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
         {/* Destinations Field */}
         <div>
           <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2">
-            <Search className="w-4 h-4 text-blue-500" /> Destinations (up to 3)
+            <Search className="w-4 h-4 text-blue-500" /> {t('destinations_label')}
           </Label>
           <div className="flex gap-2 flex-wrap mb-3">
             {destinations.map((d) => (
@@ -278,7 +280,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           </div>
           <div className="relative">
             <Input
-              placeholder="Type a destination..."
+              placeholder={t('destination_placeholder')}
               value={destinationInput}
               onChange={(e) => setDestinationInput(e.target.value)}
               onKeyDown={(e) => {
@@ -317,10 +319,10 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           {/* Budget */}
           <div>
             <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
-              <DollarSign className="w-4 h-4 text-blue-500" /> Budget
-            </Label>
-            <Input
-              placeholder="Total budget (PKR)"
+                <DollarSign className="w-4 h-4 text-blue-500" /> {t('budget_optional')}
+              </Label>
+              <Input
+                placeholder={t('budget_placeholder')}
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               type="number"
@@ -333,8 +335,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           {/* Start Date */}
           <div>
             <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
-              <Calendar className="w-4 h-4 text-blue-500" /> From
-            </Label>
+                <Calendar className="w-4 h-4 text-blue-500" /> {t('start_date')}
+              </Label>
             <Input
               type="date"
               value={startDate}
@@ -347,7 +349,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           {/* End Date */}
           <div>
             <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
-              <Calendar className="w-4 h-4 text-blue-500" /> To
+              <Calendar className="w-4 h-4 text-blue-500" /> {t('end_date')}
             </Label>
             <Input
               type="date"
@@ -361,10 +363,10 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           {/* Travellers */}
           <div>
             <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
-              👥 Travelers
-            </Label>
-            <Input
-              placeholder="Number of people"
+                👥 {t('travellers')}
+              </Label>
+              <Input
+                placeholder={t('travellers_placeholder')}
               value={travellers}
               onChange={(e) => setTravellers(e.target.value)}
               type="number"
@@ -382,15 +384,15 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               onClick={onAskAI}
               className="glass border border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-6 py-2 rounded-lg font-semibold transition-all-smooth hover:shadow-md"
             >
-              ✨ Ask AI
+              {t('ask_ai')}
             </Button>
             <ShatterButton shatterColor="#3b82f6">
-              <Button
-                type="submit"
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold px-6 py-2 rounded-lg hover:shadow-lg transition-all-smooth"
-              >
-                Plan my trip →
-              </Button>
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold px-6 py-2 rounded-lg hover:shadow-lg transition-all-smooth"
+                >
+                  {t('plan_my_trip')}
+                </Button>
             </ShatterButton>
           </div>
         </form>
