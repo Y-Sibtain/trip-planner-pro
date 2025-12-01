@@ -74,20 +74,30 @@ const Index = () => {
 
   const bookAllPackage = () => {
     if (!packageResult) return;
-    // Store the package in booking context and navigate to payment
-    const newTripData = {
-      ...(tripData || {}),
-      destinations: packageResult.destination ? [packageResult.destination] : [],
-      travellers: String(packageResult.travellers),
-      selectedFlight: packageResult.flights,
-      selectedHotel: packageResult.hotel,
-      itinerary: packageResult.itinerary,
-      budgetBreakdown: packageResult.budgetBreakdown,
+    // Create booking object with AI package data
+    const booking = {
+      itinerary_title: packageResult.destination,
+      total_amount: packageResult.totalBudgetPKR,
+      plan: {
+        destination: packageResult.destination,
+        numDays: packageResult.days,
+        numPeople: packageResult.travellers,
+        flight: packageResult.flights,
+        hotel: packageResult.hotel,
+        activities: packageResult.itinerary,
+      },
+      itinerary_data: {
+        destination: packageResult.destination,
+        numDays: packageResult.days,
+        numPeople: packageResult.travellers,
+        flight: packageResult.flights,
+        hotel: packageResult.hotel,
+        budgetBreakdown: packageResult.budgetBreakdown,
+      },
     };
-    setTripData?.(newTripData as any);
     setAiOpen(false);
-    // Navigate to payment page with the full package
-    navigate('/payment', { state: { tripData: newTripData } });
+    // Navigate to payment page with the booking object
+    navigate('/payment', { state: { booking } });
   };
 
   return (
