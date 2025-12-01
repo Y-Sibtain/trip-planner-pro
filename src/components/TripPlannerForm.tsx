@@ -4,7 +4,7 @@ import ShatterButton from "@/components/ui/shatter-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, DollarSign, Calendar, Search, X } from "lucide-react";
+import { MapPin, DollarSign, Calendar, Search, X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -31,6 +31,9 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   const [destinationInput, setDestinationInput] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [destinations, setDestinations] = useState<string[]>([]);
+  const [destination2Input, setDestination2Input] = useState("");
+  const [destination2, setDestination2] = useState<string>("");
+  const [showDestination2, setShowDestination2] = useState(false);
   const [budget, setBudget] = useState("");
   const [travellers, setTravellers] = useState("");
 
@@ -265,9 +268,19 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
 
         {/* Destinations Field */}
         <div>
-          <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2">
-            <Search className="w-4 h-4 text-blue-500" /> {t('destinations_label')}
-          </Label>
+          <div className="flex items-center justify-between mb-2">
+            <Label className="flex items-center gap-2 text-black dark:text-white font-semibold">
+              <Search className="w-4 h-4 text-blue-500" /> {t('destinations_label')}
+            </Label>
+            <button
+              type="button"
+              onClick={() => setShowDestination2(!showDestination2)}
+              title="Click to add another Destination"
+              className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all text-blue-500 hover:text-blue-600"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          </div>
           <div className="flex gap-2 flex-wrap mb-3">
             {destinations.map((d) => (
               <div key={d} className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
@@ -312,6 +325,68 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               </div>
             )}
           </div>
+
+          {/* Destination 2 Field (Optional) */}
+          {showDestination2 && (
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2">
+                <Search className="w-4 h-4 text-blue-500" /> Destination 2
+              </Label>
+              {destination2 && (
+                <div className="mb-3 inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
+                  <span className="text-sm text-gray-900">{destination2}</span>
+                  <button type="button" onClick={() => setDestination2("")} className="p-0.5 hover:text-blue-600 transition-all">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+              <div className="relative">
+                <Input
+                  placeholder="Type destination and press Enter or select from suggestions"
+                  value={destination2Input}
+                  onChange={(e) => setDestination2Input(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const trimmed = destination2Input.trim();
+                      if (trimmed && trimmed !== destinations[0]) {
+                        setDestination2(trimmed);
+                        setDestination2Input("");
+                      }
+                    }
+                  }}
+                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                />
+                {destination2Input && (filteredSuggestions.length > 0 || loadingSuggestions) && (
+                  <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
+                    {loadingSuggestions ? (
+                      <div className="p-3 text-sm text-gray-600">Loading...</div>
+                    ) : filteredSuggestions.length > 0 ? (
+                      filteredSuggestions.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+                          onClick={() => {
+                            if (s !== destinations[0]) {
+                              setDestination2(s);
+                              setDestination2Input("");
+                            } else {
+                              toast({ title: "Duplicate destination", description: "This destination is already selected as Destination 1." });
+                            }
+                          }}
+                        >
+                          {s}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-3 text-sm text-gray-600">No destinations found</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Budget, Dates, Travellers Grid */}
