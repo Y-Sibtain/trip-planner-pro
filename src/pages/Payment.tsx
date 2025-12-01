@@ -36,6 +36,8 @@ const Payment = () => {
         itinerary_data: itinerary.plan,
         user_id: user?.id,
       });
+    } else {
+      console.log("No booking or itinerary data found in state:", state);
     }
   }, [location.state, user?.id]);
 
@@ -75,9 +77,9 @@ const Payment = () => {
       // Create confirmed booking
       const confirmedBooking = {
         user_id: user.id,
-        itinerary_title: booking.itinerary_title,
-        total_amount: booking.total_amount,
-        itinerary_data: booking.itinerary_data,
+        itinerary_title: booking.itinerary_title || 'Trip Booking',
+        total_amount: booking.total_amount || 0,
+        itinerary_data: booking.plan || booking.itinerary_data || {},
         status: 'confirmed',
         payment_status: 'paid',
         transaction_id: transactionId,

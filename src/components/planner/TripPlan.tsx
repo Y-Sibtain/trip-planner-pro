@@ -90,9 +90,19 @@ interface TripPlanProps {
 
 const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) => {
   const cityData = tripData[city as keyof typeof tripData];
+
+  // Guard against invalid city
+  if (!cityData) {
+    return (
+      <Card className="p-6">
+        <p className="text-red-600">Error: City data not found for {city}</p>
+      </Card>
+    );
+  }
+
   const [selectedPlan, setSelectedPlan] = useState<{ [key: number]: { activity: any; restaurant: any } }>(() => {
     const initial: { [key: number]: { activity: any; restaurant: any } } = {};
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= numDays; i++) {
       const actIdx = (i - 1) % cityData.activities.length;
       const restIdx = (i - 1) % cityData.restaurants.length;
       initial[i] = {
