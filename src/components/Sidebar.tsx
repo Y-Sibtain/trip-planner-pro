@@ -53,7 +53,7 @@ export const Sidebar = () => {
       <div
         className={`fixed left-0 top-0 h-screen ${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-lg transform transition-all duration-300 z-40 border-r border-gray-200 dark:border-gray-700 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 md:relative md:h-screen md:sticky md:top-0 overflow-y-auto`}
+        } md:translate-x-0 md:relative md:h-screen md:sticky md:top-0 flex flex-col`}
       >
         {/* Logo Section */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 relative z-50">
@@ -98,7 +98,7 @@ export const Sidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 overflow-y-auto flex-1">
           {navItems.map((item) => {
             if (item.hideIfAuth && isAuthenticated) return null;
             if (!item.public && !isAuthenticated) return null;
@@ -127,9 +127,9 @@ export const Sidebar = () => {
         </nav>
 
         {/* Sign Out Button & Theme Switch */}
-        <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
           {/* Language above Theme Switch */}
-          <div className="flex flex-col items-center p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col items-center p-3 border-b border-gray-200 dark:border-gray-700">
             {/* Language selector - collapsed shows globe that cycles languages */}
             {isCollapsed ? (
               <button
@@ -146,32 +146,32 @@ export const Sidebar = () => {
               </button>
             ) : (
               <div className="w-full flex items-center gap-2">
-                <label className="text-xs text-muted-foreground mr-1">Language</label>
+                <label className="text-xs text-muted-foreground mr-1">Lng</label>
                 <select
                   value={lang}
                   onChange={(e) => setLang(e.target.value as any)}
-                  className="h-8 rounded-md border border-input bg-background px-2 text-sm text-foreground w-full"
+                  className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground flex-1"
                 >
-                  <option value="en">English</option>
-                  <option value="ur">اردو</option>
-                  <option value="es">Español</option>
-                  <option value="ar">العربية</option>
+                  <option value="en">EN</option>
+                  <option value="ur">UR</option>
+                  <option value="es">ES</option>
+                  <option value="ar">AR</option>
                 </select>
               </div>
             )}
 
             {/* Theme switch below language */}
-            <div className="mt-3">
+            <div className="mt-2">
               <ThemeSwitch />
             </div>
           </div>
 
           {/* Sign Out Button */}
           {isAuthenticated && (
-            <div className="p-4">
+            <div className="p-3">
               <Button
                 onClick={handleSignOut}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg transition-all-smooth hover:shadow-lg flex items-center gap-2 justify-center"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg transition-all-smooth hover:shadow-lg flex items-center gap-2 justify-center text-sm py-2"
               >
                 <LogOut className="w-4 h-4" />
                 {!isCollapsed && t('sign_out')}
