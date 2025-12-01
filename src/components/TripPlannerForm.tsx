@@ -14,7 +14,7 @@ export interface TripFormData {
   budget: string;
   startDate: string;
   endDate: string;
-  travellers?: string;
+  travellers: string;
 }
 
 interface TripPlannerFormProps {
@@ -150,6 +150,17 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
     const parsedBudget = Number(budget);
     if (budget && (Number.isNaN(parsedBudget) || parsedBudget < 0)) {
       toast({ title: "Validation error", description: "Enter a valid budget (positive number) or leave empty.", variant: "destructive" });
+      return;
+    }
+
+    // Travellers is required
+    if (!travellers || travellers.trim() === "") {
+      toast({ title: "Validation error", description: "Please enter the number of travellers.", variant: "destructive" });
+      return;
+    }
+    const parsedTravellers = Number(travellers);
+    if (Number.isNaN(parsedTravellers) || parsedTravellers < 1) {
+      toast({ title: "Validation error", description: "Enter a valid number of travellers (minimum 1).", variant: "destructive" });
       return;
     }
 
@@ -293,7 +304,7 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
                 onChange={(e) => setBudget(e.target.value)}
                 type="number"
                 min={0}
-                step="0.01"
+                step={1000}
               />
             </div>
             <div>
@@ -319,6 +330,7 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
                 type="number"
                 min="1"
                 max="20"
+                required
               />
             </div>
           </div>
