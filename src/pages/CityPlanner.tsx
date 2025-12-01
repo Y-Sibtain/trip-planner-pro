@@ -261,49 +261,50 @@ const CityPlanner = () => {
 
         {/* Summary Modal */}
         <Dialog open={showSummary} onOpenChange={setShowSummary}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto glass border border-cyan-500/20 bg-gradient-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl">
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto glass border border-blue-400/20 bg-gradient-to-b from-slate-50 to-blue-50 backdrop-blur-sm shadow-2xl">
             <DialogHeader>
-              <DialogTitle className="text-3xl text-gradient">Booking Summary</DialogTitle>
-              <DialogDescription className="text-cyan-200/70">Review your complete {selectedCity} trip</DialogDescription>
+              <DialogTitle className="text-4xl font-bold text-black">Booking Summary</DialogTitle>
+              <DialogDescription className="text-blue-600 text-base font-medium mt-2">Review your complete {selectedCity} trip</DialogDescription>
             </DialogHeader>
             
-            <div className="space-y-4 mt-4">
-              <div className="glass p-4 rounded-lg border border-cyan-500/20">
-                <h3 className="font-semibold text-cyan-300 mb-2">👥 Travelers:</h3>
-                <div className="inline-block px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 text-cyan-200">
+            <div className="space-y-4 mt-6">
+              <div className="group relative overflow-hidden p-5 rounded-xl bg-white border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all-smooth duration-300">
+                <h3 className="font-bold text-black mb-3 text-lg">👥 Travelers</h3>
+                <div className="inline-block px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold shadow-md">
                   {numPeople} {numPeople === 1 ? "person" : "people"}
                 </div>
               </div>
 
               {selectedFlight && (
-                <div className="glass p-4 rounded-lg border border-purple-500/20">
-                  <h3 className="font-semibold text-purple-300 mb-3">✈️ Selected Flight:</h3>
-                  <div className="bg-purple-500/10 p-4 rounded-lg border border-purple-400/20">
-                    <p className="font-bold text-white text-lg">{selectedFlight.airline}</p>
-                    <p className="text-sm text-purple-200/70 mt-1">{selectedFlight.class}</p>
-                    <p className="text-sm font-semibold mt-2 text-gradient">PKR {(selectedFlight.price * numPeople).toLocaleString()}</p>
+                <div className="group relative overflow-hidden p-5 rounded-xl bg-white border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all-smooth duration-300">
+                  <h3 className="font-bold text-black mb-4 text-lg">✈️ Selected Flight</h3>
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-2">
+                    <p className="font-bold text-black text-lg">{selectedFlight.airline}</p>
+                    <Badge className="bg-red-500 text-white font-semibold">
+                      {selectedFlight.class}
+                    </Badge>
                   </div>
                 </div>
               )}
 
               {selectedHotel && (
-                <div className="glass p-4 rounded-lg border border-pink-500/20">
-                  <h3 className="font-semibold text-pink-300 mb-3">🏨 Selected Hotel:</h3>
-                  <div className="bg-pink-500/10 p-4 rounded-lg border border-pink-400/20">
-                    <p className="font-bold text-white text-lg">{cityHotels.find(h => h.id === selectedHotel)?.name}</p>
-                    <div className="flex items-center gap-1 mt-2">
+                <div className="group relative overflow-hidden p-5 rounded-xl bg-white border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all-smooth duration-300">
+                  <h3 className="font-bold text-black mb-4 text-lg">🏨 Selected Hotel</h3>
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-3">
+                    <p className="font-bold text-black text-lg">{cityHotels.find(h => h.id === selectedHotel)?.name}</p>
+                    <div className="flex items-center gap-2">
                       {Array.from({ length: cityHotels.find(h => h.id === selectedHotel)?.stars || 0 }).map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                       ))}
-                      <span className="text-xs text-pink-200/70 ml-2">{cityHotels.find(h => h.id === selectedHotel)?.stars} Stars</span>
+                      <span className="text-sm text-black font-semibold ml-2">{cityHotels.find(h => h.id === selectedHotel)?.stars} Stars</span>
                     </div>
                   </div>
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-6">
                 <Button 
-                  className="flex-1 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-900 font-bold rounded-lg glow-primary hover:scale-105 transition-all-smooth"
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-base rounded-lg hover:scale-105 transition-all-smooth shadow-md"
                   onClick={() => {
                     const hotelPrice = parseInt(cityHotels.find(h => h.id === selectedHotel)?.price?.replace(/\D/g, '') || '0');
                     const bookingData = {
@@ -325,7 +326,7 @@ const CityPlanner = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => setShowSummary(false)}
-                  className="border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/10"
+                  className="border-2 border-blue-300 text-blue-600 hover:bg-blue-50 font-semibold hover:scale-105 transition-all-smooth"
                 >
                   Edit Trip
                 </Button>

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Search, Filter } from "lucide-react";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type DestinationRow = {
   id: string;
@@ -20,6 +21,7 @@ type DestinationRow = {
 const Destinations = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const [queryText, setQueryText] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -159,8 +161,13 @@ const Destinations = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-8">
+<<<<<<< HEAD
           <h1 className="text-5xl font-bold text-gray-900 mb-2">Explore Destinations</h1>
-          <p className="text-gray-600">Search and filter destinations by name, country, or price</p>
+          <p className="text-black">Search and filter destinations by name, country, or price</p>
+=======
+          <h1 className="text-5xl font-bold text-gray-900 mb-2">{t('explore_destinations')}</h1>
+          <p className="text-gray-600">{t('search_and_filter')}</p>
+>>>>>>> ef52af4 (Language Translator)
         </div>
 
         {/* Search & Filters Section */}
@@ -169,11 +176,11 @@ const Destinations = () => {
             {/* Search */}
             <div className="md:col-span-2 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Search Destinations</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">{t('search')}</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Search by name or highlights..."
+                    placeholder={t('search_by_name')}
                     value={queryText}
                     onChange={(e) => setQueryText(e.target.value)}
                     className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
@@ -189,14 +196,14 @@ const Destinations = () => {
 
               {/* Country Filter */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Country / Region</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">{t('country_region')}</label>
                 <div className="flex gap-2">
                   <select 
                     value={country} 
                     onChange={(e) => setCountry(e.target.value)}
                     className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   >
-                    <option value="">All countries</option>
+                    <option value="">{t('all_countries')}</option>
                     {availableCountries.map((c) => (
                       <option key={c} value={c} className="bg-white">
                         {c}
@@ -294,15 +301,15 @@ const Destinations = () => {
                   <div className="p-4 space-y-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-bold text-white text-lg group-hover:text-cyan-300 transition-colors">{d.name}</h3>
-                        <p className="text-cyan-200/60 text-sm">{d.country || 'Unknown'}</p>
+                        <h3 className="font-bold text-black text-lg group-hover:text-blue-600 transition-colors">{d.name}</h3>
+                        <p className="text-black/60 text-sm">{d.country || 'Unknown'}</p>
                       </div>
                     </div>
 
                     {/* Price */}
-                    <div className="border-t border-cyan-500/10 pt-3">
-                      <p className="text-xs text-cyan-200/50 mb-1">Starting from</p>
-                      <p className="text-lg font-bold text-gradient">
+                    <div className="border-t border-gray-200 pt-3">
+                      <p className="text-xs text-black/50 mb-1">Starting from</p>
+                      <p className="text-lg font-bold text-blue-600">
                         {d.base_price != null ? `PKR ${Number(d.base_price).toLocaleString()}` : "—"}
                       </p>
                     </div>
