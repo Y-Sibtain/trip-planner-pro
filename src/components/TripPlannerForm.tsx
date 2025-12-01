@@ -229,30 +229,33 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
             <MapPin className="w-4 h-4 text-blue-500" /> {t('source')}
           </Label>
           <div className="relative">
-            <Input
-              id="source"
-              placeholder={t('source_placeholder')}
-              value={sourceInput}
-              onChange={(e) => setSourceInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  if (filteredSourceSuggestions.length > 0) {
-                    setSource(filteredSourceSuggestions[0]);
-                    setSourceInput("");
+            <div className="w-full px-3 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-400/20 transition-all-smooth flex items-center gap-2 flex-wrap">
+              {source && (
+                <div className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-gray-300 bg-gray-50">
+                  <span className="text-sm text-gray-900">{source}</span>
+                  <button type="button" onClick={() => setSource("")} className="p-0.5 hover:text-blue-500 transition-all">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+
+              <input
+                id="source"
+                placeholder={t('source_placeholder')}
+                value={sourceInput}
+                onChange={(e) => setSourceInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (filteredSourceSuggestions.length > 0) {
+                      setSource(filteredSourceSuggestions[0]);
+                      setSourceInput("");
+                    }
                   }
-                }
-              }}
-              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
-            />
-            {source && (
-              <div className="mt-2 inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-gray-300 bg-gray-50">
-                <span className="text-sm text-gray-900">{source}</span>
-                <button type="button" onClick={() => setSource("")} className="p-0.5 hover:text-blue-500 transition-all">
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            )}
+                }}
+                className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2"
+              />
+            </div>
             {sourceInput && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
               <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
                 {loadingSuggestions ? (
@@ -296,29 +299,31 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               </button>
             )}
           </div>
-          <div className="flex gap-2 flex-wrap mb-3">
-            {destinations.map((d) => (
-              <div key={d} className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
-                <span className="text-sm text-gray-900">{d}</span>
-                <button type="button" onClick={() => removeDestination(d)} className="p-0.5 hover:text-blue-600 transition-all">
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
-          </div>
           <div className="relative">
-            <Input
-              placeholder={t('destination_placeholder')}
-              value={destinationInput}
-              onChange={(e) => setDestinationInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addDestination(destinationInput);
-                }
-              }}
-              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
-            />
+            <div className="w-full px-3 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-400/20 transition-all-smooth flex items-center gap-2 flex-wrap">
+              {destinations.map((d) => (
+                <div key={d} className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
+                  <span className="text-sm text-gray-900">{d}</span>
+                  <button type="button" onClick={() => removeDestination(d)} className="p-0.5 hover:text-blue-600 transition-all">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+
+              <input
+                placeholder={t('destination_placeholder')}
+                value={destinationInput}
+                onChange={(e) => setDestinationInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addDestination(destinationInput);
+                  }
+                }}
+                disabled={destinations.length >= 1}
+                className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
+              />
+            </div>
             {destinationInput && (filteredSuggestions.length > 0 || loadingSuggestions) && (
               <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
                 {loadingSuggestions ? (
