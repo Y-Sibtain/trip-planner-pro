@@ -159,21 +159,21 @@ const CityPlanner = () => {
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">
         {/* Header */}
         <div>
-          <h1 className="text-5xl font-bold text-gray-900">City Trip Planner</h1>
-          <p className="text-gray-600 mt-2">Plan your perfect {numDays}-day adventure</p>
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white">City Trip Planner</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Plan your perfect {numDays}-day adventure</p>
         </div>
 
         {/* City Selection */}
         {step === "city" && (
-          <div className="glass p-8 rounded-lg border border-gray-200 backdrop-blur-sm shadow-md">
+          <div className="glass p-8 rounded-lg border border-gray-200 dark:border-gray-700 backdrop-blur-sm shadow-md dark:bg-gray-800/50">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-3 mb-2">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                   <MapPin className="h-6 w-6 text-white" />
                 </div>
                 Choose Your Destination
               </h2>
-              <p className="text-gray-600">Select a city to begin planning</p>
+              <p className="text-gray-600 dark:text-gray-400">Select a city to begin planning</p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -181,11 +181,11 @@ const CityPlanner = () => {
                 <div
                   key={city.name}
                   onClick={() => handleCitySelect(city.name)}
-                  className="group glass p-6 rounded-lg border border-gray-200 backdrop-blur-sm cursor-pointer transition-all-smooth hover:border-blue-400 hover:bg-blue-50 hover:scale-105 hover:shadow-md"
+                  className="group glass p-6 rounded-lg border border-gray-200 dark:border-gray-700 backdrop-blur-sm cursor-pointer transition-all-smooth hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:scale-105 hover:shadow-md dark:bg-gray-800/50"
                 >
                   <div className="text-6xl mb-4 group-hover:scale-110 transition-all-smooth">{city.emoji}</div>
-                  <h3 className="font-bold text-lg text-gray-900 mb-3">{city.name}</h3>
-                  <div className="inline-block px-3 py-1 rounded-full bg-blue-100 border border-blue-300 text-sm text-blue-600">
+                  <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-3">{city.name}</h3>
+                  <div className="inline-block px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-sm text-blue-600 dark:text-blue-300">
                     {numDays} Days
                   </div>
                 </div>
@@ -197,13 +197,13 @@ const CityPlanner = () => {
         {/* Flight Selection */}
         {step === "flight" && selectedCity && (
           <>
-            <div className="glass p-8 rounded-2xl border border-cyan-500/20 backdrop-blur-xl">
+            <div className="glass p-8 rounded-2xl border border-cyan-500/20 dark:border-cyan-500/10 backdrop-blur-xl dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-3xl font-bold text-gradient mb-2">
                     Select Your Flight
                   </h2>
-                  <p className="text-black">Departing to {selectedCity} for {numDays} days</p>
+                  <p className="text-gray-900 dark:text-gray-300">Departing to {selectedCity} for {numDays} days</p>
                 </div>
                 <Button 
                   onClick={() => navigate('/')}
@@ -225,13 +225,13 @@ const CityPlanner = () => {
         {/* Hotel Selection */}
         {step === "hotel" && selectedCity && (
           <>
-            <div className="glass p-8 rounded-2xl border border-purple-500/20 backdrop-blur-xl">
+            <div className="glass p-8 rounded-2xl border border-purple-500/20 dark:border-purple-500/10 backdrop-blur-xl dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold text-blue-600 mb-2">
+                  <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                     Select Your Hotel
                   </h2>
-                  <p className="text-black">Choose from our curated accommodations in {selectedCity}</p>
+                  <p className="text-gray-900 dark:text-gray-300">Choose from our curated accommodations in {selectedCity}</p>
                 </div>
                 <Button 
                   onClick={() => setStep("flight")}
@@ -258,13 +258,13 @@ const CityPlanner = () => {
         {/* Trip Plan */}
         {step === "plan" && selectedCity && selectedHotel && (
           <>
-            <div className="glass p-8 rounded-2xl border border-pink-500/20 backdrop-blur-xl">
+            <div className="glass p-8 rounded-2xl border border-pink-500/20 dark:border-pink-500/10 backdrop-blur-xl dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold text-blue-600 mb-2">
+                  <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                     Your {numDays}-Day Itinerary
                   </h2>
-                  <p className="text-black">Activities and dining recommendations</p>
+                  <p className="text-gray-900 dark:text-gray-300">Activities and dining recommendations</p>
                 </div>
                 <Button 
                   onClick={() => setStep("hotel")}
@@ -286,25 +286,25 @@ const CityPlanner = () => {
 
         {/* Summary Modal */}
         <Dialog open={showSummary} onOpenChange={setShowSummary}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto glass border border-blue-400/20 bg-gradient-to-b from-slate-50 to-blue-50 backdrop-blur-sm shadow-2xl">
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto glass border border-blue-400/20 bg-gradient-to-b from-slate-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 dark:border-blue-400/10 backdrop-blur-sm shadow-2xl">
             <DialogHeader>
-              <DialogTitle className="text-4xl font-bold text-black">Booking Summary</DialogTitle>
-              <DialogDescription className="text-blue-600 text-base font-medium mt-2">Review your complete {selectedCity} trip</DialogDescription>
+              <DialogTitle className="text-4xl font-bold text-gray-900 dark:text-white">Booking Summary</DialogTitle>
+              <DialogDescription className="text-blue-600 dark:text-blue-400 text-base font-medium mt-2">Review your complete {selectedCity} trip</DialogDescription>
             </DialogHeader>
             
             <div className="space-y-4 mt-6">
-              <div className="group relative overflow-hidden p-5 rounded-xl bg-white border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all-smooth duration-300">
-                <h3 className="font-bold text-black mb-3 text-lg">👥 Travelers</h3>
+              <div className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
+                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-lg">👥 Travelers</h3>
                 <div className="inline-block px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold shadow-md">
                   {numPeople} {numPeople === 1 ? "person" : "people"}
                 </div>
               </div>
 
               {selectedFlight && (
-                <div className="group relative overflow-hidden p-5 rounded-xl bg-white border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all-smooth duration-300">
-                  <h3 className="font-bold text-black mb-4 text-lg">✈️ Selected Flight</h3>
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-2">
-                    <p className="font-bold text-black text-lg">{selectedFlight.airline}</p>
+                <div className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">✈️ Selected Flight</h3>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-2">
+                    <p className="font-bold text-gray-900 dark:text-white text-lg">{selectedFlight.airline}</p>
                     <Badge
                       className={
                         selectedFlight.class === "Economy"
@@ -313,7 +313,7 @@ const CityPlanner = () => {
                           ? "bg-red-500 text-white font-semibold"
                           : (selectedFlight.class === "First Class" || selectedFlight.class === "First")
                           ? "bg-yellow-500 text-white font-semibold"
-                          : "bg-gray-200 text-black font-semibold"
+                          : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-semibold"
                       }
                     >
                       {selectedFlight.class}
@@ -323,15 +323,15 @@ const CityPlanner = () => {
               )}
 
               {selectedHotel && (
-                <div className="group relative overflow-hidden p-5 rounded-xl bg-white border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all-smooth duration-300">
-                  <h3 className="font-bold text-black mb-4 text-lg">🏨 Selected Hotel</h3>
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-3">
-                    <p className="font-bold text-black text-lg">{cityHotels.find(h => h.id === selectedHotel)?.name}</p>
+                <div className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">🏨 Selected Hotel</h3>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-3">
+                    <p className="font-bold text-gray-900 dark:text-white text-lg">{cityHotels.find(h => h.id === selectedHotel)?.name}</p>
                     <div className="flex items-center gap-2">
                       {Array.from({ length: cityHotels.find(h => h.id === selectedHotel)?.stars || 0 }).map((_, i) => (
                         <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                       ))}
-                      <span className="text-sm text-black font-semibold ml-2">{cityHotels.find(h => h.id === selectedHotel)?.stars} Stars</span>
+                      <span className="text-sm text-gray-900 dark:text-white font-semibold ml-2">{cityHotels.find(h => h.id === selectedHotel)?.stars} Stars</span>
                     </div>
                   </div>
                 </div>
@@ -359,9 +359,8 @@ const CityPlanner = () => {
                   Proceed to Payment →
                 </Button>
                 <Button 
-                  variant="outline" 
                   onClick={() => setShowSummary(false)}
-                  className="border-2 border-blue-300 text-blue-600 hover:bg-blue-50 font-semibold hover:scale-105 transition-all-smooth"
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-base rounded-lg hover:scale-105 transition-all-smooth shadow-md dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800"
                 >
                   Edit Trip
                 </Button>
