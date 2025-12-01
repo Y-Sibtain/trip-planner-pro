@@ -4,7 +4,7 @@ import ShatterButton from "@/components/ui/shatter-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, DollarSign, Calendar, Search, X, Plus } from "lucide-react";
+import { MapPin, DollarSign, Calendar, Search, X, Plus, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -707,7 +707,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           {/* Travellers */}
           <div>
             <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2 text-sm">
-                👥 {t('travellers')}
+                <Users className="w-4 h-4 text-blue-500" /> {t('travellers')}
               </Label>
               <Input
                 placeholder={t('travellers_placeholder')}
