@@ -3,10 +3,15 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
+interface ThemeSwitchProps extends React.HTMLAttributes<HTMLDivElement> {
+  collapsed?: boolean;
+}
+
 const ThemeSwitch = ({
   className,
+  collapsed = false,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
+}: ThemeSwitchProps) => {
   const { theme, setTheme } = useTheme();
   const [checked, setChecked] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -22,7 +27,29 @@ const ThemeSwitch = ({
     [setTheme],
   );
 
+  const handleClick = useCallback(() => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  }, [theme, setTheme]);
+
   if (!mounted) return null;
+
+  // When collapsed, show a simple button instead of toggle
+  if (collapsed) {
+    return (
+      <button
+        onClick={handleClick}
+        title={`Dark mode: ${theme === "dark" ? "on" : "off"} (click to toggle)`}
+        className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors"
+        {...props}
+      >
+        {theme === "dark" ? (
+          <MoonIcon size={18} className="text-blue-400" />
+        ) : (
+          <SunIcon size={18} className="text-yellow-500" />
+        )}
+      </button>
+    );
+  }
 
   return (
     <div
