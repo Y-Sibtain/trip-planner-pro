@@ -353,7 +353,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              min={minDate}
+              min={startDate || minDate}
               className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
           </div>
