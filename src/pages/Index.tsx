@@ -53,7 +53,7 @@ const Index = () => {
   }, [location.state]);
 
   const handleSearch = (data: TripFormData) => {
-    console.log("Search data with travellers:", { ...data, travellers });
+    console.log("[DEBUG] Index.handleSearch - Search data with travellers:", { ...data, travellers });
     setTripData({ ...data, travellers });
     navigate('/city-planner', { state: { tripData: { ...data, travellers } } });
   };

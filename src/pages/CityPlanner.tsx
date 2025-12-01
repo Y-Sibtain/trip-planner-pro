@@ -60,13 +60,17 @@ const hotels = {
 const CityPlanner = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [step, setStep] = useState<"city" | "flight" | "hotel" | "plan">("city");
+  const [step, setStep] = useState<"city" | "flight" | "hotel" | "activity" | "plan">("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [numPeople, setNumPeople] = useState<number>(1);
-  const [selectedFlight, setSelectedFlight] = useState<any>(null);
-  const [selectedHotel, setSelectedHotel] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState(false);
   const [numDays, setNumDays] = useState<number>(7);
+
+  // Multi-destination booking support
+  const [destinationsList, setDestinationsList] = useState<string[]>([]);
+  const [currentDestIndex, setCurrentDestIndex] = useState<number>(0);
+  const [selectedFlightsByDest, setSelectedFlightsByDest] = useState<Record<string, any>>({});
+  const [selectedHotelsByDest, setSelectedHotelsByDest] = useState<Record<string, string>>({});
 
   // Calculate number of days from trip data
   useEffect(() => {
@@ -94,9 +98,26 @@ const CityPlanner = () => {
         }
       }
 
-      // Auto-select first destination if provided
-      if (state.tripData.destinations && state.tripData.destinations.length > 0) {
-        const firstDest = state.tripData.destinations[0];
+      // Prepare destinations list and auto-select first destination if provided
+      // Build list from tripData.destinations and any additional destination2/destination3 fields
+      const rawDestinations: string[] = [];
+      if (Array.isArray(state.tripData.destinations)) rawDestinations.push(...state.tripData.destinations);
+      if (state.tripData.destination2) rawDestinations.push(state.tripData.destination2);
+      if (state.tripData.destination3) rawDestinations.push(state.tripData.destination3);
+      // normalize, remove empties and duplicates while preserving order
+      const dests = rawDestinations
+        .map((d: string) => (d || "").trim())
+        .filter((d: string) => d && d.length > 0)
+        .reduce((acc: string[], cur: string) => {
+          const lower = cur.toLowerCase();
+          if (!acc.some(a => a.toLowerCase() === lower)) acc.push(cur);
+          return acc;
+        }, [] as string[]);
+
+      if (dests.length > 0) {
+        setDestinationsList(dests);
+        setCurrentDestIndex(0);
+        const firstDest = dests[0];
         const matchedCity = cities.find(c => c.name.toLowerCase() === firstDest.toLowerCase());
         if (matchedCity) {
           setSelectedCity(matchedCity.name);
@@ -116,11 +137,13 @@ const CityPlanner = () => {
     if (state.booking) {
       const b = state.booking;
       try {
-        if (b.plan?.city) setSelectedCity(b.plan.city);
+        // Rehydrate per-destination selections if present
+        if (b.plan?.itineraryByDest) {
+          setSelectedFlightsByDest(b.plan.itineraryByDest.flights || {});
+          setSelectedHotelsByDest(b.plan.itineraryByDest.hotels || {});
+        }
         if (b.plan?.numPeople) setNumPeople(b.plan.numPeople);
         if (b.plan?.numDays) setNumDays(b.plan.numDays);
-        if (b.plan?.flight) setSelectedFlight(b.plan.flight);
-        if (b.plan?.hotel) setSelectedHotel(b.plan.hotel?.id || b.plan.hotel?.id || null);
         setStep('plan');
         setShowSummary(true);
       } catch (err) {
@@ -138,16 +161,69 @@ const CityPlanner = () => {
   };
 
   const handleFlightSelect = (flight: any) => {
-    setSelectedFlight(flight);
+    if (!destinationsList[currentDestIndex]) return;
+    const destName = destinationsList[currentDestIndex];
+    setSelectedFlightsByDest((s) => ({ ...s, [destName]: flight }));
     setStep("hotel");
   };
 
   const handleHotelSelect = (hotelId: string) => {
-    setSelectedHotel(hotelId);
-    setStep("plan");
+    if (!destinationsList[currentDestIndex]) return;
+    const destName = destinationsList[currentDestIndex];
+    setSelectedHotelsByDest((s) => ({ ...s, [destName]: hotelId }));
+    // After selecting hotel, go to activities for the current destination
+    setStep('activity');
+  };
+
+  const handleActivityComplete = () => {
+    // After activities for current destination, either advance to next destination or finish
+    const nextIndex = currentDestIndex + 1;
+    if (nextIndex < destinationsList.length) {
+      const nextDest = destinationsList[nextIndex];
+      const matchedCity = cities.find(c => c.name.toLowerCase() === nextDest.toLowerCase());
+      setCurrentDestIndex(nextIndex);
+      if (matchedCity) {
+        setSelectedCity(matchedCity.name);
+      } else {
+        setSelectedCity(nextDest);
+      }
+      // start the next destination flow with flight selection
+      setStep('flight');
+    } else {
+      // finished selecting for all destinations
+      setStep('plan');
+      setShowSummary(true);
+    }
   };
 
   const cityHotels = selectedCity ? hotels[selectedCity as keyof typeof hotels] : [];
+
+  const currentDestName = destinationsList[currentDestIndex] || selectedCity || null;
+
+  const parsePriceRangeToNumber = (priceStr?: string) => {
+    if (!priceStr) return 0;
+    // try to extract the first number and multiplier (k)
+    const m = priceStr.match(/([0-9]+(?:\.[0-9]+)?)(k?)/i);
+    if (!m) return 0;
+    let val = parseFloat(m[1]);
+    if (m[2] && m[2].toLowerCase() === "k") val = val * 1000;
+    return Math.round(val);
+  };
+  const getDaysForDestination = (index: number) => {
+    const state = location.state as any;
+    const td = state?.tripData;
+    if (!td) return numDays;
+    if (index === 0) {
+      if (td.startDate && td.endDate) return Math.ceil((new Date(td.endDate).getTime() - new Date(td.startDate).getTime())/(1000*60*60*24))+1;
+    }
+    if (index === 1) {
+      if (td.startDate2 && td.endDate2) return Math.ceil((new Date(td.endDate2).getTime() - new Date(td.startDate2).getTime())/(1000*60*60*24))+1;
+    }
+    if (index === 2) {
+      if (td.startDate3 && td.endDate3) return Math.ceil((new Date(td.endDate3).getTime() - new Date(td.startDate3).getTime())/(1000*60*60*24))+1;
+    }
+    return numDays;
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden">
@@ -196,15 +272,15 @@ const CityPlanner = () => {
         )}
 
         {/* Flight Selection */}
-        {step === "flight" && selectedCity && (
+        {step === "flight" && currentDestName && (
           <>
             <div className="glass p-8 rounded-2xl border border-cyan-500/20 dark:border-cyan-500/10 backdrop-blur-xl dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Select Your Flight
+                    Select Your Flight for {currentDestName}
                   </h2>
-                  <p className="text-gray-700 dark:text-gray-300">Departing to {selectedCity} for {numDays} days</p>
+                  <p className="text-gray-700 dark:text-gray-300">Departing to {currentDestName} for {getDaysForDestination(currentDestIndex)} days</p>
                 </div>
                 <Button 
                   onClick={() => navigate('/')}
@@ -216,7 +292,7 @@ const CityPlanner = () => {
             </div>
             
             <FlightSelector
-              destination={selectedCity}
+              destination={currentDestName || selectedCity}
               numPeople={numPeople}
               onSelect={handleFlightSelect}
             />
@@ -224,15 +300,15 @@ const CityPlanner = () => {
         )}
 
         {/* Hotel Selection */}
-        {step === "hotel" && selectedCity && (
+        {step === "hotel" && currentDestName && (
           <>
             <div className="glass p-8 rounded-2xl border border-purple-500/20 dark:border-purple-500/10 backdrop-blur-xl dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                    Select Your Hotel
+                    Select Your Hotel for {currentDestName}
                   </h2>
-                  <p className="text-gray-700 dark:text-gray-300">Choose from our curated accommodations in {selectedCity}</p>
+                  <p className="text-gray-700 dark:text-gray-300">Choose from our curated accommodations in {currentDestName}</p>
                 </div>
                 <Button 
                   onClick={() => setStep("flight")}
@@ -244,11 +320,11 @@ const CityPlanner = () => {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {cityHotels.map((hotel) => (
+              {(hotels[currentDestName as keyof typeof hotels] || []).map((hotel) => (
                 <HotelCard
                   key={hotel.id}
                   hotel={hotel}
-                  isSelected={selectedHotel === hotel.id}
+                  isSelected={selectedHotelsByDest[currentDestName || ''] === hotel.id}
                   onSelect={() => handleHotelSelect(hotel.id)}
                 />
               ))}
@@ -257,7 +333,36 @@ const CityPlanner = () => {
         )}
 
         {/* Trip Plan */}
-        {step === "plan" && selectedCity && selectedHotel && (
+        {/* Activity Selection (per-destination) */}
+        {step === "activity" && selectedCity && (
+          <>
+            <div className="glass p-8 rounded-2xl border border-amber-500/20 dark:border-amber-500/10 backdrop-blur-xl dark:bg-gray-800/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                    Select Activities for {selectedCity}
+                  </h2>
+                  <p className="text-gray-700 dark:text-gray-300">Choose activities and dining for {selectedCity}</p>
+                </div>
+                <Button 
+                  onClick={() => setStep("hotel")}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
+                >
+                  ← Back
+                </Button>
+              </div>
+            </div>
+
+            <TripPlan
+              city={selectedCity}
+              numPeople={numPeople}
+              numDays={getDaysForDestination(currentDestIndex)}
+              onFinalize={handleActivityComplete}
+            />
+          </>
+        )}
+
+        {step === "plan" && (destinationsList.length > 0 || selectedCity) && (
           <>
             <div className="glass p-8 rounded-2xl border border-pink-500/20 dark:border-pink-500/10 backdrop-blur-xl dark:bg-gray-800/50">
               <div className="flex items-center justify-between">
@@ -300,58 +405,87 @@ const CityPlanner = () => {
                   {numPeople} {numPeople === 1 ? "person" : "people"}
                 </div>
               </div>
-
-              {selectedFlight && (
-                <div className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">✈️ Selected Flight</h3>
-                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-2">
-                    <p className="font-bold text-gray-900 dark:text-white text-lg">{selectedFlight.airline}</p>
-                    <Badge
-                      className={
-                        selectedFlight.class === "Economy"
-                          ? "bg-green-500 text-white font-semibold"
-                          : selectedFlight.class === "Business"
-                          ? "bg-red-500 text-white font-semibold"
-                          : (selectedFlight.class === "First Class" || selectedFlight.class === "First")
-                          ? "bg-yellow-500 text-white font-semibold"
-                          : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-semibold"
-                      }
-                    >
-                      {selectedFlight.class}
-                    </Badge>
-                  </div>
-                </div>
-              )}
-
-              {selectedHotel && (
-                <div className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">🏨 Selected Hotel</h3>
-                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-3">
-                    <p className="font-bold text-gray-900 dark:text-white text-lg">{cityHotels.find(h => h.id === selectedHotel)?.name}</p>
-                    <div className="flex items-center gap-2">
-                      {Array.from({ length: cityHotels.find(h => h.id === selectedHotel)?.stars || 0 }).map((_, i) => (
-                        <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-900 dark:text-white font-semibold ml-2">{cityHotels.find(h => h.id === selectedHotel)?.stars} Stars</span>
+              {/* Render per-destination selections */}
+              {destinationsList.map((dest, idx) => (
+                <div key={dest} className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">{idx + 1}. {dest} — {getDaysForDestination(idx)} day{getDaysForDestination(idx) > 1 ? 's' : ''}</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-semibold">✈️ Flight</h4>
+                      {selectedFlightsByDest[dest] ? (
+                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-2">
+                          <p className="font-bold text-gray-900 dark:text-white text-lg">{selectedFlightsByDest[dest].airline}</p>
+                          <Badge className={
+                            selectedFlightsByDest[dest].class === "Economy"
+                              ? "bg-green-500 text-white font-semibold"
+                              : selectedFlightsByDest[dest].class === "Business"
+                              ? "bg-red-500 text-white font-semibold"
+                              : (selectedFlightsByDest[dest].class === "First Class" || selectedFlightsByDest[dest].class === "First")
+                              ? "bg-yellow-500 text-white font-semibold"
+                              : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-semibold"
+                          }>{selectedFlightsByDest[dest].class}</Badge>
+                          <div className="text-sm text-gray-700 dark:text-gray-300">Price: {selectedFlightsByDest[dest].price ? `${selectedFlightsByDest[dest].price}` : 'N/A'}</div>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-500">No flight selected for {dest}</div>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">🏨 Hotel</h4>
+                      {selectedHotelsByDest[dest] ? (
+                        (() => {
+                          const hotel = (hotels[dest as keyof typeof hotels] || []).find(h => h.id === selectedHotelsByDest[dest]);
+                          return (
+                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-2">
+                              <p className="font-bold text-gray-900 dark:text-white text-lg">{hotel?.name}</p>
+                              <div className="flex items-center gap-2">
+                                {Array.from({ length: hotel?.stars || 0 }).map((_, i) => (
+                                  <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                                ))}
+                                <span className="text-sm text-gray-900 dark:text-white font-semibold ml-2">{hotel?.stars} Stars</span>
+                              </div>
+                            </div>
+                          );
+                        })()
+                      ) : (
+                        <div className="text-sm text-gray-500">No hotel selected for {dest}</div>
+                      )}
                     </div>
                   </div>
                 </div>
-              )}
+              ))}
 
               <div className="flex gap-3 pt-6">
                 <Button 
                   className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-base rounded-lg hover:scale-105 transition-all-smooth shadow-md"
                   onClick={() => {
-                    const hotelPrice = parseInt(cityHotels.find(h => h.id === selectedHotel)?.price?.replace(/\D/g, '') || '0');
+                    // Compute totals across all destinations
+                    let totalAmount = 0;
+                    let totalDays = 0;
+                    const itineraryByDest: any = { flights: {}, hotels: {}, days: {} };
+                    destinationsList.forEach((dest, idx) => {
+                      const days = getDaysForDestination(idx) || 1;
+                      totalDays += days;
+                      const flight = selectedFlightsByDest[dest];
+                      const hotelId = selectedHotelsByDest[dest];
+                      itineraryByDest.flights[dest] = flight || null;
+                      itineraryByDest.hotels[dest] = hotelId || null;
+                      itineraryByDest.days[dest] = days;
+                      if (flight && flight.price) totalAmount += (flight.price || 0) * numPeople;
+                      if (hotelId) {
+                        const hotel = (hotels[dest as keyof typeof hotels] || []).find(h => h.id === hotelId);
+                        const hotelPrice = parsePriceRangeToNumber(hotel?.price);
+                        totalAmount += hotelPrice * days;
+                      }
+                    });
+
                     const bookingData = {
-                      itinerary_title: `${selectedCity} - ${numDays} Days`,
-                      total_amount: ((selectedFlight?.price || 0) * numPeople) + (hotelPrice * numDays),
+                      itinerary_title: `${destinationsList.join(' > ')} - ${totalDays} Days`,
+                      total_amount: totalAmount,
                       plan: {
-                        city: selectedCity,
                         numPeople,
-                        numDays,
-                        flight: selectedFlight,
-                        hotel: cityHotels.find(h => h.id === selectedHotel),
+                        numDays: totalDays,
+                        itineraryByDest,
                       },
                     };
                     navigate('/payment', { state: { booking: bookingData } });

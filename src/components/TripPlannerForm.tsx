@@ -143,9 +143,12 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   // Notify parent component of form state changes
   useEffect(() => {
     if (onFormStateChange) {
+      const allDestinations = [...destinations];
+      if (destination2) allDestinations.push(destination2);
+      if (destination3) allDestinations.push(destination3);
       onFormStateChange({
         source,
-        destinations,
+        destinations: allDestinations,
         budget,
         startDate,
         endDate,
@@ -264,7 +267,12 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
     // All good — pass data up
     onSearch({
       source: source.trim(),
-      destinations,
+      destinations: (() => {
+        const all = [...destinations];
+        if (destination2) all.push(destination2);
+        if (destination3) all.push(destination3);
+        return all;
+      })(),
       budget: budget.trim(),
       startDate,
       endDate,
@@ -272,8 +280,6 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
       endDate2,
       startDate3,
       endDate3,
-      // pass additional destination fields separately where needed
-      // main destinations array still used for core flow
       travellers: travellers.trim(),
     });
   };
