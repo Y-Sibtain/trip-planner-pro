@@ -152,14 +152,11 @@ const Destinations = () => {
     <div className="min-h-screen p-4">
       <Card className="max-w-6xl mx-auto">
         <CardHeader>
-          <div className="w-full flex items-center justify-between">
-            <div>
-              <CardTitle>Explore Destinations</CardTitle>
+            <div className="w-full flex items-center justify-between">
+              <div>
+                <CardTitle>Explore Destinations</CardTitle>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Button onClick={() => navigate("/admin")}>Admin</Button>
-            </div>
-          </div>
           <div className="mt-2 text-muted-foreground">Search and filter destinations by name, type, country, or cost.</div>
         </CardHeader>
 
@@ -183,7 +180,11 @@ const Destinations = () => {
               <div>
                 <Label>Country / Region</Label>
                 <div className="flex gap-2 mt-2">
-                  <select value={country} onChange={(e) => setCountry(e.target.value)} className="border rounded p-2">
+                  <select
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
+                  >
                     <option value="">All countries</option>
                     {availableCountries.map((c) => (
                       <option key={c} value={c}>

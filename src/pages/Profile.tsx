@@ -284,7 +284,7 @@ const Profile = () => {
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" value={formData.email} readOnly className="bg-gray-50" />
+              <Input id="email" value={formData.email} readOnly />
             </div>
 
             <div className="space-y-2">

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane, Bookmark } from 'lucide-react';
+import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane, Bookmark, Sun, Moon, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useBooking } from '@/contexts/BookingContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Button } from '@/components/ui/button';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +18,25 @@ export const Sidebar = () => {
     setIsOpen(false);
     navigate('/');
   };
+
+  // Collapsed state for desktop sidebar
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('sidebar-collapsed') === '1';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('sidebar-collapsed', collapsed ? '1' : '0');
+    } catch (e) {
+      // ignore
+    }
+  }, [collapsed]);
+
+  const { theme, toggleTheme } = useTheme();
 
   const navItems = [
     { path: '/', icon: Home, label: 'Home', public: true },
@@ -45,21 +65,56 @@ export const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white shadow-lg transform transition-transform duration-300 z-40 ${
+        className={`fixed left-0 top-0 h-screen ${collapsed ? 'w-20' : 'w-64'} bg-gray-900 text-white shadow-lg transform transition-all duration-300 z-60 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:relative md:h-screen md:sticky md:top-0 overflow-y-auto`}
       >
         {/* Logo */}
-        <div className="p-6 border-b border-gray-700">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="p-4 border-b border-gray-700 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
             <MapPin className="w-8 h-8 text-indigo-400" />
-            <h1 className="text-xl font-bold">Trip Planner</h1>
+            {!collapsed && <h1 className="text-xl font-bold">Trip Planner</h1>}
           </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              className="p-1 rounded hover:bg-gray-800"
+            >
+              {collapsed ? <ChevronsRight className="w-5 h-5" /> : <ChevronsLeft className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+
+        <div className="p-4 border-b border-gray-700">
           {isAuthenticated && (
-            <>
-              <p className="text-sm text-gray-400">{user?.email}</p>
-              {isAdmin && <p className="text-xs text-indigo-400 font-semibold">Admin</p>}
-            </>
+            <div className={`flex flex-col gap-1 ${collapsed ? 'items-center' : ''}`}>
+              <p className={`text-sm text-gray-400 ${collapsed ? 'hidden' : 'block'}`}>{user?.email}</p>
+              {isAdmin && !collapsed && <p className="text-xs text-indigo-400 font-semibold">Admin</p>}
+              {/* Theme toggle displayed as icon when collapsed */}
+              <div className="mt-2">
+                <button
+                  onClick={toggleTheme}
+                  className="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-800"
+                  title="Toggle theme"
+                >
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {!collapsed && <span className="text-sm">{theme === 'dark' ? 'Light' : 'Dark'} mode</span>}
+                </button>
+              </div>
+            </div>
+          )}
+          {!isAuthenticated && (
+            <div className="mt-2">
+              <button
+                onClick={toggleTheme}
+                className="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-800"
+                title="Toggle theme"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {!collapsed && <span className="text-sm">{theme === 'dark' ? 'Light' : 'Dark'} mode</span>}
+              </button>
+            </div>
           )}
         </div>
 
@@ -81,14 +136,15 @@ export const Sidebar = () => {
                   navigate(item.path);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                className={`w-full flex items-center ${collapsed ? 'justify-center' : 'gap-3 px-4'} py-3 rounded-lg transition ${
                   isActive(item.path)
                     ? 'bg-indigo-600 text-white'
                     : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                 }`}
+                title={item.label}
               >
                 <Icon className="w-5 h-5" />
-                <span>{item.label}</span>
+                {!collapsed && <span>{item.label}</span>}
               </button>
             );
           })}
@@ -102,7 +158,7 @@ export const Sidebar = () => {
               className="w-full bg-red-600 hover:bg-red-700 text-white flex items-center gap-2 justify-center"
             >
               <LogOut className="w-4 h-4" />
-              Sign Out
+              {!collapsed && 'Sign Out'}
             </Button>
           </div>
         )}
