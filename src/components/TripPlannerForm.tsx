@@ -160,6 +160,25 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
     }
   }, [source, destinations, budget, startDate, endDate, startDate2, endDate2, startDate3, endDate3, destination2, destination3, travellers, onFormStateChange]);
 
+  // When Destination 2 is shown, default its start date to the end date of Destination 1
+  useEffect(() => {
+    if (showDestination2) {
+      if (endDate && (!startDate2 || startDate2 === "")) {
+        setStartDate2(endDate);
+      }
+    }
+    // only re-run when visibility or primary endDate changes
+  }, [showDestination2, endDate]);
+
+  // When Destination 3 is shown, default its start date to the end date of Destination 2
+  useEffect(() => {
+    if (showDestination3) {
+      if (endDate2 && (!startDate3 || startDate3 === "")) {
+        setStartDate3(endDate2);
+      }
+    }
+  }, [showDestination3, endDate2]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -259,9 +278,9 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           <div className="relative">
             <div className="w-full px-3 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-400/20 transition-all-smooth flex items-center gap-2 flex-wrap">
               {source && (
-                <div className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-gray-300 bg-gray-50">
+                <div className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
                   <span className="text-sm text-gray-900">{source}</span>
-                  <button type="button" onClick={() => setSource("")} className="p-0.5 hover:text-blue-500 transition-all">
+                  <button type="button" onClick={() => setSource("")} className="p-0.5 hover:text-blue-600 transition-all">
                     <X className="w-3 h-3" />
                   </button>
                 </div>
@@ -281,7 +300,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                     }
                   }
                 }}
-                className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2"
+                disabled={source.length > 0}
+                className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
               />
             </div>
             {sourceInput && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
@@ -396,31 +416,34 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              {destination2 && (
-                <div className="mb-3 inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
-                  <span className="text-sm text-gray-900">{destination2}</span>
-                  <button type="button" onClick={() => setDestination2("")} className="p-0.5 hover:text-blue-600 transition-all">
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
               <div className="relative">
-                <Input
-                  placeholder={t('destination_placeholder')}
-                  value={destination2Input}
-                  onChange={(e) => setDestination2Input(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const trimmed = destination2Input.trim();
-                      if (trimmed && trimmed !== destinations[0] && trimmed !== destination3) {
-                        setDestination2(trimmed);
-                        setDestination2Input("");
+                <div className="w-full px-3 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-400/20 transition-all-smooth flex items-center gap-2 flex-wrap">
+                  {destination2 && (
+                    <div className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
+                      <span className="text-sm text-gray-900">{destination2}</span>
+                      <button type="button" onClick={() => setDestination2("")} className="p-0.5 hover:text-blue-600 transition-all">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                  <input
+                    placeholder={t('destination_placeholder')}
+                    value={destination2Input}
+                    onChange={(e) => setDestination2Input(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const trimmed = destination2Input.trim();
+                        if (trimmed && trimmed !== destinations[0] && trimmed !== destination3) {
+                          setDestination2(trimmed);
+                          setDestination2Input("");
+                        }
                       }
-                    }
-                  }}
-                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
-                />
+                    }}
+                    disabled={destination2.length > 0}
+                    className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
+                  />
+                </div>
                 {destination2Input && (filteredDestination2Suggestions.length > 0 || loadingSuggestions) && (
                   <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
                     {loadingSuggestions ? (
@@ -475,32 +498,34 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 </button>
               </div>
 
-              {destination3 && (
-                <div className="mb-3 inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
-                  <span className="text-sm text-gray-900">{destination3}</span>
-                  <button type="button" onClick={() => setDestination3("")} className="p-0.5 hover:text-blue-600 transition-all">
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
-
               <div className="relative">
-                <Input
-                  placeholder={t('destination_placeholder')}
-                  value={destination3Input}
-                  onChange={(e) => setDestination3Input(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const trimmed = destination3Input.trim();
-                      if (trimmed && trimmed !== destinations[0] && trimmed !== destination2) {
-                        setDestination3(trimmed);
-                        setDestination3Input("");
+                <div className="w-full px-3 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-400/20 transition-all-smooth flex items-center gap-2 flex-wrap">
+                  {destination3 && (
+                    <div className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
+                      <span className="text-sm text-gray-900">{destination3}</span>
+                      <button type="button" onClick={() => setDestination3("")} className="p-0.5 hover:text-blue-600 transition-all">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                  <input
+                    placeholder={t('destination_placeholder')}
+                    value={destination3Input}
+                    onChange={(e) => setDestination3Input(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const trimmed = destination3Input.trim();
+                        if (trimmed && trimmed !== destinations[0] && trimmed !== destination2) {
+                          setDestination3(trimmed);
+                          setDestination3Input("");
+                        }
                       }
-                    }
-                  }}
-                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
-                />
+                    }}
+                    disabled={destination3.length > 0}
+                    className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
+                  />
+                </div>
                 {destination3Input && (filteredDestination3Suggestions.length > 0 || loadingSuggestions) && (
                   <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
                     {loadingSuggestions ? (
