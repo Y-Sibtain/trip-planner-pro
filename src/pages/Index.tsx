@@ -149,81 +149,81 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Feature 1 */}
-            <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 hover:border-blue-300 transition-all-smooth hover:shadow-lg cursor-pointer">
-              <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 transition-all">
+            <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all-smooth hover:shadow-lg cursor-pointer dark:bg-gray-800/50">
+              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
                 🏨
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Perfect Stays</h3>
-              <p className="text-gray-600">Handpicked accommodations that match your style and budget, from luxury resorts to cozy boutiques.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Perfect Stays</h3>
+              <p className="text-gray-600 dark:text-gray-400">Handpicked accommodations that match your style and budget, from luxury resorts to cozy boutiques.</p>
             </div>
 
             {/* Feature 2 */}
-            <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 hover:border-blue-300 transition-all-smooth hover:shadow-lg cursor-pointer">
-              <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 transition-all">
+            <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all-smooth hover:shadow-lg cursor-pointer dark:bg-gray-800/50">
+              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
                 🍽️
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Local Flavors</h3>
-              <p className="text-gray-600">Discover authentic dining experiences and local activities that capture the true essence of each destination.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Local Flavors</h3>
+              <p className="text-gray-600 dark:text-gray-400">Discover authentic dining experiences and local activities that capture the true essence of each destination.</p>
             </div>
 
             {/* Feature 3 */}
-            <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 hover:border-blue-300 transition-all-smooth hover:shadow-lg cursor-pointer">
-              <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 transition-all">
+            <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all-smooth hover:shadow-lg cursor-pointer dark:bg-gray-800/50">
+              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
                 🗺️
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Day-by-Day Plans</h3>
-              <p className="text-gray-600">Detailed itineraries with cost breakdowns, so you can explore confidently and stay within budget.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Day-by-Day Plans</h3>
+              <p className="text-gray-600 dark:text-gray-400">Detailed itineraries with cost breakdowns, so you can explore confidently and stay within budget.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-white">
+      <section className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-white dark:bg-gray-900">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-gray-600 text-lg">Three simple steps to your perfect trip</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">How It Works</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-lg">Three simple steps to your perfect trip</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative">
             {/* Step 1 */}
-            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 group hover:shadow-lg transition-all-smooth">
+            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50">
               <div className="absolute -top-6 -left-6 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                 1
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Tell Us Your Dreams</h3>
-              <p className="text-gray-600 mb-4">Select destinations, set your dates, and define your budget. Add as many as 3 destinations to explore.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Tell Us Your Dreams</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Select destinations, set your dates, and define your budget. Add as many as 3 destinations to explore.</p>
               <div className="flex gap-2 flex-wrap">
-                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">Destinations</span>
-                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">Budget</span>
-                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">Dates</span>
+                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Destinations</span>
+                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Budget</span>
+                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Dates</span>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 group hover:shadow-lg transition-all-smooth md:mt-8">
+            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50 md:mt-8">
               <div className="absolute -top-6 -left-6 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                 2
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">AI Plans Your Trip</h3>
-              <p className="text-gray-600 mb-4">Our AI creates personalized itineraries with flights, hotels, activities, and dining recommendations.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">AI Plans Your Trip</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Our AI creates personalized itineraries with flights, hotels, activities, and dining recommendations.</p>
               <div className="flex gap-2 flex-wrap">
-                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">AI Powered</span>
-                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">Personalized</span>
+                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">AI Powered</span>
+                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Personalized</span>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 group hover:shadow-lg transition-all-smooth">
+            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50">
               <div className="absolute -top-6 -left-6 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                 3
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Book & Explore</h3>
-              <p className="text-gray-600 mb-4">Review your perfect itinerary, save it for later, or book immediately with our secure payment.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Book & Explore</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Review your perfect itinerary, save it for later, or book immediately with our secure payment.</p>
               <div className="flex gap-2 flex-wrap">
-                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">Save</span>
-                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">Book</span>
+                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Save</span>
+                <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Book</span>
               </div>
             </div>
           </div>
@@ -231,11 +231,11 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-gray-50">
+      <section className="relative w-full py-20 md:py-32 px-4 md:px-8 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-4xl mx-auto">
-          <div className="glass p-8 md:p-12 rounded-lg backdrop-blur-sm border border-gray-200 text-center shadow-md">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t('hero_title')}</h2>
-            <p className="text-gray-600 mb-8 text-lg">{t('hero_sub')}</p>
+          <div className="glass p-8 md:p-12 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 text-center shadow-md dark:bg-gray-800/50">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{t('hero_title')}</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">{t('hero_sub')}</p>
             <Button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold px-8 py-6 rounded-lg text-lg hover:shadow-lg transition-all-smooth">
               {t('plan_my_trip')}
             </Button>
@@ -245,91 +245,91 @@ const Index = () => {
 
       {/* AI Dialog */}
       <Dialog open={aiOpen} onOpenChange={setAiOpen}>
-        <DialogContent className="max-h-screen overflow-y-auto max-w-2xl glass border-gray-200 shadow-lg">
+        <DialogContent className="max-h-screen overflow-y-auto max-w-2xl glass border-gray-200 dark:border-gray-700 shadow-lg dark:bg-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-gray-900">Your Perfect Trip Package ✈️</DialogTitle>
-            <DialogDescription className="text-gray-600">AI-generated itinerary tailored to your preferences and budget</DialogDescription>
+            <DialogTitle className="text-2xl text-gray-900 dark:text-white">Your Perfect Trip Package ✈️</DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">AI-generated itinerary tailored to your preferences and budget</DialogDescription>
           </DialogHeader>
 
           {packageResult ? (
             <div className="space-y-4 mt-4">
-              <div className="p-4 rounded-lg border border-gray-300 bg-blue-50">
-                <div className="font-bold text-xl text-blue-900 mb-2">📍 {packageResult.destination}</div>
-                <div className="text-sm space-y-2 text-gray-700">
-                  <div>📅 Duration: <strong className="text-blue-600">{packageResult.days} days</strong> | 👥 Travelers: <strong className="text-blue-600">{packageResult.travellers}</strong></div>
-                  <div>💰 Total Budget: <strong className="text-blue-600">₨{packageResult.totalBudgetPKR.toLocaleString()}</strong></div>
+              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
+                <div className="font-bold text-xl text-blue-900 dark:text-blue-300 mb-2">📍 {packageResult.destination}</div>
+                <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
+                  <div>📅 Duration: <strong className="text-blue-600 dark:text-blue-400">{packageResult.days} days</strong> | 👥 Travelers: <strong className="text-blue-600 dark:text-blue-400">{packageResult.travellers}</strong></div>
+                  <div>💰 Total Budget: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.totalBudgetPKR.toLocaleString()}</strong></div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg border border-gray-300 bg-gray-50">
-                <div className="font-bold text-gray-900 mb-2">✈️ Flight</div>
-                <div className="text-sm space-y-1 text-gray-700">
-                  <div>Airline: <span className="text-blue-600">{packageResult.flights.airline}</span></div>
+              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
+                <div className="font-bold text-gray-900 dark:text-white mb-2">✈️ Flight</div>
+                <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
+                  <div>Airline: <span className="text-blue-600 dark:text-blue-400">{packageResult.flights.airline}</span></div>
                   <div>Route: {packageResult.flights.departure} → {packageResult.flights.arrival}</div>
-                  <div>Price: <strong className="text-blue-600">₨{packageResult.flights.pricePerPersonPKR.toLocaleString()}</strong> per person</div>
+                  <div>Price: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.flights.pricePerPersonPKR.toLocaleString()}</strong> per person</div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg border border-gray-300 bg-gray-50">
-                <div className="font-bold text-gray-900 mb-2">🏨 Accommodation</div>
-                <div className="text-sm space-y-1 text-gray-700">
-                  <div>Hotel: <span className="text-blue-600">{packageResult.hotel.name}</span> ({packageResult.hotel.stars} ⭐)</div>
-                  <div>Rate: <strong className="text-blue-600">₨{packageResult.hotel.pricePerNightPKR.toLocaleString()}</strong> per night</div>
+              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
+                <div className="font-bold text-gray-900 dark:text-white mb-2">🏨 Accommodation</div>
+                <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
+                  <div>Hotel: <span className="text-blue-600 dark:text-blue-400">{packageResult.hotel.name}</span> ({packageResult.hotel.stars} ⭐)</div>
+                  <div>Rate: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.hotel.pricePerNightPKR.toLocaleString()}</strong> per night</div>
                   <div>Total Stay: <strong>₨{packageResult.hotel.totalStayPKR.toLocaleString()}</strong></div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg border border-gray-300 bg-blue-50">
-                <div className="font-bold text-gray-900 mb-3">💵 Budget Breakdown</div>
-                <div className="text-sm space-y-2 text-gray-700">
+              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
+                <div className="font-bold text-gray-900 dark:text-white mb-3">💵 Budget Breakdown</div>
+                <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
                   <div className="flex justify-between">
                     <span>Flights:</span>
-                    <strong className="text-blue-600">₨{packageResult.budgetBreakdown.flights.toLocaleString()}</strong>
+                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.flights.toLocaleString()}</strong>
                   </div>
                   <div className="flex justify-between">
                     <span>Accommodation:</span>
-                    <strong className="text-blue-600">₨{packageResult.budgetBreakdown.accommodation.toLocaleString()}</strong>
+                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.accommodation.toLocaleString()}</strong>
                   </div>
                   <div className="flex justify-between">
                     <span>Meals:</span>
-                    <strong className="text-blue-600">₨{packageResult.budgetBreakdown.meals.toLocaleString()}</strong>
+                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.meals.toLocaleString()}</strong>
                   </div>
                   <div className="flex justify-between">
                     <span>Activities:</span>
-                    <strong className="text-blue-600">₨{packageResult.budgetBreakdown.activities.toLocaleString()}</strong>
+                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.activities.toLocaleString()}</strong>
                   </div>
                   <div className="flex justify-between">
                     <span>Transport:</span>
-                    <strong className="text-blue-600">₨{packageResult.budgetBreakdown.transport.toLocaleString()}</strong>
+                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.transport.toLocaleString()}</strong>
                   </div>
-                  <div className="flex justify-between pt-2 border-t border-gray-300">
+                  <div className="flex justify-between pt-2 border-t border-gray-300 dark:border-gray-600">
                     <span>Contingency:</span>
-                    <strong className="text-blue-600">₨{packageResult.budgetBreakdown.contingency.toLocaleString()}</strong>
+                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.contingency.toLocaleString()}</strong>
                   </div>
-                  <div className="flex justify-between font-bold pt-2 border-t border-gray-300 text-lg text-blue-600">
+                  <div className="flex justify-between font-bold pt-2 border-t border-gray-300 dark:border-gray-600 text-lg text-blue-600 dark:text-blue-400">
                     <span>Total:</span>
                     <span>₨{packageResult.budgetBreakdown.total.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg border border-gray-300 bg-gray-50">
-                <div className="font-bold text-gray-900 mb-3">📅 Day-by-Day Itinerary</div>
-                <div className="text-sm space-y-2 text-gray-700">
+              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
+                <div className="font-bold text-gray-900 dark:text-white mb-3">📅 Day-by-Day Itinerary</div>
+                <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
                   {packageResult.itinerary.slice(0, 3).map((day) => (
                     <div key={day.day} className="flex justify-between">
                       <span>Day {day.day}: <strong>{day.activity}</strong></span>
-                      {day.estimatedCostPKR > 0 && <strong className="text-blue-600">₨{day.estimatedCostPKR.toLocaleString()}</strong>}
+                      {day.estimatedCostPKR > 0 && <strong className="text-blue-600 dark:text-blue-400">₨{day.estimatedCostPKR.toLocaleString()}</strong>}
                     </div>
                   ))}
                   {packageResult.itinerary.length > 3 && (
-                    <div className="text-xs italic text-gray-600 pt-2">+ {packageResult.itinerary.length - 3} more days</div>
+                    <div className="text-xs italic text-gray-600 dark:text-gray-500 pt-2">+ {packageResult.itinerary.length - 3} more days</div>
                   )}
                 </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => setAiOpen(false)} className="border-gray-300 text-gray-700 hover:bg-gray-100">
+                <Button variant="outline" onClick={() => setAiOpen(false)} className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                   Decline
                 </Button>
                 <Button onClick={bookAllPackage} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold hover:shadow-lg transition-all-smooth">
@@ -338,13 +338,13 @@ const Index = () => {
               </div>
             </div>
           ) : (
-            <div className="text-sm text-gray-600 py-8 text-center">No package available.</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400 py-8 text-center">No package available.</div>
           )}
         </DialogContent>
       </Dialog>
 
       {/* Footer */}
-      <footer className="relative w-full border-t border-gray-200 bg-white py-12 md:py-16 px-4 md:px-8">
+      <footer className="relative w-full border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-12 md:py-16 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div>
@@ -352,46 +352,46 @@ const Index = () => {
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-md flex items-center justify-center text-white font-bold">
                   ✈
                 </div>
-                <span className="font-bold text-lg text-blue-600">Trip Planner</span>
+                <span className="font-bold text-lg text-blue-600 dark:text-blue-400">Trip Planner</span>
               </div>
-              <p className="text-sm text-gray-600">AI-powered travel planning for the modern explorer.</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">AI-powered travel planning for the modern explorer.</p>
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">Product</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-4">Product</h4>
               <ul className="space-y-2 text-sm">
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all" onClick={() => navigate('/city-planner')}>Itineraries</span></li>
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all" onClick={() => navigate('/destinations')}>Destinations</span></li>
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all" onClick={() => navigate('/saved-itineraries')}>Saved Plans</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all" onClick={() => navigate('/city-planner')}>Itineraries</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all" onClick={() => navigate('/destinations')}>Destinations</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all" onClick={() => navigate('/saved-itineraries')}>Saved Plans</span></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">Support</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-4">Support</h4>
               <ul className="space-y-2 text-sm">
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all">Help & FAQs</span></li>
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all">Contact</span></li>
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all">Status</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">Help & FAQs</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">Contact</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">Status</span></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">Legal</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all">Privacy</span></li>
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all">Terms</span></li>
-                <li><span className="text-gray-600 hover:text-blue-600 cursor-pointer transition-all">Cookie Policy</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">Privacy</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">Terms</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">Cookie Policy</span></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
               <p>© {new Date().getFullYear()} Trip Planner. All rights reserved.</p>
               <div className="flex gap-6">
-                <span className="hover:text-blue-600 cursor-pointer transition-all">Twitter</span>
-                <span className="hover:text-blue-600 cursor-pointer transition-all">Instagram</span>
-                <span className="hover:text-blue-600 cursor-pointer transition-all">LinkedIn</span>
+                <span className="hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">Twitter</span>
+                <span className="hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">Instagram</span>
+                <span className="hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all">LinkedIn</span>
               </div>
             </div>
           </div>

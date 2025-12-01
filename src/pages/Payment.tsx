@@ -128,32 +128,32 @@ const Payment = () => {
 
   if (!booking) {
     return (
-      <div className="w-full min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="w-full min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-4">
         <div className="text-center">
           <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg animate-pulse mx-auto mb-4 flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <p className="text-gray-600 text-lg">Loading payment details...</p>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">Loading payment details...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full min-h-screen bg-white px-4 py-12 md:py-20 relative overflow-hidden">
+    <div className="w-full min-h-screen bg-white dark:bg-gray-900 px-4 py-12 md:py-20 relative overflow-hidden">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20 dark:opacity-10"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10 dark:opacity-5"></div>
       </div>
 
       <div className="relative z-10 max-w-md mx-auto">
-        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 p-6 md:p-8 shadow-md">
+        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 p-6 md:p-8 shadow-md dark:bg-gray-800/50">
           {/* Header with Back on right */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Payment</h1>
-              <p className="text-gray-600 text-sm">Secure payment processing</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Complete Payment</h1>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Secure payment processing</p>
             </div>
             <Button
               onClick={() => navigate('/city-planner', { state: { booking, openSummary: true } })}
@@ -164,26 +164,26 @@ const Payment = () => {
           </div>
 
           {/* Demo Warning */}
-          <div className="mb-6 p-4 rounded-lg border border-blue-200 bg-blue-50">
+          <div className="mb-6 p-4 rounded-lg border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20">
             <div className="flex gap-3">
               <div className="text-2xl">🧪</div>
-              <div className="text-sm text-blue-700">
+              <div className="text-sm text-blue-700 dark:text-blue-300">
                 <strong>Demo Mode:</strong> Use any 16-digit card, future expiry date, and any 3-digit CVV.
               </div>
             </div>
           </div>
 
           {/* Booking Summary */}
-          <div className="mb-8 rounded-lg border border-gray-300 p-4 space-y-3 bg-gray-50">
-            <p className="text-gray-700 text-sm font-semibold">Order Summary</p>
+          <div className="mb-8 rounded-lg border border-gray-300 dark:border-gray-700 p-4 space-y-3 bg-gray-50 dark:bg-gray-800/30">
+            <p className="text-gray-700 dark:text-gray-300 text-sm font-semibold">Order Summary</p>
             <div className="space-y-2">
               <div className="flex justify-between items-start">
-                <span className="text-gray-700">{booking.itinerary_title}</span>
-                <span className="font-bold text-blue-600">PKR {Number(booking.total_amount).toLocaleString()}</span>
+                <span className="text-gray-700 dark:text-gray-300">{booking.itinerary_title}</span>
+                <span className="font-bold text-blue-600 dark:text-blue-400">PKR {Number(booking.total_amount).toLocaleString()}</span>
               </div>
-              <div className="border-t border-gray-300 pt-2 flex justify-between items-center">
-                <span className="font-bold text-gray-900">Total Amount</span>
-                <span className="text-2xl font-bold text-blue-600">PKR {Number(booking.total_amount).toLocaleString()}</span>
+              <div className="border-t border-gray-300 dark:border-gray-700 pt-2 flex justify-between items-center">
+                <span className="font-bold text-gray-900 dark:text-white">Total Amount</span>
+                <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">PKR {Number(booking.total_amount).toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -192,20 +192,20 @@ const Payment = () => {
           <form onSubmit={handlePayment} className="space-y-5">
             {/* Cardholder Name */}
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">Cardholder Name</label>
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Cardholder Name</label>
               <input
                 type="text"
                 placeholder="John Doe"
                 value={cardData.cardName}
                 onChange={(e) => setCardData({ ...cardData, cardName: e.target.value })}
                 required
-                className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                className="w-full px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:bg-gray-700/50 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
               />
             </div>
 
             {/* Card Number */}
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">Card Number</label>
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Card Number</label>
               <input
                 type="text"
                 placeholder="1234 5678 9012 3456"
@@ -215,14 +215,14 @@ const Payment = () => {
                   setCardData({ ...cardData, cardNumber: val });
                 }}
                 required
-                className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
+                className="w-full px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:bg-gray-700/50 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
               />
             </div>
 
             {/* Expiry & CVV */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Expiry (MM/YY)</label>
+                <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Expiry (MM/YY)</label>
                 <input
                   type="text"
                   placeholder="12/25"
@@ -235,18 +235,18 @@ const Payment = () => {
                     setCardData({ ...cardData, expiryDate: val });
                   }}
                   required
-                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
+                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:bg-gray-700/50 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">CVV</label>
+                <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">CVV</label>
                 <input
                   type="password"
                   placeholder="123"
                   value={cardData.cvv}
                   onChange={(e) => setCardData({ ...cardData, cvv: e.target.value.replace(/\D/g, '').slice(0, 3) })}
                   required
-                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
+                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:bg-gray-700/50 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
                 />
               </div>
             </div>
@@ -263,7 +263,7 @@ const Payment = () => {
           </form>
 
           {/* Security Note */}
-          <p className="text-xs text-gray-600 text-center mt-6">🔒 Payments are encrypted and secure</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 text-center mt-6">🔒 Payments are encrypted and secure</p>
         </div>
       </div>
     </div>
