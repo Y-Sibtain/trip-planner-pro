@@ -106,6 +106,31 @@ const CityPlanner = () => {
     }
   }, []);
 
+  // Open summary when navigated back from Payment or when booking state is provided
+  useEffect(() => {
+    const state = location.state as any;
+    if (!state) return;
+
+    // If Payment navigated back with booking, rehydrate selection and open summary
+    if (state.booking) {
+      const b = state.booking;
+      try {
+        if (b.plan?.city) setSelectedCity(b.plan.city);
+        if (b.plan?.numPeople) setNumPeople(b.plan.numPeople);
+        if (b.plan?.numDays) setNumDays(b.plan.numDays);
+        if (b.plan?.flight) setSelectedFlight(b.plan.flight);
+        if (b.plan?.hotel) setSelectedHotel(b.plan.hotel?.id || b.plan.hotel?.id || null);
+        setStep('plan');
+        setShowSummary(true);
+      } catch (err) {
+        console.warn('Failed to rehydrate booking state:', err);
+        setShowSummary(true);
+      }
+    } else if (state.openSummary) {
+      setShowSummary(true);
+    }
+  }, [location.state]);
+
   const handleCitySelect = (city: string) => {
     setSelectedCity(city);
     setStep("flight");

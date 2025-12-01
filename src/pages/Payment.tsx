@@ -149,10 +149,18 @@ const Payment = () => {
 
       <div className="relative z-10 max-w-md mx-auto">
         <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 p-6 md:p-8 shadow-md">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Payment</h1>
-            <p className="text-gray-600 text-sm">Secure payment processing</p>
+          {/* Header with Back on right */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Payment</h1>
+              <p className="text-gray-600 text-sm">Secure payment processing</p>
+            </div>
+            <Button
+              onClick={() => navigate('/city-planner', { state: { booking, openSummary: true } })}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
+            >
+              ← Back
+            </Button>
           </div>
 
           {/* Demo Warning */}
