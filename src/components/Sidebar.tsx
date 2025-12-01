@@ -129,7 +129,7 @@ export const Sidebar = () => {
         {/* Sign Out Button & Theme Switch */}
         <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
           {/* Language & Theme Switch Side by Side */}
-          <div className="flex items-center gap-2 p-3 border-b border-gray-200 dark:border-gray-700">
+          <div className={`flex items-center ${isCollapsed ? 'gap-1 p-2 flex-col' : 'gap-2 p-3'} border-b border-gray-200 dark:border-gray-700`}>
             {/* Language selector */}
             {isCollapsed ? (
               <button
@@ -140,9 +140,9 @@ export const Sidebar = () => {
                   setLang(next);
                 }}
                 title={`Language: ${lang} (click to cycle)`}
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0"
+                className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors w-full flex items-center justify-center"
               >
-                <Globe className="w-5 h-5" />
+                <Globe className="w-4 h-4" />
               </button>
             ) : (
               <select
