@@ -329,7 +329,7 @@ const Index = () => {
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => setAiOpen(false)} className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <Button onClick={() => setAiOpen(false)} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold hover:shadow-lg transition-all-smooth">
                   Decline
                 </Button>
                 <Button onClick={bookAllPackage} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold hover:shadow-lg transition-all-smooth">
