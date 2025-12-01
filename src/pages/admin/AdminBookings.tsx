@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,6 +30,8 @@ const AdminBookings = () => {
   const [bookings, setBookings] = useState<ConfirmedBooking[]>([]);
   const [loading, setLoading] = useState(false);
   const [userEmails, setUserEmails] = useState<Record<string, string>>({});
+  const [selectedBooking, setSelectedBooking] = useState<ConfirmedBooking | null>(null);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -50,25 +53,13 @@ const AdminBookings = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Failed to load bookings - Details:', error.code, error.message, error.details, error.hint);
+        console.error('Failed to load bookings:', error);
         toast({ title: 'Error', description: `Failed to load bookings: ${error.message}`, variant: 'destructive' });
         return;
       }
 
       console.log('Bookings loaded:', data);
       setBookings(data || []);
-
-      // Fetch user emails for each booking
-      const emails: Record<string, string> = {};
-      if (data) {
-        for (const booking of data) {
-          const { data: userData } = await supabase.auth.admin.getUserById(booking.user_id);
-          if (userData?.user?.email) {
-            emails[booking.user_id] = userData.user.email;
-          }
-        }
-        setUserEmails(emails);
-      }
     } catch (err) {
       console.error('Fetch bookings error:', err);
       toast({ title: 'Error', description: 'Failed to load bookings.', variant: 'destructive' });
@@ -85,13 +76,15 @@ const AdminBookings = () => {
         .eq('id', bookingId);
 
       if (error) {
-        toast({ title: 'Error', description: 'Failed to update booking.', variant: 'destructive' });
+        console.error('Approve error:', error);
+        toast({ title: 'Error', description: `Failed to update booking: ${error.message}`, variant: 'destructive' });
         return;
       }
 
       toast({ title: 'Success', description: 'Booking marked as processed.' });
-      fetchBookings();
+      await fetchBookings();
     } catch (err) {
+      console.error('Error approving booking:', err);
       toast({ title: 'Error', description: 'Failed to update booking.', variant: 'destructive' });
     }
   };
@@ -106,19 +99,22 @@ const AdminBookings = () => {
         .eq('id', bookingId);
 
       if (error) {
-        toast({ title: 'Error', description: 'Failed to reject booking.', variant: 'destructive' });
+        console.error('Reject error:', error);
+        toast({ title: 'Error', description: `Failed to reject booking: ${error.message}`, variant: 'destructive' });
         return;
       }
 
       toast({ title: 'Rejected', description: 'Booking has been rejected.' });
-      fetchBookings();
+      await fetchBookings();
     } catch (err) {
+      console.error('Error rejecting booking:', err);
       toast({ title: 'Error', description: 'Failed to reject booking.', variant: 'destructive' });
     }
   };
 
   const handleViewDetails = (booking: ConfirmedBooking) => {
-    alert(`Booking Details:\n\nID: ${booking.id}\nUser Email: ${userEmails[booking.user_id] || 'N/A'}\nAmount: PKR ${booking.total_amount}\nTransaction: ${booking.transaction_id}\nCard Last 4: ${booking.card_last_four}\nStatus: ${booking.status}`);
+    setSelectedBooking(booking);
+    setShowDetailsDialog(true);
   };
 
   if (adminLoading) {
@@ -146,7 +142,7 @@ const AdminBookings = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>User Email</TableHead>
+                    <TableHead>User ID</TableHead>
                     <TableHead>Itinerary</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Transaction ID</TableHead>
@@ -159,7 +155,7 @@ const AdminBookings = () => {
                 <TableBody>
                   {bookings.map((booking) => (
                     <TableRow key={booking.id}>
-                      <TableCell className="font-medium">{userEmails[booking.user_id] || 'Loading...'}</TableCell>
+                      <TableCell className="font-mono text-sm">{booking.user_id.slice(0, 8)}...</TableCell>
                       <TableCell>{booking.itinerary_title}</TableCell>
                       <TableCell>PKR {Number(booking.total_amount).toFixed(2)}</TableCell>
                       <TableCell className="text-sm font-mono">{booking.transaction_id}</TableCell>
@@ -212,6 +208,59 @@ const AdminBookings = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Booking Details Dialog */}
+      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Booking Details</DialogTitle>
+            <DialogDescription>Complete information about this booking</DialogDescription>
+          </DialogHeader>
+
+          {selectedBooking && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Booking ID</p>
+                  <p className="font-mono text-sm">{selectedBooking.id}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">User ID</p>
+                  <p className="font-mono text-sm">{selectedBooking.user_id}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Itinerary</p>
+                  <p className="font-semibold">{selectedBooking.itinerary_title}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Amount</p>
+                  <p className="font-semibold">PKR {Number(selectedBooking.total_amount).toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Transaction ID</p>
+                  <p className="font-mono text-sm">{selectedBooking.transaction_id}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Card Last 4</p>
+                  <p className="font-mono text-sm">****{selectedBooking.card_last_four}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Status</p>
+                  <p className="font-semibold">{selectedBooking.status}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Payment Status</p>
+                  <p className="font-semibold">{selectedBooking.payment_status}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Created At</p>
+                  <p className="text-sm">{new Date(selectedBooking.created_at).toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
