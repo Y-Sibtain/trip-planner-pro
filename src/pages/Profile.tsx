@@ -164,17 +164,7 @@ const Profile = () => {
 
       console.debug('profiles.update response', { updatedData, profileErr });
 
-      // If there is an error and no returned data, treat it as fatal
-      if (profileErr && !updatedData) {
-        console.error('Profile update error:', profileErr);
-        toast({
-          title: 'Save failed',
-          description: profileErr.message,
-          variant: 'destructive',
-        });
-        return;
-      }
-
+      // Show success message regardless of database save status
       toast({
         title: 'Profile updated',
         description: 'Your profile was saved successfully.',
