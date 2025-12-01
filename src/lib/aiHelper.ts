@@ -48,6 +48,9 @@ export interface TripPackage {
   itinerary: ItineraryDay[];
   budgetBreakdown: BudgetBreakdown;
   notes: string[];
+  affordable: boolean;
+  affordabilityNotes: string[];
+  alternatives?: string[];
 }
 
 // Mock data for flights and hotels by destination
@@ -124,19 +127,85 @@ export function generateTripPackage(data: TripData): TripPackage {
 
   // Get flight price
   const flightPrice = flightPrices[dest as keyof typeof flightPrices] || 50000;
-
-  // Get hotel
+  // Get hotel options for destination
   const hotelOptions = hotelsByDestination[dest as keyof typeof hotelsByDestination] || hotelsByDestination["Dubai"];
-  const hotelData = hotelOptions[recommendedStars] || hotelOptions[3];
-  const hotelPerNight = hotelData.pricePerNight;
 
-  // Calculate budget allocation
-  const flightsTotal = flightPrice * travellers;
-  const hotelTotal = hotelPerNight * (days - 1) * travellers; // -1 because typically last day is travel day
-  const mealsCost = days * 3000 * travellers; // ₨3000 per person per day for meals
-  const activitiesCost = Math.max(0, (budgetNum - flightsTotal - hotelTotal - mealsCost) * 0.25);
-  const transportCost = Math.max(0, (budgetNum - flightsTotal - hotelTotal - mealsCost) * 0.1);
-  const contingency = Math.max(0, budgetNum - flightsTotal - hotelTotal - mealsCost - activitiesCost - transportCost);
+  // Helper to compute totals for a given star hotel
+  const computeTotalsForStar = (star: number) => {
+    const hd = hotelOptions[star] || hotelOptions[3];
+    const perNight = hd.pricePerNight;
+    const hotelTotalLocal = perNight * (days - 1) * travellers;
+    const flightsTotalLocal = flightPrice * travellers;
+    const mealsCostLocal = days * 3000 * travellers;
+    const coreTotal = flightsTotalLocal + hotelTotalLocal + mealsCostLocal;
+    return { hd, perNight, hotelTotalLocal, flightsTotalLocal, mealsCostLocal, coreTotal };
+  };
+
+  // Start with recommended stars and try to fit core costs into budget by downgrading if needed
+  let chosenStar = recommendedStars;
+  let chosenHotelData = hotelOptions[chosenStar] || hotelOptions[3];
+  let flightsTotal = flightPrice * travellers;
+  let hotelTotal = chosenHotelData.pricePerNight * (days - 1) * travellers;
+  let mealsCost = days * 3000 * travellers;
+  let coreTotal = flightsTotal + hotelTotal + mealsCost;
+  const affordabilityNotes: string[] = [];
+  const alternatives: string[] = [];
+  let affordable = true;
+
+  if (coreTotal > budgetNum) {
+    // Attempt downgrades (recommendedStars down to 3)
+    let fit = false;
+    for (let s = recommendedStars; s >= 3; s--) {
+      const t = computeTotalsForStar(s);
+      if (t.coreTotal <= budgetNum) {
+        chosenStar = s;
+        chosenHotelData = t.hd;
+        flightsTotal = t.flightsTotalLocal;
+        hotelTotal = t.hotelTotalLocal;
+        mealsCost = t.mealsCostLocal;
+        coreTotal = t.coreTotal;
+        if (s < recommendedStars) {
+          affordabilityNotes.push(`To fit your budget, accommodation was downgraded from ${recommendedStars}★ to ${s}★ (${t.hd.name}).`);
+        }
+        fit = true;
+        break;
+      }
+    }
+
+    if (!fit) {
+      // Even cheapest hotel doesn't fit with flights + meals. Calculate minimum possible and shortfall.
+      affordable = false;
+      
+      // Compute minimum possible: flights + cheapest hotel (3 stars) + meals
+      const minHotelOption = hotelOptions[3] || { name: "Budget Hotel", pricePerNight: 5000 };
+      const minHotelCost = minHotelOption.pricePerNight * (days - 1) * travellers;
+      const minCoreTotal = flightsTotal + minHotelCost + mealsCost;
+      const minShortfall = Math.max(0, minCoreTotal - budgetNum);
+      
+      if (flightsTotal <= budgetNum) {
+        affordabilityNotes.push("Your budget doesn't cover flights + accommodation + meals for the selected dates.");
+        affordabilityNotes.push(`Minimum trip needed: ₨${minCoreTotal.toLocaleString()} (flights + cheapest hotel + meals).`);
+        affordabilityNotes.push(`You need ₨${minShortfall.toLocaleString()} more to book the minimum possible trip.`);
+        alternatives.push(`Flights only: ₨${flightsTotal.toLocaleString()} (this fits your budget).`);
+      } else {
+        const shortfall = flightsTotal - budgetNum;
+        affordabilityNotes.push("Your budget is too low to cover basic flight costs for these travellers and dates.");
+        affordabilityNotes.push(`You need at least an additional ₨${shortfall.toLocaleString()} to cover flights.`);
+        alternatives.push(`Minimum needed for flights: ₨${flightsTotal.toLocaleString()}`);
+      }
+    }
+  }
+
+  // Prepare activity/transport/contingency allocations only if affordable
+  let activitiesCost = 0;
+  let transportCost = 0;
+  let contingency = 0;
+  if (affordable) {
+    const remaining = Math.max(0, budgetNum - (flightsTotal + hotelTotal + mealsCost));
+    activitiesCost = Math.floor(remaining * 0.25);
+    transportCost = Math.floor(remaining * 0.1);
+    contingency = Math.floor(remaining - activitiesCost - transportCost);
+  }
 
   // Generate itinerary
   const activities = sampleActivities[dest as keyof typeof sampleActivities] || sampleActivities["Dubai"];
@@ -153,11 +222,19 @@ export function generateTripPackage(data: TripData): TripPackage {
 
   const notes: string[] = [];
   notes.push(`✈️ Flight: ${data.source || "Islamabad"} → ${dest}`);
-  notes.push(`🏨 Hotel: ${hotelData.name} (${recommendedStars} stars)`);
+  notes.push(`🏨 Hotel: ${chosenHotelData.name} (${chosenStar} stars)`);
   notes.push(`📅 Duration: ${days} days, ${travellers} ${travellers === 1 ? "person" : "people"}`);
   notes.push(`💰 Total Budget: ₨${budgetNum.toLocaleString()}`);
 
   const breakdownTotal = flightsTotal + hotelTotal + mealsCost + activitiesCost + transportCost + contingency;
+
+  if (affordabilityNotes.length === 0 && chosenStar < recommendedStars) {
+    affordabilityNotes.push(`Accommodation downgraded to ${chosenStar}★ to fit your budget.`);
+  }
+
+  if (!affordable && affordabilityNotes.length === 0) {
+    affordabilityNotes.push("We could not create a complete package within your budget. See alternatives provided.");
+  }
 
   return {
     destination: dest,
@@ -172,9 +249,9 @@ export function generateTripPackage(data: TripData): TripPackage {
       pricePerPersonPKR: flightPrice,
     },
     hotel: {
-      name: hotelData.name,
-      stars: recommendedStars,
-      pricePerNightPKR: hotelPerNight,
+      name: chosenHotelData.name,
+      stars: chosenStar,
+      pricePerNightPKR: chosenHotelData.pricePerNight,
       totalStayPKR: hotelTotal,
     },
     itinerary,
@@ -188,6 +265,9 @@ export function generateTripPackage(data: TripData): TripPackage {
       total: Math.floor(breakdownTotal),
     },
     notes,
+    affordable,
+    affordabilityNotes,
+    alternatives: alternatives.length ? alternatives : undefined,
   };
 }
 

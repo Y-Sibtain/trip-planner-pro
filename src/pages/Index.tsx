@@ -264,6 +264,28 @@ const Index = () => {
                 </div>
               </div>
 
+              {/* Affordability Notes / Alternatives */}
+              {packageResult.affordabilityNotes && packageResult.affordabilityNotes.length > 0 && (
+                <div className="border rounded-lg p-3 bg-yellow-50">
+                  <div className="font-semibold mb-2">⚠️ Budget Notes</div>
+                  <div className="text-sm space-y-1 text-muted-foreground">
+                    {packageResult.affordabilityNotes.map((n, idx) => (
+                      <div key={idx}>{n}</div>
+                    ))}
+                    {packageResult.alternatives && packageResult.alternatives.length > 0 && (
+                      <div className="mt-2">
+                        <div className="font-medium">Options within your budget:</div>
+                        <ul className="list-disc ml-5 text-sm text-muted-foreground">
+                          {packageResult.alternatives.map((a, i) => (
+                            <li key={i}>{a}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Itinerary Preview */}
               <div className="border rounded-lg p-3">
                 <div className="font-semibold mb-2">📅 Day-by-Day Itinerary</div>

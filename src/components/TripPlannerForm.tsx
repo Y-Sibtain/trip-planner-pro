@@ -352,7 +352,35 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" onClick={onAskAI}>
+            <Button 
+              type="button" 
+              onClick={() => {
+                // Validate mandatory fields before calling onAskAI
+                if (!source.trim()) {
+                  toast({ title: "Validation error", description: "Please enter a source city or airport.", variant: "destructive" });
+                  return;
+                }
+                if (destinations.length === 0) {
+                  toast({ title: "Validation error", description: "Select at least one destination.", variant: "destructive" });
+                  return;
+                }
+                if (!startDate || !endDate) {
+                  toast({ title: "Validation error", description: "Please enter both start and end dates.", variant: "destructive" });
+                  return;
+                }
+                if (!travellers || travellers.trim() === "") {
+                  toast({ title: "Validation error", description: "Please enter the number of travellers.", variant: "destructive" });
+                  return;
+                }
+                const parsedTravellers = Number(travellers);
+                if (Number.isNaN(parsedTravellers) || parsedTravellers < 1) {
+                  toast({ title: "Validation error", description: "Enter a valid number of travellers (minimum 1).", variant: "destructive" });
+                  return;
+                }
+                // All mandatory fields are filled; call onAskAI
+                onAskAI?.();
+              }}
+            >
               Ask AI
             </Button>
             <ShatterButton shatterColor="#06b6d4">
