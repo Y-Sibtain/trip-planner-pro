@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import TripPlannerForm, { TripFormData } from "@/components/TripPlannerForm";
 import { Plane } from "lucide-react";
 import { UserMenu } from "@/components/UserMenu";
-import NotificationsMenu from "@/components/NotificationsMenu";
 import { useBooking } from "@/contexts/BookingContext";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -108,7 +107,6 @@ const Index = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center pointer-events-auto">
           <div></div>
           <div className="flex items-center gap-2 sm:gap-4">
-            <NotificationsMenu />
             <UserMenu />
           </div>
         </div>
