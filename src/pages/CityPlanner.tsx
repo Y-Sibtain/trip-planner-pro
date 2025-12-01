@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -59,6 +59,7 @@ const hotels = {
 
 const CityPlanner = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [step, setStep] = useState<"city" | "flight" | "hotel" | "plan">("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [numPeople, setNumPeople] = useState<number>(1);
@@ -292,9 +293,26 @@ const CityPlanner = () => {
               )}
 
               <div className="flex gap-3 pt-4">
-                <Link to="/payment" className="flex-1">
-                  <Button className="w-full">Proceed to Payment</Button>
-                </Link>
+                <Button 
+                  className="flex-1"
+                  onClick={() => {
+                    const hotelPrice = parseInt(cityHotels.find(h => h.id === selectedHotel)?.price?.replace(/\D/g, '') || '0');
+                    const bookingData = {
+                      itinerary_title: `${selectedCity} - ${numDays} Days`,
+                      total_amount: ((selectedFlight?.price || 0) * numPeople) + (hotelPrice * numDays),
+                      plan: {
+                        city: selectedCity,
+                        numPeople,
+                        numDays,
+                        flight: selectedFlight,
+                        hotel: cityHotels.find(h => h.id === selectedHotel),
+                      },
+                    };
+                    navigate('/payment', { state: { booking: bookingData } });
+                  }}
+                >
+                  Proceed to Payment
+                </Button>
                 <Button variant="outline" onClick={() => setShowSummary(false)}>
                   Edit Trip
                 </Button>
