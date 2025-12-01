@@ -127,49 +127,79 @@ const Payment = () => {
   };
 
   if (!booking) {
-    return <div className="text-center p-8">Loading payment details...</div>;
+    return (
+      <div className="w-full min-h-screen bg-white flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg animate-pulse mx-auto mb-4 flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-600 text-lg">Loading payment details...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen p-4 flex items-center justify-center bg-gray-50">
-      <Card className="max-w-md w-full">
-        <CardHeader>
-          <CardTitle>Payment</CardTitle>
-          <CardDescription>Complete your booking payment (Demo Mode)</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {/* Demo warning */}
-          <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded flex gap-2">
-            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-blue-800">
-              <strong>Demo Mode:</strong> Use any 16-digit card number, future expiry date, and any 3-digit CVV.
+    <div className="w-full min-h-screen bg-white px-4 py-12 md:py-20 relative overflow-hidden">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+      </div>
+
+      <div className="relative z-10 max-w-md mx-auto">
+        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 p-6 md:p-8 shadow-md">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Payment</h1>
+            <p className="text-gray-600 text-sm">Secure payment processing</p>
+          </div>
+
+          {/* Demo Warning */}
+          <div className="mb-6 p-4 rounded-lg border border-blue-200 bg-blue-50">
+            <div className="flex gap-3">
+              <div className="text-2xl">🧪</div>
+              <div className="text-sm text-blue-700">
+                <strong>Demo Mode:</strong> Use any 16-digit card, future expiry date, and any 3-digit CVV.
+              </div>
             </div>
           </div>
 
-          <div className="mb-6 p-4 bg-gray-50 rounded border">
-            <p className="text-sm font-medium text-gray-600">Itinerary</p>
-            <p className="font-semibold mb-2">{booking.itinerary_title}</p>
-            <p className="text-2xl font-bold text-indigo-600">PKR {Number(booking.total_amount).toFixed(2)}</p>
+          {/* Booking Summary */}
+          <div className="mb-8 rounded-lg border border-gray-300 p-4 space-y-3 bg-gray-50">
+            <p className="text-gray-700 text-sm font-semibold">Order Summary</p>
+            <div className="space-y-2">
+              <div className="flex justify-between items-start">
+                <span className="text-gray-700">{booking.itinerary_title}</span>
+                <span className="font-bold text-blue-600">PKR {Number(booking.total_amount).toLocaleString()}</span>
+              </div>
+              <div className="border-t border-gray-300 pt-2 flex justify-between items-center">
+                <span className="font-bold text-gray-900">Total Amount</span>
+                <span className="text-2xl font-bold text-blue-600">PKR {Number(booking.total_amount).toLocaleString()}</span>
+              </div>
+            </div>
           </div>
 
-          <form onSubmit={handlePayment} className="space-y-4">
+          {/* Payment Form */}
+          <form onSubmit={handlePayment} className="space-y-5">
+            {/* Cardholder Name */}
             <div>
-              <label className="block text-sm font-medium mb-1">Cardholder Name</label>
+              <label className="block text-sm font-semibold text-gray-900 mb-2">Cardholder Name</label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="John Doe"
                 value={cardData.cardName}
                 onChange={(e) => setCardData({ ...cardData, cardName: e.target.value })}
                 required
+                className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
               />
             </div>
 
+            {/* Card Number */}
             <div>
-              <label className="block text-sm font-medium mb-1">Card Number</label>
+              <label className="block text-sm font-semibold text-gray-900 mb-2">Card Number</label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="1234 5678 9012 3456"
                 value={cardData.cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ')}
                 onChange={(e) => {
@@ -177,15 +207,16 @@ const Payment = () => {
                   setCardData({ ...cardData, cardNumber: val });
                 }}
                 required
+                className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
               />
             </div>
 
+            {/* Expiry & CVV */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Expiry (MM/YY)</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Expiry (MM/YY)</label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="12/25"
                   value={cardData.expiryDate}
                   onChange={(e) => {
@@ -196,28 +227,37 @@ const Payment = () => {
                     setCardData({ ...cardData, expiryDate: val });
                   }}
                   required
+                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">CVV</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">CVV</label>
                 <input
                   type="password"
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="123"
                   value={cardData.cvv}
                   onChange={(e) => setCardData({ ...cardData, cvv: e.target.value.replace(/\D/g, '').slice(0, 3) })}
                   required
+                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth font-mono"
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={loading}>
-              <CreditCard className="w-4 h-4 mr-2" />
+            {/* Pay Button */}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg mt-6 hover:shadow-lg transition-all-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <CreditCard className="w-4 h-4 mr-2 inline" />
               {loading ? 'Processing...' : 'Pay Now'}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+
+          {/* Security Note */}
+          <p className="text-xs text-gray-600 text-center mt-6">🔒 Payments are encrypted and secure</p>
+        </div>
+      </div>
     </div>
   );
 };

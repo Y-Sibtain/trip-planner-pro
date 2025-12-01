@@ -38,27 +38,29 @@ export const Sidebar = () => {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition md:hidden"
+        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-blue-600 text-white hover:scale-110 transition-all-smooth md:hidden font-bold"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white shadow-lg transform transition-transform duration-300 z-40 ${
+        className={`fixed left-0 top-0 h-screen w-64 bg-white text-gray-900 shadow-lg transform transition-transform duration-300 z-40 border-r border-gray-200 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:relative md:h-screen md:sticky md:top-0 overflow-y-auto`}
       >
         {/* Logo */}
-        <div className="p-6 border-b border-gray-700">
-          <div className="flex items-center gap-2 mb-2">
-            <MapPin className="w-8 h-8 text-indigo-400" />
-            <h1 className="text-xl font-bold">Trip Planner</h1>
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold">
+              ✈
+            </div>
+            <h1 className="text-xl font-bold text-gray-900">Trip Planner</h1>
           </div>
           {isAuthenticated && (
             <>
-              <p className="text-sm text-gray-400">{user?.email}</p>
-              {isAdmin && <p className="text-xs text-indigo-400 font-semibold">Admin</p>}
+              <p className="text-xs text-gray-600">{user?.email}</p>
+              {isAdmin && <p className="text-xs text-blue-600 font-semibold mt-1">👑 Admin Access</p>}
             </>
           )}
         </div>
@@ -66,11 +68,8 @@ export const Sidebar = () => {
         {/* Navigation */}
         <nav className="p-4 space-y-2">
           {navItems.map((item) => {
-            // Skip if hideIfAuth is true and user is authenticated
             if (item.hideIfAuth && isAuthenticated) return null;
-            // Skip if not public and user is not authenticated
             if (!item.public && !isAuthenticated) return null;
-            // Skip admin items if user is not an admin
             if (item.admin && !isAdmin) return null;
 
             const Icon = item.icon;
@@ -81,14 +80,14 @@ export const Sidebar = () => {
                   navigate(item.path);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all-smooth ${
                   isActive(item.path)
-                    ? 'bg-indigo-600 text-white'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ? 'bg-blue-100 text-blue-600 border border-blue-300'
+                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100 border border-transparent'
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span>{item.label}</span>
+                <span className="font-medium">{item.label}</span>
               </button>
             );
           })}
@@ -96,10 +95,10 @@ export const Sidebar = () => {
 
         {/* Sign Out Button */}
         {isAuthenticated && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
             <Button
               onClick={handleSignOut}
-              className="w-full bg-red-600 hover:bg-red-700 text-white flex items-center gap-2 justify-center"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg transition-all-smooth hover:shadow-lg flex items-center gap-2 justify-center"
             >
               <LogOut className="w-4 h-4" />
               Sign Out
@@ -111,7 +110,7 @@ export const Sidebar = () => {
       {/* Overlay when sidebar is open on mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-all-smooth"
           onClick={() => setIsOpen(false)}
         />
       )}

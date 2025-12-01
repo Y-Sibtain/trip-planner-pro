@@ -208,119 +208,142 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          {isRecoveryMode ? (
-            <>
-              <CardTitle>Reset Password</CardTitle>
-              <CardDescription>Enter your new password</CardDescription>
-            </>
-          ) : (
-            <>
-              <CardTitle>{isLogin ? 'Welcome Back' : 'Create Account'}</CardTitle>
-              <CardDescription>
-                {isLogin ? 'Sign in to continue booking' : 'Sign up to start planning your trip'}
-              </CardDescription>
-            </>
-          )}
-        </CardHeader>
-        <CardContent>
-          {isRecoveryMode ? (
-            <form onSubmit={handleRecoveryPasswordUpdate} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  placeholder="At least 8 characters"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Confirm your password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Updating...' : 'Update Password'}
-              </Button>
-            </form>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Login/Signup common fields only */}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder={isLogin ? '' : 'At least 8 characters'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {isLogin ? 'Sign In' : 'Sign Up'}
-                </Button>
-              </div>
-            </form>
-          )}
+    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative overflow-hidden">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+      </div>
 
-          {signupSuccess && !isRecoveryMode && (
-            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-              <p className="text-sm text-blue-900">
-                <strong>Check your email!</strong> A confirmation link has been sent to <strong>{email}</strong>. 
-                Please click the link to confirm your email before signing in.
-              </p>
-            </div>
-          )}
-
-          <div className="mt-4 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setSignupSuccess(false);
-              }}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-            </button>
-
-            {isLogin && (
-              <button
-                type="button"
-                onClick={handlePasswordReset}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                disabled={resetting}
-              >
-                Forgot password?
-              </button>
+      <div className="relative z-10 w-full max-w-md">
+        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 shadow-md overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 md:px-8 py-8">
+            {isRecoveryMode ? (
+              <>
+                <h1 className="text-2xl font-bold text-white mb-1">Reset Password</h1>
+                <p className="text-blue-100">Enter your new password</p>
+              </>
+            ) : (
+              <>
+                <h1 className="text-2xl font-bold text-white mb-1">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
+                <p className="text-blue-100">
+                  {isLogin ? 'Sign in to continue booking' : 'Sign up to start planning your trip'}
+                </p>
+              </>
             )}
           </div>
-          </CardContent>
-      </Card>
+
+          {/* Form */}
+          <div className="p-6 md:p-8">
+            {isRecoveryMode ? (
+              <form onSubmit={handleRecoveryPasswordUpdate} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword" className="text-gray-900 font-semibold">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    placeholder="At least 8 characters"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-gray-900 font-semibold">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth disabled:opacity-50"
+                  disabled={loading}
+                >
+                  {loading ? 'Updating...' : 'Update Password'}
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Login/Signup common fields only */}
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-gray-900 font-semibold">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-900 font-semibold">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder={isLogin ? '' : 'At least 8 characters'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth disabled:opacity-50"
+                    disabled={loading}
+                  >
+                    {isLogin ? 'Sign In' : 'Sign Up'}
+                  </Button>
+                </div>
+              </form>
+            )}
+
+            {signupSuccess && !isRecoveryMode && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-300 rounded-lg">
+                <p className="text-sm text-blue-900">
+                  <strong>Check your email!</strong> A confirmation link has been sent to <strong>{email}</strong>. 
+                  Please click the link to confirm your email before signing in.
+                </p>
+              </div>
+            )}
+
+            <div className="mt-6 space-y-3 border-t border-gray-200 pt-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setSignupSuccess(false);
+                }}
+                className="w-full text-sm text-gray-600 hover:text-blue-600 font-semibold transition-colors"
+              >
+                {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+              </button>
+
+              {isLogin && (
+                <button
+                  type="button"
+                  onClick={handlePasswordReset}
+                  className="w-full text-sm text-gray-600 hover:text-blue-600 font-semibold transition-colors disabled:opacity-50"
+                  disabled={resetting}
+                >
+                  {resetting ? 'Sending reset link...' : 'Forgot password?'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

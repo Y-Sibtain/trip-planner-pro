@@ -203,166 +203,199 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
     : [];
 
   return (
-    <Card className="w-full">
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="source" className="flex items-center gap-2">
-              <MapPin className="w-4 h-4" /> Source
-            </Label>
-            <div className="relative">
-              <Input
-                id="source"
-                placeholder="Type a source city or airport"
-                value={sourceInput}
-                onChange={(e) => setSourceInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    if (filteredSourceSuggestions.length > 0) {
-                      setSource(filteredSourceSuggestions[0]);
-                      setSourceInput("");
-                    }
+    <div className="w-full">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Source Field */}
+        <div>
+          <Label htmlFor="source" className="flex items-center gap-2 text-gray-900 font-semibold mb-2">
+            <MapPin className="w-4 h-4 text-blue-500" /> Departing From
+          </Label>
+          <div className="relative">
+            <Input
+              id="source"
+              placeholder="Type your departure city..."
+              value={sourceInput}
+              onChange={(e) => setSourceInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (filteredSourceSuggestions.length > 0) {
+                    setSource(filteredSourceSuggestions[0]);
+                    setSourceInput("");
                   }
-                }}
-              />
-              {source && (
-                <div className="mt-2 inline-flex items-center gap-2 bg-muted px-3 py-1 rounded-full">
-                  <span className="text-sm">{source}</span>
-                  <button type="button" onClick={() => setSource("")} aria-label={`Remove ${source}`} className="p-0.5">
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
-              {sourceInput && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
-                <div className="absolute z-20 mt-1 w-full bg-gray-200 border rounded-md shadow">
-                  {loadingSuggestions ? (
-                    <div className="p-2 text-sm text-muted-foreground">Loading...</div>
-                  ) : filteredSourceSuggestions.length > 0 ? (
-                    filteredSourceSuggestions.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        className="w-full text-left p-2 hover:bg-muted/50"
-                        onClick={() => {
-                          setSource(s);
-                          setSourceInput("");
-                        }}
-                      >
-                        {s}
-                      </button>
-                    ))
-                  ) : (
-                    <div className="p-2 text-sm text-muted-foreground">No sources match your search</div>
-                  )}
-                </div>
-              )}
-            </div>
+                }
+              }}
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+            />
+            {source && (
+              <div className="mt-2 inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-gray-300 bg-gray-50">
+                <span className="text-sm text-gray-900">{source}</span>
+                <button type="button" onClick={() => setSource("")} className="p-0.5 hover:text-blue-500 transition-all">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+            {sourceInput && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
+              <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
+                {loadingSuggestions ? (
+                  <div className="p-3 text-sm text-gray-600">Loading...</div>
+                ) : filteredSourceSuggestions.length > 0 ? (
+                  filteredSourceSuggestions.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+                      onClick={() => {
+                        setSource(s);
+                        setSourceInput("");
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))
+                ) : (
+                  <div className="p-3 text-sm text-gray-600">No cities found</div>
+                )}
+              </div>
+            )}
+          </div>
           </div>
 
+        {/* Destinations Field */}
+        <div>
+          <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2">
+            <Search className="w-4 h-4 text-blue-500" /> Destinations (up to 3)
+          </Label>
+          <div className="flex gap-2 flex-wrap mb-3">
+            {destinations.map((d) => (
+              <div key={d} className="inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
+                <span className="text-sm text-gray-900">{d}</span>
+                <button type="button" onClick={() => removeDestination(d)} className="p-0.5 hover:text-blue-600 transition-all">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="relative">
+            <Input
+              placeholder="Type a destination..."
+              value={destinationInput}
+              onChange={(e) => setDestinationInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addDestination(destinationInput);
+                }
+              }}
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+            />
+            {destinationInput && (filteredSuggestions.length > 0 || loadingSuggestions) && (
+              <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
+                {loadingSuggestions ? (
+                  <div className="p-3 text-sm text-gray-600">Loading...</div>
+                ) : filteredSuggestions.length > 0 ? (
+                  filteredSuggestions.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+                      onClick={() => addDestination(s)}
+                    >
+                      {s}
+                    </button>
+                  ))
+                ) : (
+                  <div className="p-3 text-sm text-gray-600">No destinations found</div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Budget, Dates, Travellers Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          {/* Budget */}
           <div>
-            <Label className="flex items-center gap-2">
-              <Search className="w-4 h-4" /> Destinations (up to 3)
+            <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
+              <DollarSign className="w-4 h-4 text-blue-500" /> Budget
             </Label>
-            <div className="flex gap-2 flex-wrap mb-2">
-              {destinations.map((d) => (
-                <div key={d} className="inline-flex items-center gap-2 bg-muted px-3 py-1 rounded-full">
-                  <span className="text-sm">{d}</span>
-                  <button type="button" onClick={() => removeDestination(d)} aria-label={`Remove ${d}`} className="p-0.5">
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div className="relative">
-              <Input
-                placeholder="Type a destination and press Enter or select from suggestions"
-                value={destinationInput}
-                onChange={(e) => setDestinationInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addDestination(destinationInput);
-                  }
-                }}
-              />
-              {destinationInput && (filteredSuggestions.length > 0 || loadingSuggestions) && (
-                <div className="absolute z-20 mt-1 w-full bg-gray-200 border rounded-md shadow">
-                  {loadingSuggestions ? (
-                    <div className="p-2 text-sm text-muted-foreground">Loading...</div>
-                  ) : filteredSuggestions.length > 0 ? (
-                    filteredSuggestions.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        className="w-full text-left p-2 hover:bg-muted/50"
-                        onClick={() => addDestination(s)}
-                      >
-                        {s}
-                      </button>
-                    ))
-                  ) : (
-                    <div className="p-2 text-sm text-muted-foreground">No destinations match your search</div>
-                  )}
-                </div>
-              )}
-            </div>
+            <Input
+              placeholder="Total budget (PKR)"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              type="number"
+              min={0}
+              step={1000}
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div>
-              <Label className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4" /> Budget (optional)
-              </Label>
-              <Input
-                placeholder="Total budget (PKR)"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-                type="number"
-                min={0}
-                step={1000}
-              />
-            </div>
-            <div>
-              <Label className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" /> Start Date
-              </Label>
-              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} min={minDate} />
-            </div>
-            <div>
-              <Label className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" /> End Date
-              </Label>
-              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={minDate} />
-            </div>
-            <div>
-              <Label className="flex items-center gap-2">
-                👥 Travellers
-              </Label>
-              <Input
-                placeholder="Number of people"
-                value={travellers}
-                onChange={(e) => setTravellers(e.target.value)}
-                type="number"
-                min="1"
-                max="20"
-                required
-              />
-            </div>
+          {/* Start Date */}
+          <div>
+            <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
+              <Calendar className="w-4 h-4 text-blue-500" /> From
+            </Label>
+            <Input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              min={minDate}
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+            />
           </div>
 
-          <div className="flex justify-end gap-2">
-            <Button type="button" onClick={onAskAI}>
-              Ask AI
+          {/* End Date */}
+          <div>
+            <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
+              <Calendar className="w-4 h-4 text-blue-500" /> To
+            </Label>
+            <Input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              min={minDate}
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+            />
+          </div>
+
+          {/* Travellers */}
+          <div>
+            <Label className="flex items-center gap-2 text-gray-900 font-semibold mb-2 text-sm">
+              👥 Travelers
+            </Label>
+            <Input
+              placeholder="Number of people"
+              value={travellers}
+              onChange={(e) => setTravellers(e.target.value)}
+              type="number"
+              min="1"
+              max="20"
+              required
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+            />
+          </div>
+        </div>
+
+          <div className="flex justify-end gap-1 items-center pt-4">
+            <Button
+              type="button"
+              onClick={onAskAI}
+              className="glass border border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900 px-6 py-2 rounded-lg font-semibold transition-all-smooth hover:shadow-md"
+            >
+              ✨ Ask AI
             </Button>
-            <ShatterButton shatterColor="#06b6d4">
-              <Button type="submit">Plan my trip</Button>
+            <ShatterButton shatterColor="#3b82f6">
+              <Button
+                type="submit"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold px-6 py-2 rounded-lg hover:shadow-lg transition-all-smooth"
+              >
+                Plan my trip →
+              </Button>
             </ShatterButton>
           </div>
         </form>
-      </CardContent>
-    </Card>
-  );
+      </div>
+    );
 };
 
 export default TripPlannerForm;

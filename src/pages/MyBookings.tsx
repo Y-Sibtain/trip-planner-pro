@@ -74,68 +74,100 @@ const MyBookings = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen p-4 bg-gray-50">
-      <Card className="max-w-6xl mx-auto">
-        <CardHeader>
-          <CardTitle>My Bookings</CardTitle>
-          <CardDescription>Your confirmed and paid bookings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="text-center p-8">Loading bookings...</div>
-          ) : bookings.length === 0 ? (
-            <div className="text-center p-8 text-muted-foreground">
-              No bookings yet. <Button variant="link" onClick={() => navigate('/saved-itineraries')}>Book a saved itinerary</Button>
+    <div className="min-h-screen bg-white relative overflow-hidden p-4">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-5xl font-bold text-gray-900 mb-2">My Bookings</h1>
+          <p className="text-gray-600">Your confirmed and paid bookings</p>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="glass p-12 rounded-lg border border-gray-200 text-center">
+            <div className="inline-flex items-center justify-center">
+              <div className="relative w-12 h-12">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full animate-spin" style={{maskImage: 'conic-gradient(transparent 75%, black)'}}></div>
+              </div>
             </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Itinerary</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Transaction ID</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {bookings.map((booking) => (
-                  <TableRow key={booking.id}>
-                    <TableCell className="font-medium">{booking.itinerary_title}</TableCell>
-                    <TableCell>PKR {Number(booking.total_amount).toFixed(2)}</TableCell>
-                    <TableCell>
-                      <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                        Confirmed
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-sm font-mono">{booking.transaction_id}</TableCell>
-                    <TableCell>{new Date(booking.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleViewDetails(booking)}
-                        >
-                          <Eye className="w-4 h-4 mr-2" /> Details
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="destructive"
-                          onClick={() => handleCancel(booking.id)}
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" /> Cancel
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+            <p className="text-gray-900 mt-4 font-semibold">Loading your bookings...</p>
+          </div>
+        ) : bookings.length === 0 ? (
+          <div className="glass p-12 rounded-lg border border-gray-200 text-center">
+            <div className="text-6xl mb-4">✈️</div>
+            <p className="text-gray-900 text-lg font-semibold mb-2">No bookings yet</p>
+            <p className="text-gray-600 mb-6">Start planning your next adventure!</p>
+            <Button 
+              onClick={() => navigate('/saved-itineraries')}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth"
+            >
+              Book a Saved Itinerary →
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {bookings.map((booking) => (
+              <div 
+                key={booking.id}
+                className="glass p-6 rounded-lg border border-gray-200 backdrop-blur-sm hover:border-blue-400 transition-all-smooth group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                      {booking.itinerary_title}
+                    </h3>
+                    <p className="text-gray-600 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" />
+                      Transaction ID: <span className="font-mono text-gray-900">{booking.transaction_id}</span>
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-600 text-sm mb-1">Total Amount</p>
+                    <p className="text-3xl font-bold text-blue-600">PKR {Number(booking.total_amount).toLocaleString()}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-gray-300 pt-4">
+                  <div className="flex items-center gap-3">
+                    <div className="px-3 py-1 rounded-full bg-green-100 border border-green-300">
+                      <span className="text-xs font-semibold text-green-700">✓ Confirmed</span>
+                    </div>
+                    <p className="text-gray-600 text-sm">
+                      {new Date(booking.created_at).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm"
+                      onClick={() => handleViewDetails(booking)}
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold hover:shadow-lg transition-all-smooth"
+                    >
+                      <Eye className="w-4 h-4 mr-2" /> Details
+                    </Button>
+                    <Button 
+                      size="sm"
+                      onClick={() => handleCancel(booking.id)}
+                      className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold hover:shadow-lg transition-all-smooth"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" /> Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

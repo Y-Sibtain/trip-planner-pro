@@ -124,70 +124,78 @@ const CityPlanner = () => {
   const cityHotels = selectedCity ? hotels[selectedCity as keyof typeof hotels] : [];
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-4 space-y-6">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold">City Trip Planner</h1>
-            <p className="text-muted-foreground mt-1">Plan your perfect {numDays}-day adventure</p>
+            <h1 className="text-5xl font-bold text-gray-900">City Trip Planner</h1>
+            <p className="text-gray-600 mt-2">Plan your perfect {numDays}-day adventure</p>
           </div>
           <Link to="/" onClick={() => window.history.back()}>
-            <Button variant="outline">← Back</Button>
+            <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth">← Back</Button>
           </Link>
         </div>
 
         {/* City Selection */}
         {step === "city" && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                Choose Your Destination
-              </CardTitle>
-              <CardDescription>Select a city</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-3">Select Destination</h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {cities.map((city) => (
-                    <Card
-                      key={city.name}
-                      className="cursor-pointer transition-all hover:scale-105 hover:shadow-lg"
-                      onClick={() => handleCitySelect(city.name)}
-                    >
-                      <CardContent className="p-6 text-center">
-                        <div className="text-5xl mb-3">{city.emoji}</div>
-                        <h3 className="font-semibold text-lg">{city.name}</h3>
-                        <Badge className="mt-2" variant="secondary">{numDays} Days</Badge>
-                      </CardContent>
-                    </Card>
-                  ))}
+          <div className="glass p-8 rounded-lg border border-gray-200 backdrop-blur-sm shadow-md">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                  <MapPin className="h-6 w-6 text-white" />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                Choose Your Destination
+              </h2>
+              <p className="text-gray-600">Select a city to begin planning</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {cities.map((city) => (
+                <div
+                  key={city.name}
+                  onClick={() => handleCitySelect(city.name)}
+                  className="group glass p-6 rounded-lg border border-gray-200 backdrop-blur-sm cursor-pointer transition-all-smooth hover:border-blue-400 hover:bg-blue-50 hover:scale-105 hover:shadow-md"
+                >
+                  <div className="text-6xl mb-4 group-hover:scale-110 transition-all-smooth">{city.emoji}</div>
+                  <h3 className="font-bold text-lg text-gray-900 mb-3">{city.name}</h3>
+                  <div className="inline-block px-3 py-1 rounded-full bg-blue-100 border border-blue-300 text-sm text-blue-600">
+                    {numDays} Days
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Flight Selection */}
         {step === "flight" && selectedCity && (
           <>
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <Plane className="h-6 w-6" />
-                      Select Your Flight to {selectedCity}
-                    </CardTitle>
-                  </div>
-                  <Button variant="outline" onClick={() => navigate('/')}>
-                    ← Back
-                  </Button>
+            <div className="glass p-8 rounded-2xl border border-cyan-500/20 backdrop-blur-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold text-gradient flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center glow-primary">
+                      <Plane className="h-6 w-6 text-white" />
+                    </div>
+                    Select Your Flight
+                  </h2>
+                  <p className="text-cyan-200/60">Departing to {selectedCity} for {numDays} days</p>
                 </div>
-              </CardHeader>
-            </Card>
+                <Button 
+                  onClick={() => navigate('/')}
+                  className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 text-white font-semibold glow-tertiary hover:scale-105 transition-all-smooth"
+                >
+                  ← Back
+                </Button>
+              </div>
+            </div>
             
             <FlightSelector
               destination={selectedCity}
@@ -200,19 +208,25 @@ const CityPlanner = () => {
         {/* Hotel Selection */}
         {step === "hotel" && selectedCity && (
           <>
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl">Select Your Hotel</CardTitle>
-                    <CardDescription>Choose from our curated accommodations in {selectedCity}</CardDescription>
-                  </div>
-                  <Button variant="outline" onClick={() => setStep("flight")}>
-                    ← Back
-                  </Button>
+            <div className="glass p-8 rounded-2xl border border-purple-500/20 backdrop-blur-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold text-gradient flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center glow-secondary">
+                      🏨
+                    </div>
+                    Select Your Hotel
+                  </h2>
+                  <p className="text-cyan-200/60">Choose from our curated accommodations in {selectedCity}</p>
                 </div>
-              </CardHeader>
-            </Card>
+                <Button 
+                  onClick={() => setStep("flight")}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-semibold glow-secondary hover:scale-105 transition-all-smooth"
+                >
+                  ← Back
+                </Button>
+              </div>
+            </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {cityHotels.map((hotel) => (
@@ -230,19 +244,25 @@ const CityPlanner = () => {
         {/* Trip Plan */}
         {step === "plan" && selectedCity && selectedHotel && (
           <>
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl">Your {numDays}-Day Itinerary</CardTitle>
-                    <CardDescription>Activities and dining recommendations</CardDescription>
-                  </div>
-                  <Button variant="outline" onClick={() => setStep("hotel")}>
-                    ← Back
-                  </Button>
+            <div className="glass p-8 rounded-2xl border border-pink-500/20 backdrop-blur-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold text-gradient flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center glow-tertiary">
+                      📅
+                    </div>
+                    Your {numDays}-Day Itinerary
+                  </h2>
+                  <p className="text-cyan-200/60">Activities and dining recommendations</p>
                 </div>
-              </CardHeader>
-            </Card>
+                <Button 
+                  onClick={() => setStep("hotel")}
+                  className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-semibold glow-tertiary hover:scale-105 transition-all-smooth"
+                >
+                  ← Back
+                </Button>
+              </div>
+            </div>
 
             <TripPlan
               city={selectedCity}
@@ -255,38 +275,41 @@ const CityPlanner = () => {
 
         {/* Summary Modal */}
         <Dialog open={showSummary} onOpenChange={setShowSummary}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto glass border border-cyan-500/20 bg-gradient-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl">
             <DialogHeader>
-              <DialogTitle className="text-2xl">Booking Summary</DialogTitle>
-              <DialogDescription>Review your complete {selectedCity} trip</DialogDescription>
+              <DialogTitle className="text-3xl text-gradient">Booking Summary</DialogTitle>
+              <DialogDescription className="text-cyan-200/70">Review your complete {selectedCity} trip</DialogDescription>
             </DialogHeader>
             
             <div className="space-y-4 mt-4">
-              <div>
-                <h3 className="font-semibold mb-2">Travelers:</h3>
-                <Badge variant="secondary">{numPeople} {numPeople === 1 ? "person" : "people"}</Badge>
+              <div className="glass p-4 rounded-lg border border-cyan-500/20">
+                <h3 className="font-semibold text-cyan-300 mb-2">👥 Travelers:</h3>
+                <div className="inline-block px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 text-cyan-200">
+                  {numPeople} {numPeople === 1 ? "person" : "people"}
+                </div>
               </div>
 
               {selectedFlight && (
-                <div>
-                  <h3 className="font-semibold mb-2">Selected Flight:</h3>
-                  <div className="bg-muted p-3 rounded-lg">
-                    <p className="font-medium">{selectedFlight.airline}</p>
-                    <p className="text-sm text-muted-foreground">{selectedFlight.class}</p>
-                    <p className="text-sm font-semibold mt-1">PKR {(selectedFlight.price * numPeople).toLocaleString()}</p>
+                <div className="glass p-4 rounded-lg border border-purple-500/20">
+                  <h3 className="font-semibold text-purple-300 mb-3">✈️ Selected Flight:</h3>
+                  <div className="bg-purple-500/10 p-4 rounded-lg border border-purple-400/20">
+                    <p className="font-bold text-white text-lg">{selectedFlight.airline}</p>
+                    <p className="text-sm text-purple-200/70 mt-1">{selectedFlight.class}</p>
+                    <p className="text-sm font-semibold mt-2 text-gradient">PKR {(selectedFlight.price * numPeople).toLocaleString()}</p>
                   </div>
                 </div>
               )}
 
               {selectedHotel && (
-                <div>
-                  <h3 className="font-semibold mb-2">Selected Hotel:</h3>
-                  <div className="bg-muted p-3 rounded-lg">
-                    <p className="font-medium">{cityHotels.find(h => h.id === selectedHotel)?.name}</p>
-                    <div className="flex items-center gap-1 mt-1">
+                <div className="glass p-4 rounded-lg border border-pink-500/20">
+                  <h3 className="font-semibold text-pink-300 mb-3">🏨 Selected Hotel:</h3>
+                  <div className="bg-pink-500/10 p-4 rounded-lg border border-pink-400/20">
+                    <p className="font-bold text-white text-lg">{cityHotels.find(h => h.id === selectedHotel)?.name}</p>
+                    <div className="flex items-center gap-1 mt-2">
                       {Array.from({ length: cityHotels.find(h => h.id === selectedHotel)?.stars || 0 }).map((_, i) => (
                         <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       ))}
+                      <span className="text-xs text-pink-200/70 ml-2">{cityHotels.find(h => h.id === selectedHotel)?.stars} Stars</span>
                     </div>
                   </div>
                 </div>
@@ -294,7 +317,7 @@ const CityPlanner = () => {
 
               <div className="flex gap-3 pt-4">
                 <Button 
-                  className="flex-1"
+                  className="flex-1 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-900 font-bold rounded-lg glow-primary hover:scale-105 transition-all-smooth"
                   onClick={() => {
                     const hotelPrice = parseInt(cityHotels.find(h => h.id === selectedHotel)?.price?.replace(/\D/g, '') || '0');
                     const bookingData = {
@@ -311,9 +334,13 @@ const CityPlanner = () => {
                     navigate('/payment', { state: { booking: bookingData } });
                   }}
                 >
-                  Proceed to Payment
+                  Proceed to Payment →
                 </Button>
-                <Button variant="outline" onClick={() => setShowSummary(false)}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowSummary(false)}
+                  className="border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/10"
+                >
                   Edit Trip
                 </Button>
               </div>

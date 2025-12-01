@@ -254,8 +254,13 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading profile...</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg animate-pulse mx-auto mb-4 flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-600 text-lg">Loading profile...</p>
+        </div>
       </div>
     );
   }
@@ -263,59 +268,91 @@ const Profile = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen p-4">
-      <Card className="max-w-3xl mx-auto">
-        <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>Manage your personal information and preferences</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {/* Avatar removed - profile simplified */}
+    <div className="min-h-screen bg-white p-4 relative overflow-hidden">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+      </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-            </div>
+      <div className="relative z-10 max-w-3xl mx-auto">
+        <div className="glass rounded-lg backdrop-blur-sm border border-gray-200 shadow-md overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 md:px-8 py-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Profile</h1>
+            <p className="text-blue-100">Manage your personal information and preferences</p>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" value={formData.email} readOnly className="bg-gray-50" />
-            </div>
+          <div className="p-6 md:p-8">
+            <div className="space-y-6">
+              {/* Full Name */}
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-gray-900 font-semibold">Full Name</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-            </div>
+              {/* Email */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-900 font-semibold">Email</Label>
+                <Input 
+                  id="email" 
+                  value={formData.email} 
+                  readOnly 
+                  className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-700 bg-gray-50 cursor-not-allowed"
+                />
+              </div>
 
-            <div className="flex gap-2">
-              <Button onClick={handleSave} className="w-full" disabled={saving}>
-                Save Changes
-              </Button>
-              <Button variant="outline" onClick={() => navigate(-1)} className="w-full">
-                Back
-              </Button>
-            </div>
+              {/* Phone */}
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-gray-900 font-semibold">Phone</Label>
+                <Input
+                  id="phone"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                />
+              </div>
 
-            <div className="mt-4 border-t pt-4">
-              <Label>Account</Label>
-              <div className="flex gap-2 mt-2">
-              <Button variant="destructive" onClick={handleDeleteAccountSoft} disabled={saving}>
-                <Trash2 className="w-4 h-4 mr-2" /> Delete Profile
-              </Button>
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  onClick={handleSave} 
+                  disabled={saving}
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth disabled:opacity-50"
+                >
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate(-1)}
+                  className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold rounded-lg transition-all-smooth"
+                >
+                  Back
+                </Button>
+              </div>
+
+              {/* Account Management */}
+              <div className="mt-8 pt-8 border-t border-gray-300">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Account Management</h3>
+                <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+                  <p className="text-sm text-red-800 mb-3">Deleting your profile will remove all your personal data from the app.</p>
+                  <Button 
+                    onClick={handleDeleteAccountSoft} 
+                    disabled={saving}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all-smooth disabled:opacity-50"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" /> Delete Profile
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

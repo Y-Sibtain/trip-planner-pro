@@ -2,99 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Professional Minimalist Design System - 2025 */
 
 @layer base {
-:root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+  :root {
+    /* Base Colors - Professional clean theme */
+    --background: 0 0% 98%;
+    --foreground: 240 10% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 240 10% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 240 10% 8%;
 
-    --primary: 217 91% 40%;
+    /* Primary: Professional Blue (like airlines/hotels) */
+    --primary: 210 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 24 95% 53%;
+    /* Secondary: Subtle Gray */
+    --secondary: 240 10% 40%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    /* Tertiary: Accent Blue-Gray */
+    --tertiary: 215 14% 34%;
+    --tertiary-foreground: 0 0% 100%;
 
-    --accent: 24 95% 53%;
+    /* Muted - subtle grays */
+    --muted: 240 10% 90%;
+    --muted-foreground: 240 10% 40%;
+
+    /* Accent - professional blue */
+    --accent: 210 100% 50%;
     --accent-foreground: 0 0% 100%;
 
+    /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 217 91% 40%;
+    /* Border and input */
+    --border: 240 10% 90%;
+    --input: 240 10% 96%;
+    --ring: 210 100% 50%;
 
-    --radius: 0.75rem;
+    /* Radius */
+    --radius: 0.5rem;
 
-    --gradient-hero: linear-gradient(135deg, hsl(217 91% 40%), hsl(217 91% 50%));
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 98%));
-    --shadow-card: 0 4px 20px -2px hsl(217 91% 40% / 0.1);
-    --shadow-hover: 0 8px 30px -4px hsl(217 91% 40% / 0.2);
+    /* Professional Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 50%), hsl(200 90% 45%));
+    --gradient-secondary: linear-gradient(135deg, hsl(240 10% 40%), hsl(215 14% 34%));
+    --gradient-tertiary: linear-gradient(135deg, hsl(215 14% 34%), hsl(210 100% 50%));
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5% 26%;
-    --sidebar-primary: 240 6% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 5% 96%;
-    --sidebar-accent-foreground: 240 6% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217 91% 60%;
+    /* Glassmorphism blur values */
+    --glass-blur: blur(8px);
+    --glass-blur-sm: blur(4px);
+
+    /* Shadow system - professional, subtle */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --shadow-glow: 0 0 12px rgba(59, 130, 246, 0.15);
+    --shadow-glow-secondary: 0 0 12px rgba(156, 163, 175, 0.15);
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 240 10% 15%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 10% 90%;
+    --sidebar-accent-foreground: 240 10% 15%;
+    --sidebar-border: 240 10% 90%;
+    --sidebar-ring: 210 100% 50%;
   }
 
-.dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-
-    --card: 217 33% 17%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 24 95% 53%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 24 95% 53%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 217 91% 60%;
-
-    --gradient-hero: linear-gradient(135deg, hsl(217 91% 30%), hsl(217 91% 40%));
-    --gradient-card: linear-gradient(180deg, hsl(217 33% 17%), hsl(217 33% 14%));
-    --shadow-card: 0 4px 20px -2px hsl(0 0% 0% / 0.3);
-    --shadow-hover: 0 8px 30px -4px hsl(217 91% 60% / 0.3);
-
-    --sidebar-background: 240 6% 10%;
-    --sidebar-foreground: 240 5% 96%;
-    --sidebar-primary: 224 76% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4% 16%;
-    --sidebar-accent-foreground: 240 5% 96%;
-    --sidebar-border: 240 4% 16%;
-    --sidebar-ring: 217 91% 60%;
+  .dark {
+    color-scheme: light;
   }
 }
 
@@ -103,7 +86,175 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    background: #f8f9fa;
+    min-height: 100vh;
+  }
+}
+
+/* Futuristic animation keyframes */
+@layer utilities {
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  .animate-slide-in-up {
+    animation: slideInUp 0.5s ease-out;
+  }
+
+  .animate-slide-in-down {
+    animation: slideInDown 0.5s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Glassmorphism utility - subtle */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+  }
+
+  .glass-sm {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(59, 130, 246, 0.05);
+  }
+
+  .glass-dark {
+    background: rgba(240, 244, 252, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(59, 130, 246, 0.08);
+  }
+
+  /* Glow effects - subtle */
+  .glow-primary {
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+  }
+
+  .glow-secondary {
+    box-shadow: 0 0 12px rgba(156, 163, 175, 0.15);
+  }
+
+  .glow-tertiary {
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.1);
+  }
+
+  /* Text gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  .text-gradient-secondary {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-secondary);
+  }
+
+  /* Backdrop blur */
+  .backdrop-blur-xl {
+    backdrop-filter: blur(8px);
+  }
+
+  /* Smooth transitions */
+  .transition-all-smooth {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  /* Border gradients */
+  .border-gradient {
+    position: relative;
+    background-image: linear-gradient(#ffffff, #ffffff), 
+                      linear-gradient(135deg, hsl(210 100% 50%), hsl(200 90% 45%));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    border: 1px solid transparent;
   }
 }

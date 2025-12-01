@@ -157,77 +157,129 @@ const SavedItineraries = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen p-4">
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle>Saved Itineraries</CardTitle>
-          <CardDescription>View, load, edit, or remove previously saved trip plans</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4 flex justify-between items-center">
-            <div>
-              <strong>{saved.length}</strong> saved itineraries{saved.length !== 1 ? '' : ''}
-            </div>
-            <div>
-              <Button onClick={fetchSaved} disabled={loading}>
-                Refresh
-              </Button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-white relative overflow-hidden p-4">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 rounded-full blur-3xl opacity-10"></div>
+      </div>
 
-          {saved.length === 0 ? (
-            <div className="text-center p-8 text-muted-foreground">No saved itineraries yet. Generate and save an itinerary to see it here.</div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {saved.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.title}</TableCell>
-                    <TableCell>{row.created_at ? new Date(row.created_at).toLocaleString() : '-'}</TableCell>
-                    <TableCell>{row.total_price != null ? `PKR ${Number(row.total_price).toFixed(2)}` : '-'}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button size="sm" onClick={() => {
-                          setTripData({
-                            source: row.plan?.meta?.source || '',
-                            destinations: row.plan?.meta?.destinations || (row.plan?.days?.map((d: any) => d.destination) || []),
-                            budget: String(row.plan?.totals?.grandTotal || ''),
-                            startDate: row.plan?.days?.[0]?.date || '',
-                            endDate: row.plan?.days?.[row.plan?.days?.length - 1]?.date || '',
-                          });
-                          toast({ title: 'Loaded itinerary', description: 'Saved itinerary loaded into planner.' });
-                          navigate('/');
-                        }}>
-                          <Play className="w-4 h-4 mr-2" /> Load
-                        </Button>
-                        <Button size="sm" onClick={() => {
-                          navigate('/payment', { state: { itinerary: row } });
-                        }}>
-                          <ShoppingCart className="w-4 h-4 mr-2" /> Book
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => handleRename(row.id)}>
-                          <Edit className="w-4 h-4 mr-2" /> Rename
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleDelete(row.id)} disabled={deletingId === row.id}>
-                          <Trash2 className="w-4 h-4 mr-2" /> Delete
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      <div className="max-w-4xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-5xl font-bold text-gray-900 mb-2">Saved Itineraries</h1>
+          <p className="text-gray-600">View, load, edit, or remove your previously saved trip plans</p>
+        </div>
+
+        {/* Stats Bar */}
+        <div className="glass p-4 rounded-lg border border-gray-200 backdrop-blur-sm shadow-md mb-6 flex justify-between items-center">
+          <div>
+            <p className="text-gray-600 text-sm">Total Saved</p>
+            <p className="text-3xl font-bold text-blue-600">{saved.length}</p>
+          </div>
+          <Button 
+            onClick={fetchSaved}
+            disabled={loading}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth disabled:opacity-50"
+          >
+            🔄 Refresh
+          </Button>
+        </div>
+
+        {/* Content */}
+        {saved.length === 0 ? (
+          <div className="glass p-12 rounded-lg border border-gray-200 text-center">
+            <div className="text-6xl mb-4">📋</div>
+            <p className="text-gray-900 text-lg font-semibold mb-2">No saved itineraries yet</p>
+            <p className="text-gray-600 mb-6">Generate and save a trip plan to see it here</p>
+            <Button 
+              onClick={() => navigate('/')}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth"
+            >
+              Start Planning →
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {saved.map((row) => (
+              <div 
+                key={row.id}
+                className="glass p-6 rounded-lg border border-gray-200 backdrop-blur-sm hover:border-blue-400 transition-all-smooth group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                      {row.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Created {row.created_at ? new Date(row.created_at).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }) : 'unknown'}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-600 text-sm mb-1">Total Price</p>
+                    <p className="text-3xl font-bold text-blue-600">
+                      {row.total_price != null ? `PKR ${Number(row.total_price).toLocaleString()}` : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-300 pt-4 flex gap-2 flex-wrap">
+                  <Button 
+                    size="sm"
+                    onClick={() => {
+                      setTripData({
+                        source: row.plan?.meta?.source || '',
+                        destinations: row.plan?.meta?.destinations || (row.plan?.days?.map((d: any) => d.destination) || []),
+                        budget: String(row.plan?.totals?.grandTotal || ''),
+                        startDate: row.plan?.days?.[0]?.date || '',
+                        endDate: row.plan?.days?.[row.plan?.days?.length - 1]?.date || '',
+                      });
+                      toast({ title: '✅ Loaded', description: 'Itinerary loaded into planner.' });
+                      navigate('/');
+                    }}
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold hover:shadow-lg transition-all-smooth"
+                  >
+                    <Play className="w-4 h-4 mr-2" /> Load
+                  </Button>
+
+                  <Button 
+                    size="sm"
+                    onClick={() => {
+                      navigate('/payment', { state: { itinerary: row } });
+                    }}
+                    className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold hover:shadow-lg transition-all-smooth"
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" /> Book
+                  </Button>
+
+                  <Button 
+                    size="sm"
+                    onClick={() => handleRename(row.id)}
+                    className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold hover:shadow-lg transition-all-smooth"
+                  >
+                    <Edit className="w-4 h-4 mr-2" /> Rename
+                  </Button>
+
+                  <Button 
+                    size="sm"
+                    onClick={() => handleDelete(row.id)}
+                    disabled={deletingId === row.id}
+                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold hover:shadow-lg transition-all-smooth disabled:opacity-50"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" /> Delete
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
