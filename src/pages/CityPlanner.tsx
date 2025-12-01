@@ -305,7 +305,17 @@ const CityPlanner = () => {
                   <h3 className="font-bold text-black mb-4 text-lg">✈️ Selected Flight</h3>
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-2">
                     <p className="font-bold text-black text-lg">{selectedFlight.airline}</p>
-                    <Badge className="bg-red-500 text-white font-semibold">
+                    <Badge
+                      className={
+                        selectedFlight.class === "Economy"
+                          ? "bg-green-500 text-white font-semibold"
+                          : selectedFlight.class === "Business"
+                          ? "bg-red-500 text-white font-semibold"
+                          : (selectedFlight.class === "First Class" || selectedFlight.class === "First")
+                          ? "bg-yellow-500 text-white font-semibold"
+                          : "bg-gray-200 text-black font-semibold"
+                      }
+                    >
                       {selectedFlight.class}
                     </Badge>
                   </div>
