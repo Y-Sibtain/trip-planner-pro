@@ -161,13 +161,8 @@ const Destinations = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-8">
-<<<<<<< HEAD
           <h1 className="text-5xl font-bold text-gray-900 mb-2">Explore Destinations</h1>
-          <p className="text-black">Search and filter destinations by name, country, or price</p>
-=======
-          <h1 className="text-5xl font-bold text-gray-900 mb-2">{t('explore_destinations')}</h1>
-          <p className="text-gray-600">{t('search_and_filter')}</p>
->>>>>>> ef52af4 (Language Translator)
+          <p className="text-gray-600">Search and filter destinations by name, country, or price</p>
         </div>
 
         {/* Search & Filters Section */}
