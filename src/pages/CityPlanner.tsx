@@ -19,38 +19,41 @@ const cities = [
   { name: "Istanbul", emoji: "🕌", color: "bg-purple-500" },
 ];
 
+// Exchange rate: 1 USD = 278 PKR
+const USD_TO_PKR = 278;
+
 const hotels = {
   Dubai: [
-    { id: "dub1", name: "Burj Al Arab", stars: 5, price: "$800-1200", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" },
-    { id: "dub2", name: "Atlantis The Palm", stars: 5, price: "$600-900", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
-    { id: "dub3", name: "Jumeirah Beach Hotel", stars: 5, price: "$500-800", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400" },
-    { id: "dub4", name: "Rove Downtown", stars: 4, price: "$200-350", image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400" },
-    { id: "dub5", name: "Holiday Inn Express", stars: 4, price: "$150-250", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400" },
-    { id: "dub6", name: "Ibis Al Barsha", stars: 4, price: "$100-180", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" },
+    { id: "dub1", name: "Burj Al Arab", stars: 5, price: "₨222.4k-333.6k", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" },
+    { id: "dub2", name: "Atlantis The Palm", stars: 5, price: "₨166.8k-250.2k", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
+    { id: "dub3", name: "Jumeirah Beach Hotel", stars: 5, price: "₨139k-222.4k", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400" },
+    { id: "dub4", name: "Rove Downtown", stars: 4, price: "₨55.6k-97.3k", image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400" },
+    { id: "dub5", name: "Holiday Inn Express", stars: 4, price: "₨41.7k-69.5k", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400" },
+    { id: "dub6", name: "Ibis Al Barsha", stars: 4, price: "₨27.8k-50k", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" },
   ],
   London: [
-    { id: "lon1", name: "The Ritz London", stars: 5, price: "$700-1100", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400" },
-    { id: "lon2", name: "Savoy Hotel", stars: 5, price: "$650-1000", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" },
-    { id: "lon3", name: "Shangri-La The Shard", stars: 5, price: "$600-950", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
-    { id: "lon4", name: "Premier Inn City", stars: 4, price: "$180-280", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400" },
-    { id: "lon5", name: "Holiday Inn Kensington", stars: 4, price: "$150-240", image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400" },
-    { id: "lon6", name: "Travelodge Central", stars: 4, price: "$120-200", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" },
+    { id: "lon1", name: "The Ritz London", stars: 5, price: "₨194.6k-305.8k", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400" },
+    { id: "lon2", name: "Savoy Hotel", stars: 5, price: "₨180.7k-278k", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" },
+    { id: "lon3", name: "Shangri-La The Shard", stars: 5, price: "₨166.8k-264.1k", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
+    { id: "lon4", name: "Premier Inn City", stars: 4, price: "₨50k-77.8k", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400" },
+    { id: "lon5", name: "Holiday Inn Kensington", stars: 4, price: "₨41.7k-66.7k", image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400" },
+    { id: "lon6", name: "Travelodge Central", stars: 4, price: "₨33.4k-55.6k", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" },
   ],
   "New York": [
-    { id: "ny1", name: "The Plaza", stars: 5, price: "$900-1500", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" },
-    { id: "ny2", name: "St. Regis New York", stars: 5, price: "$850-1400", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400" },
-    { id: "ny3", name: "The Peninsula", stars: 5, price: "$800-1300", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" },
-    { id: "ny4", name: "Pod Times Square", stars: 4, price: "$250-380", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
-    { id: "ny5", name: "Hampton Inn Manhattan", stars: 4, price: "$220-340", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400" },
-    { id: "ny6", name: "Holiday Inn Express", stars: 4, price: "$180-290", image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400" },
+    { id: "ny1", name: "The Plaza", stars: 5, price: "₨250.2k-417k", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" },
+    { id: "ny2", name: "St. Regis New York", stars: 5, price: "₨236.3k-389.2k", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400" },
+    { id: "ny3", name: "The Peninsula", stars: 5, price: "₨222.4k-361.4k", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" },
+    { id: "ny4", name: "Pod Times Square", stars: 4, price: "₨69.5k-105.6k", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
+    { id: "ny5", name: "Hampton Inn Manhattan", stars: 4, price: "₨61.2k-94.5k", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400" },
+    { id: "ny6", name: "Holiday Inn Express", stars: 4, price: "₨50k-80.6k", image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400" },
   ],
   Istanbul: [
-    { id: "ist1", name: "Çırağan Palace", stars: 5, price: "$600-1000", image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400" },
-    { id: "ist2", name: "Four Seasons Sultanahmet", stars: 5, price: "$550-900", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" },
-    { id: "ist3", name: "Swissôtel The Bosphorus", stars: 5, price: "$500-850", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400" },
-    { id: "ist4", name: "Ramada by Wyndham", stars: 4, price: "$150-250", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" },
-    { id: "ist5", name: "Holiday Inn Old City", stars: 4, price: "$130-220", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
-    { id: "ist6", name: "Best Western Taksim", stars: 4, price: "$100-180", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400" },
+    { id: "ist1", name: "Çırağan Palace", stars: 5, price: "₨166.8k-278k", image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400" },
+    { id: "ist2", name: "Four Seasons Sultanahmet", stars: 5, price: "₨152.9k-250.2k", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" },
+    { id: "ist3", name: "Swissôtel The Bosphorus", stars: 5, price: "₨139k-236.3k", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400" },
+    { id: "ist4", name: "Ramada by Wyndham", stars: 4, price: "₨41.7k-69.5k", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" },
+    { id: "ist5", name: "Holiday Inn Old City", stars: 4, price: "₨36.1k-61.2k", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
+    { id: "ist6", name: "Best Western Taksim", stars: 4, price: "₨27.8k-50k", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400" },
   ],
 };
 
