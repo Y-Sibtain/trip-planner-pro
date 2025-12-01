@@ -329,7 +329,7 @@ const Profile = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => navigate(-1)}
-                  className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold rounded-lg transition-all-smooth"
+                  className="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-semibold rounded-lg transition-all-smooth"
                 >
                   Back
                 </Button>

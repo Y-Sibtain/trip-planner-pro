@@ -133,14 +133,9 @@ const CityPlanner = () => {
 
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-5xl font-bold text-gray-900">City Trip Planner</h1>
-            <p className="text-gray-600 mt-2">Plan your perfect {numDays}-day adventure</p>
-          </div>
-          <Link to="/" onClick={() => window.history.back()}>
-            <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth">← Back</Button>
-          </Link>
+        <div>
+          <h1 className="text-5xl font-bold text-gray-900">City Trip Planner</h1>
+          <p className="text-gray-600 mt-2">Plan your perfect {numDays}-day adventure</p>
         </div>
 
         {/* City Selection */}
@@ -180,17 +175,14 @@ const CityPlanner = () => {
             <div className="glass p-8 rounded-2xl border border-cyan-500/20 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold text-gradient flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center glow-primary">
-                      <Plane className="h-6 w-6 text-white" />
-                    </div>
+                  <h2 className="text-3xl font-bold text-gradient mb-2">
                     Select Your Flight
                   </h2>
-                  <p className="text-cyan-200/60">Departing to {selectedCity} for {numDays} days</p>
+                  <p className="text-black">Departing to {selectedCity} for {numDays} days</p>
                 </div>
                 <Button 
                   onClick={() => navigate('/')}
-                  className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 text-white font-semibold glow-tertiary hover:scale-105 transition-all-smooth"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
                 >
                   ← Back
                 </Button>
@@ -211,17 +203,14 @@ const CityPlanner = () => {
             <div className="glass p-8 rounded-2xl border border-purple-500/20 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold text-gradient flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center glow-secondary">
-                      🏨
-                    </div>
+                  <h2 className="text-3xl font-bold text-blue-600 mb-2">
                     Select Your Hotel
                   </h2>
-                  <p className="text-cyan-200/60">Choose from our curated accommodations in {selectedCity}</p>
+                  <p className="text-black">Choose from our curated accommodations in {selectedCity}</p>
                 </div>
                 <Button 
                   onClick={() => setStep("flight")}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-semibold glow-secondary hover:scale-105 transition-all-smooth"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
                 >
                   ← Back
                 </Button>
@@ -247,17 +236,14 @@ const CityPlanner = () => {
             <div className="glass p-8 rounded-2xl border border-pink-500/20 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold text-gradient flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center glow-tertiary">
-                      📅
-                    </div>
+                  <h2 className="text-3xl font-bold text-blue-600 mb-2">
                     Your {numDays}-Day Itinerary
                   </h2>
-                  <p className="text-cyan-200/60">Activities and dining recommendations</p>
+                  <p className="text-black">Activities and dining recommendations</p>
                 </div>
                 <Button 
                   onClick={() => setStep("hotel")}
-                  className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-semibold glow-tertiary hover:scale-105 transition-all-smooth"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
                 >
                   ← Back
                 </Button>

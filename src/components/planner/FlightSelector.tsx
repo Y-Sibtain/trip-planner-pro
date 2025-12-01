@@ -73,7 +73,20 @@ const FlightSelector = ({ destination, numPeople, onSelect }: FlightSelectorProp
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <h3 className="font-bold text-lg">{flight.airline}</h3>
-                            <Badge variant="secondary">{flight.class}</Badge>
+                            <Badge 
+                              variant="secondary" 
+                              className={
+                                flight.class === "Economy" 
+                                  ? "bg-green-500 text-white" 
+                                  : flight.class === "Business"
+                                  ? "bg-red-500 text-white"
+                                  : flight.class === "First Class"
+                                  ? "bg-yellow-500 text-white"
+                                  : ""
+                              }
+                            >
+                              {flight.class}
+                            </Badge>
                           </div>
                           
                           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
