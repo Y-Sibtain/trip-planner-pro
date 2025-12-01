@@ -158,7 +158,7 @@ export const Sidebar = () => {
             )}
 
             {/* Theme switch beside language */}
-            <ThemeSwitch />
+            <ThemeSwitch collapsed={isCollapsed} />
           </div>
 
           {/* Sign Out Button */}
