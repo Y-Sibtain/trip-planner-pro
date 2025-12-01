@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +56,7 @@ const hotels = {
 
 const CityPlanner = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [step, setStep] = useState<"city" | "flight" | "hotel" | "plan">("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [numPeople, setNumPeople] = useState<number>(1);
@@ -128,8 +129,8 @@ const CityPlanner = () => {
             <h1 className="text-4xl font-bold">City Trip Planner</h1>
             <p className="text-muted-foreground mt-1">Plan your perfect {numDays}-day adventure</p>
           </div>
-          <Link to="/">
-            <Button variant="outline">← Back to Home</Button>
+          <Link to="/" onClick={() => window.history.back()}>
+            <Button variant="outline">← Back</Button>
           </Link>
         </div>
 
@@ -178,7 +179,7 @@ const CityPlanner = () => {
                       Select Your Flight to {selectedCity}
                     </CardTitle>
                   </div>
-                  <Button variant="outline" onClick={() => setStep("city")}>
+                  <Button variant="outline" onClick={() => navigate('/')}>
                     ← Back
                   </Button>
                 </div>

@@ -29,6 +29,24 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
   const [destinations, setDestinations] = useState<string[]>([]);
   const [budget, setBudget] = useState("");
   const [travellers, setTravellers] = useState("");
+
+  // Load initial data from localStorage if available
+  useEffect(() => {
+    const savedData = localStorage.getItem('tripData');
+    if (savedData) {
+      try {
+        const data = JSON.parse(savedData);
+        if (data.source) setSource(data.source);
+        if (data.destinations && data.destinations.length > 0) setDestinations(data.destinations);
+        if (data.budget) setBudget(data.budget);
+        if (data.startDate) setStartDate(data.startDate);
+        if (data.endDate) setEndDate(data.endDate);
+        if (data.travellers) setTravellers(data.travellers);
+      } catch (e) {
+        console.error('Failed to load saved trip data:', e);
+      }
+    }
+  }, []);
   // Helper to format a Date as YYYY-MM-DD (safe for `input[type=date]`)
   const formatDate = (date: Date) => {
     const y = date.getFullYear();

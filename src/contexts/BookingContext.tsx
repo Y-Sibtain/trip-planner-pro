@@ -21,9 +21,38 @@ export const BookingProvider = ({ children }: { children: React.ReactNode }) => 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any | null>(null);
 
-  // Placeholder booking state (keep same shape as before if repo uses them)
-  const [tripData, setTripData] = useState<any | null>(null);
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  // Initialize from localStorage
+  const [tripData, setTripData] = useState<any | null>(() => {
+    try {
+      const saved = localStorage.getItem('tripData');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  
+  const [selectedItems, setSelectedItems] = useState<any[]>(() => {
+    try {
+      const saved = localStorage.getItem('selectedItems');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Persist tripData to localStorage when it changes
+  useEffect(() => {
+    if (tripData) {
+      localStorage.setItem('tripData', JSON.stringify(tripData));
+    } else {
+      localStorage.removeItem('tripData');
+    }
+  }, [tripData]);
+
+  // Persist selectedItems to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('selectedItems', JSON.stringify(selectedItems));
+  }, [selectedItems]);
 
   useEffect(() => {
     // Initialize session on mount

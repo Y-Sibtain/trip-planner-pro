@@ -160,9 +160,24 @@ const Index = () => {
             <div>
               <div className="font-semibold">Product</div>
               <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                <li>Itineraries</li>
-                <li>Destinations</li>
-                <li>Saved Plans</li>
+                <li 
+                  className="cursor-pointer hover:text-primary transition"
+                  onClick={() => navigate('/city-planner')}
+                >
+                  Itineraries
+                </li>
+                <li 
+                  className="cursor-pointer hover:text-primary transition"
+                  onClick={() => navigate('/destinations')}
+                >
+                  Destinations
+                </li>
+                <li 
+                  className="cursor-pointer hover:text-primary transition"
+                  onClick={() => navigate('/saved-itineraries')}
+                >
+                  Saved Plans
+                </li>
               </ul>
             </div>
 
