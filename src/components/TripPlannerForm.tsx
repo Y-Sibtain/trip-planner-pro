@@ -34,6 +34,9 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   const [destination2Input, setDestination2Input] = useState("");
   const [destination2, setDestination2] = useState<string>("");
   const [showDestination2, setShowDestination2] = useState(false);
+  const [destination3Input, setDestination3Input] = useState("");
+  const [destination3, setDestination3] = useState<string>("");
+  const [showDestination3, setShowDestination3] = useState(false);
   const [budget, setBudget] = useState("");
   const [travellers, setTravellers] = useState("");
 
@@ -202,6 +205,16 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
     ? suggestions.filter((s) => s.toLowerCase().includes(destinationInput.toLowerCase()) && !destinations.includes(s)).slice(0, 6)
     : [];
 
+  // Filtered suggestions for Destination 2
+  const filteredDestination2Suggestions = destination2Input
+    ? suggestions.filter((s) => s.toLowerCase().includes(destination2Input.toLowerCase()) && s !== destinations[0] && s !== destination3).slice(0, 6)
+    : [];
+
+  // Filtered suggestions for Destination 3
+  const filteredDestination3Suggestions = destination3Input
+    ? suggestions.filter((s) => s.toLowerCase().includes(destination3Input.toLowerCase()) && s !== destinations[0] && s !== destination2).slice(0, 6)
+    : [];
+
   // Filtered source suggestions for source dropdown (single-select)
   const filteredSourceSuggestions = sourceInput
     ? sourceSuggestions.filter((s) => s.toLowerCase().includes(sourceInput.toLowerCase())).slice(0, 6)
@@ -272,14 +285,16 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
             <Label className="flex items-center gap-2 text-black dark:text-white font-semibold">
               <Search className="w-4 h-4 text-blue-500" /> {t('destinations_label')}
             </Label>
-            <button
-              type="button"
-              onClick={() => setShowDestination2(!showDestination2)}
-              title="Click to add another Destination"
-              className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all text-blue-500 hover:text-blue-600"
-            >
-              <Plus className="w-5 h-5" />
-            </button>
+            {!showDestination2 && (
+              <button
+                type="button"
+                onClick={() => setShowDestination2(true)}
+                title="Click to add Destination 2"
+                className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all text-blue-500 hover:text-blue-600"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            )}
           </div>
           <div className="flex gap-2 flex-wrap mb-3">
             {destinations.map((d) => (
@@ -329,9 +344,23 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           {/* Destination 2 Field (Optional) */}
           {showDestination2 && (
             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2">
-                <Search className="w-4 h-4 text-blue-500" /> Destination 2
-              </Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label className="flex items-center gap-2 text-black dark:text-white font-semibold">
+                  <Search className="w-4 h-4 text-blue-500" /> Destination 2
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDestination2(false);
+                    setDestination2("");
+                    setDestination2Input("");
+                  }}
+                  title="Click to remove Destination 2"
+                  className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-all text-red-500 hover:text-red-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
               {destination2 && (
                 <div className="mb-3 inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
                   <span className="text-sm text-gray-900">{destination2}</span>
@@ -342,14 +371,14 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               )}
               <div className="relative">
                 <Input
-                  placeholder="Type destination and press Enter or select from suggestions"
+                  placeholder={t('destination_placeholder')}
                   value={destination2Input}
                   onChange={(e) => setDestination2Input(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
                       const trimmed = destination2Input.trim();
-                      if (trimmed && trimmed !== destinations[0]) {
+                      if (trimmed && trimmed !== destinations[0] && trimmed !== destination3) {
                         setDestination2(trimmed);
                         setDestination2Input("");
                       }
@@ -357,22 +386,22 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                   }}
                   className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                 />
-                {destination2Input && (filteredSuggestions.length > 0 || loadingSuggestions) && (
+                {destination2Input && (filteredDestination2Suggestions.length > 0 || loadingSuggestions) && (
                   <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
                     {loadingSuggestions ? (
                       <div className="p-3 text-sm text-gray-600">Loading...</div>
-                    ) : filteredSuggestions.length > 0 ? (
-                      filteredSuggestions.map((s) => (
+                    ) : filteredDestination2Suggestions.length > 0 ? (
+                      filteredDestination2Suggestions.map((s) => (
                         <button
                           key={s}
                           type="button"
                           className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
                           onClick={() => {
-                            if (s !== destinations[0]) {
+                            if (s !== destinations[0] && s !== destination3) {
                               setDestination2(s);
                               setDestination2Input("");
                             } else {
-                              toast({ title: "Duplicate destination", description: "This destination is already selected as Destination 1." });
+                              toast({ title: "Duplicate destination", description: "This destination is already selected." });
                             }
                           }}
                         >
@@ -385,6 +414,96 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Destination 3 Field (Optional) */}
+          {showDestination3 && (
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-2">
+                <Label className="flex items-center gap-2 text-black dark:text-white font-semibold">
+                  <Search className="w-4 h-4 text-blue-500" /> Destination 3
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDestination3(false);
+                    setDestination3("");
+                    setDestination3Input("");
+                  }}
+                  title="Click to remove Destination 3"
+                  className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-all text-red-500 hover:text-red-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              {destination3 && (
+                <div className="mb-3 inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
+                  <span className="text-sm text-gray-900">{destination3}</span>
+                  <button type="button" onClick={() => setDestination3("")} className="p-0.5 hover:text-blue-600 transition-all">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+              <div className="relative">
+                <Input
+                  placeholder={t('destination_placeholder')}
+                  value={destination3Input}
+                  onChange={(e) => setDestination3Input(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const trimmed = destination3Input.trim();
+                      if (trimmed && trimmed !== destinations[0] && trimmed !== destination2) {
+                        setDestination3(trimmed);
+                        setDestination3Input("");
+                      }
+                    }
+                  }}
+                  className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                />
+                {destination3Input && (filteredDestination3Suggestions.length > 0 || loadingSuggestions) && (
+                  <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
+                    {loadingSuggestions ? (
+                      <div className="p-3 text-sm text-gray-600">Loading...</div>
+                    ) : filteredDestination3Suggestions.length > 0 ? (
+                      filteredDestination3Suggestions.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+                          onClick={() => {
+                            if (s !== destinations[0] && s !== destination2) {
+                              setDestination3(s);
+                              setDestination3Input("");
+                            } else {
+                              toast({ title: "Duplicate destination", description: "This destination is already selected." });
+                            }
+                          }}
+                        >
+                          {s}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-3 text-sm text-gray-600">No destinations found</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Show Destination 3 button if Destination 2 is shown */}
+          {showDestination2 && !showDestination3 && (
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => setShowDestination3(true)}
+                title="Click to add Destination 3"
+                className="w-full py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all text-blue-500 hover:text-blue-600 flex items-center justify-center gap-2"
+              >
+                <Plus className="w-5 h-5" /> Add Destination 3
+              </button>
             </div>
           )}
         </div>
