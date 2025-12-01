@@ -25,7 +25,7 @@ const Index = () => {
   const [travellers, setTravellers] = useState('');
   const { toast } = useToast();
   const [aiOpen, setAiOpen] = useState(false);
-  const [packageResult, setPackageResult] = useState<TripPackage | null>(null);
+  const [packageResults, setPackageResults] = useState<TripPackage[] | null>(null);
   const [currentFormData, setCurrentFormData] = useState<TripFormData | null>(null);
   const { t } = useLanguage();
 
@@ -63,33 +63,62 @@ const Index = () => {
       toast({ title: "No trip data", description: "Please fill the planner form on this page first.", variant: "destructive" });
       return;
     }
-    const pkg = generateTripPackage(currentFormData as any);
-    setPackageResult(pkg);
+
+    const dests = Array.isArray(currentFormData.destinations) ? currentFormData.destinations : [];
+    if (dests.length === 0) {
+      toast({ title: "No destinations", description: "Please add at least one destination.", variant: "destructive" });
+      return;
+    }
+
+    const pkgs: TripPackage[] = dests.map((d, idx) => {
+      const tripDataForDest: any = { ...currentFormData };
+      tripDataForDest.destinations = [d];
+      if (idx === 0) {
+        tripDataForDest.startDate = currentFormData.startDate;
+        tripDataForDest.endDate = currentFormData.endDate;
+      } else if (idx === 1) {
+        tripDataForDest.startDate = currentFormData.startDate2 || currentFormData.endDate;
+        tripDataForDest.endDate = currentFormData.endDate2;
+      } else if (idx === 2) {
+        tripDataForDest.startDate = currentFormData.startDate3 || currentFormData.endDate2;
+        tripDataForDest.endDate = currentFormData.endDate3;
+      }
+      return generateTripPackage(tripDataForDest as any);
+    });
+
+    setPackageResults(pkgs);
     setAiOpen(true);
   };
 
   const bookAllPackage = () => {
-    if (!packageResult) return;
+    if (!packageResults || packageResults.length === 0) return;
+    let totalAmount = 0;
+    let totalDays = 0;
+    const itineraryByDest: any = { flights: {}, hotels: {}, days: {}, itineraries: {} };
+    packageResults.forEach((p) => {
+      totalAmount += (p.budgetBreakdown?.total || 0);
+      totalDays += (p.days || 0);
+      const dest = p.destination || `Destination`;
+      itineraryByDest.flights[dest] = p.flights || null;
+      itineraryByDest.hotels[dest] = p.hotel || null;
+      itineraryByDest.days[dest] = p.days || 0;
+      itineraryByDest.itineraries[dest] = p.itinerary || [];
+    });
+
     const booking = {
-      itinerary_title: packageResult.destination,
-      total_amount: packageResult.totalBudgetPKR,
+      itinerary_title: packageResults.map(p => p.destination).join(' > '),
+      total_amount: totalAmount,
       plan: {
-        destination: packageResult.destination,
-        numDays: packageResult.days,
-        numPeople: packageResult.travellers,
-        flight: packageResult.flights,
-        hotel: packageResult.hotel,
-        activities: packageResult.itinerary,
+        numPeople: packageResults[0]?.travellers || 1,
+        numDays: totalDays,
+        itineraryByDest,
       },
       itinerary_data: {
-        destination: packageResult.destination,
-        numDays: packageResult.days,
-        numPeople: packageResult.travellers,
-        flight: packageResult.flights,
-        hotel: packageResult.hotel,
-        budgetBreakdown: packageResult.budgetBreakdown,
+        itineraryByDest,
+        budgetBreakdown: { total: totalAmount },
       },
     };
+
     setAiOpen(false);
     navigate('/payment', { state: { booking } });
   };
@@ -251,82 +280,86 @@ const Index = () => {
             <DialogDescription className="text-gray-600 dark:text-gray-400">AI-generated itinerary tailored to your preferences and budget</DialogDescription>
           </DialogHeader>
 
-          {packageResult ? (
+          {packageResults && packageResults.length ? (
             <div className="space-y-4 mt-4">
-              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
-                <div className="font-bold text-xl text-blue-900 dark:text-blue-300 mb-2">📍 {packageResult.destination}</div>
-                <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
-                  <div>📅 Duration: <strong className="text-blue-600 dark:text-blue-400">{packageResult.days} days</strong> | 👥 Travelers: <strong className="text-blue-600 dark:text-blue-400">{packageResult.travellers}</strong></div>
-                  <div>💰 Total Budget: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.totalBudgetPKR.toLocaleString()}</strong></div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
-                <div className="font-bold text-gray-900 dark:text-white mb-2">✈️ Flight</div>
-                <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-                  <div>Airline: <span className="text-blue-600 dark:text-blue-400">{packageResult.flights.airline}</span></div>
-                  <div>Route: {packageResult.flights.departure} → {packageResult.flights.arrival}</div>
-                  <div>Price: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.flights.pricePerPersonPKR.toLocaleString()}</strong> per person</div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
-                <div className="font-bold text-gray-900 dark:text-white mb-2">🏨 Accommodation</div>
-                <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-                  <div>Hotel: <span className="text-blue-600 dark:text-blue-400">{packageResult.hotel.name}</span> ({packageResult.hotel.stars} ⭐)</div>
-                  <div>Rate: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.hotel.pricePerNightPKR.toLocaleString()}</strong> per night</div>
-                  <div>Total Stay: <strong>₨{packageResult.hotel.totalStayPKR.toLocaleString()}</strong></div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
-                <div className="font-bold text-gray-900 dark:text-white mb-3">💵 Budget Breakdown</div>
-                <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
-                  <div className="flex justify-between">
-                    <span>Flights:</span>
-                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.flights.toLocaleString()}</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Accommodation:</span>
-                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.accommodation.toLocaleString()}</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Meals:</span>
-                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.meals.toLocaleString()}</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Activities:</span>
-                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.activities.toLocaleString()}</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Transport:</span>
-                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.transport.toLocaleString()}</strong>
-                  </div>
-                  <div className="flex justify-between pt-2 border-t border-gray-300 dark:border-gray-600">
-                    <span>Contingency:</span>
-                    <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.contingency.toLocaleString()}</strong>
-                  </div>
-                  <div className="flex justify-between font-bold pt-2 border-t border-gray-300 dark:border-gray-600 text-lg text-blue-600 dark:text-blue-400">
-                    <span>Total:</span>
-                    <span>₨{packageResult.budgetBreakdown.total.toLocaleString()}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
-                <div className="font-bold text-gray-900 dark:text-white mb-3">📅 Day-by-Day Itinerary</div>
-                <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
-                  {packageResult.itinerary.slice(0, 3).map((day) => (
-                    <div key={day.day} className="flex justify-between">
-                      <span>Day {day.day}: <strong>{day.activity}</strong></span>
-                      {day.estimatedCostPKR > 0 && <strong className="text-blue-600 dark:text-blue-400">₨{day.estimatedCostPKR.toLocaleString()}</strong>}
+              {packageResults.map((packageResult, idx) => (
+                <div key={idx} className="space-y-4">
+                  <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
+                    <div className="font-bold text-xl text-blue-900 dark:text-blue-300 mb-2">📍 {packageResult.destination}</div>
+                    <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
+                      <div>📅 Duration: <strong className="text-blue-600 dark:text-blue-400">{packageResult.days} days</strong> | 👥 Travelers: <strong className="text-blue-600 dark:text-blue-400">{packageResult.travellers}</strong></div>
+                      <div>💰 Total Budget: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.totalBudgetPKR.toLocaleString()}</strong></div>
                     </div>
-                  ))}
-                  {packageResult.itinerary.length > 3 && (
-                    <div className="text-xs italic text-gray-600 dark:text-gray-500 pt-2">+ {packageResult.itinerary.length - 3} more days</div>
-                  )}
+                  </div>
+
+                  <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
+                    <div className="font-bold text-gray-900 dark:text-white mb-2">✈️ Flight</div>
+                    <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
+                      <div>Airline: <span className="text-blue-600 dark:text-blue-400">{packageResult.flights.airline}</span></div>
+                      <div>Route: {packageResult.flights.departure} → {packageResult.flights.arrival}</div>
+                      <div>Price: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.flights.pricePerPersonPKR.toLocaleString()}</strong> per person</div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
+                    <div className="font-bold text-gray-900 dark:text-white mb-2">🏨 Accommodation</div>
+                    <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
+                      <div>Hotel: <span className="text-blue-600 dark:text-blue-400">{packageResult.hotel.name}</span> ({packageResult.hotel.stars} ⭐)</div>
+                      <div>Rate: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.hotel.pricePerNightPKR.toLocaleString()}</strong> per night</div>
+                      <div>Total Stay: <strong>₨{packageResult.hotel.totalStayPKR.toLocaleString()}</strong></div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
+                    <div className="font-bold text-gray-900 dark:text-white mb-3">💵 Budget Breakdown</div>
+                    <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
+                      <div className="flex justify-between">
+                        <span>Flights:</span>
+                        <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.flights.toLocaleString()}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Accommodation:</span>
+                        <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.accommodation.toLocaleString()}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Meals:</span>
+                        <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.meals.toLocaleString()}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Activities:</span>
+                        <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.activities.toLocaleString()}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Transport:</span>
+                        <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.transport.toLocaleString()}</strong>
+                      </div>
+                      <div className="flex justify-between pt-2 border-t border-gray-300 dark:border-gray-600">
+                        <span>Contingency:</span>
+                        <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.contingency.toLocaleString()}</strong>
+                      </div>
+                      <div className="flex justify-between font-bold pt-2 border-t border-gray-300 dark:border-gray-600 text-lg text-blue-600 dark:text-blue-400">
+                        <span>Total:</span>
+                        <span>₨{packageResult.budgetBreakdown.total.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
+                    <div className="font-bold text-gray-900 dark:text-white mb-3">📅 Day-by-Day Itinerary</div>
+                    <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
+                      {packageResult.itinerary.slice(0, 3).map((day) => (
+                        <div key={day.day} className="flex justify-between">
+                          <span>Day {day.day}: <strong>{day.activity}</strong></span>
+                          {day.estimatedCostPKR > 0 && <strong className="text-blue-600 dark:text-blue-400">₨{day.estimatedCostPKR.toLocaleString()}</strong>}
+                        </div>
+                      ))}
+                      {packageResult.itinerary.length > 3 && (
+                        <div className="text-xs italic text-gray-600 dark:text-gray-500 pt-2">+ {packageResult.itinerary.length - 3} more days</div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button onClick={() => setAiOpen(false)} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold hover:shadow-lg transition-all-smooth">
