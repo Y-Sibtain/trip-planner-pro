@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import ShatterButton from "@/components/ui/shatter-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -323,7 +324,9 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit">Generate Itinerary</Button>
+            <ShatterButton shatterColor="#06b6d4">
+              <Button type="submit">Plan my trip</Button>
+            </ShatterButton>
           </div>
         </form>
       </CardContent>
