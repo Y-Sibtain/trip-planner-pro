@@ -128,9 +128,9 @@ export const Sidebar = () => {
 
         {/* Sign Out Button & Theme Switch */}
         <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
-          {/* Language above Theme Switch */}
-          <div className="flex flex-col items-center p-3 border-b border-gray-200 dark:border-gray-700">
-            {/* Language selector - collapsed shows globe that cycles languages */}
+          {/* Language & Theme Switch Side by Side */}
+          <div className="flex items-center gap-2 p-3 border-b border-gray-200 dark:border-gray-700">
+            {/* Language selector */}
             {isCollapsed ? (
               <button
                 onClick={() => {
@@ -140,30 +140,25 @@ export const Sidebar = () => {
                   setLang(next);
                 }}
                 title={`Language: ${lang} (click to cycle)`}
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0"
               >
                 <Globe className="w-5 h-5" />
               </button>
             ) : (
-              <div className="w-full flex items-center gap-2">
-                <label className="text-xs text-muted-foreground mr-1">Lng</label>
-                <select
-                  value={lang}
-                  onChange={(e) => setLang(e.target.value as any)}
-                  className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground flex-1"
-                >
-                  <option value="en">EN</option>
-                  <option value="ur">UR</option>
-                  <option value="es">ES</option>
-                  <option value="ar">AR</option>
-                </select>
-              </div>
+              <select
+                value={lang}
+                onChange={(e) => setLang(e.target.value as any)}
+                className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground flex-1"
+              >
+                <option value="en">EN</option>
+                <option value="ur">UR</option>
+                <option value="es">ES</option>
+                <option value="ar">AR</option>
+              </select>
             )}
 
-            {/* Theme switch below language */}
-            <div className="mt-2">
-              <ThemeSwitch />
-            </div>
+            {/* Theme switch beside language */}
+            <ThemeSwitch />
           </div>
 
           {/* Sign Out Button */}
