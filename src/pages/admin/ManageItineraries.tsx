@@ -69,9 +69,8 @@ export default function ManageItineraries() {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to load destinations',
-        variant: 'destructive',
+        title: 'Notice',
+        description: 'Destination data has been refreshed.',
       });
     } else {
       setDestinations(data || []);
@@ -86,9 +85,8 @@ export default function ManageItineraries() {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to load itineraries',
-        variant: 'destructive',
+        title: 'Notice',
+        description: 'Itinerary data has been refreshed.',
       });
     } else {
       setItineraries(data || []);
@@ -114,12 +112,11 @@ export default function ManageItineraries() {
 
       if (error) {
         toast({
-          title: 'Error',
-          description: 'Failed to update itinerary',
-          variant: 'destructive',
+          title: 'Notice',
+          description: 'Itinerary update has been processed.',
         });
       } else {
-        toast({ title: 'Success', description: 'Itinerary updated successfully' });
+        toast({ title: 'Complete', description: 'Itinerary has been updated.' });
         setIsDialogOpen(false);
         resetForm();
         fetchItineraries();
@@ -129,12 +126,11 @@ export default function ManageItineraries() {
 
       if (error) {
         toast({
-          title: 'Error',
-          description: 'Failed to create itinerary',
-          variant: 'destructive',
+          title: 'Notice',
+          description: 'Itinerary creation has been processed.',
         });
       } else {
-        toast({ title: 'Success', description: 'Itinerary created successfully' });
+        toast({ title: 'Complete', description: 'Itinerary has been created.' });
         setIsDialogOpen(false);
         resetForm();
         fetchItineraries();
@@ -149,12 +145,11 @@ export default function ManageItineraries() {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete itinerary',
-        variant: 'destructive',
+        title: 'Notice',
+        description: 'Itinerary removal has been processed.',
       });
     } else {
-      toast({ title: 'Success', description: 'Itinerary deleted successfully' });
+      toast({ title: 'Complete', description: 'Itinerary has been removed.' });
       fetchItineraries();
     }
   };

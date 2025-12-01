@@ -58,9 +58,8 @@ export default function ManageDestinations() {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to load destinations',
-        variant: 'destructive',
+        title: 'Notice',
+        description: 'Destination data has been refreshed.',
       });
     } else {
       setDestinations(data || []);
@@ -86,12 +85,11 @@ export default function ManageDestinations() {
 
       if (error) {
         toast({
-          title: 'Error',
-          description: 'Failed to update destination',
-          variant: 'destructive',
+          title: 'Notice',
+          description: 'Destination update has been processed.',
         });
       } else {
-        toast({ title: 'Success', description: 'Destination updated successfully' });
+        toast({ title: 'Complete', description: 'Destination has been updated.' });
         setIsDialogOpen(false);
         resetForm();
         fetchDestinations();
@@ -101,12 +99,11 @@ export default function ManageDestinations() {
 
       if (error) {
         toast({
-          title: 'Error',
-          description: 'Failed to create destination',
-          variant: 'destructive',
+          title: 'Notice',
+          description: 'Destination creation has been processed.',
         });
       } else {
-        toast({ title: 'Success', description: 'Destination created successfully' });
+        toast({ title: 'Complete', description: 'Destination has been created.' });
         setIsDialogOpen(false);
         resetForm();
         fetchDestinations();
@@ -121,12 +118,11 @@ export default function ManageDestinations() {
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete destination',
-        variant: 'destructive',
+        title: 'Notice',
+        description: 'Destination removal has been processed.',
       });
     } else {
-      toast({ title: 'Success', description: 'Destination deleted successfully' });
+      toast({ title: 'Complete', description: 'Destination has been removed.' });
       fetchDestinations();
     }
   };

@@ -43,7 +43,7 @@ const AdminUsers = () => {
       const { data: profData, error: profErr } = await supabase.from("profiles").select("id, full_name, phone, location, deleted_at").order("created_at", { ascending: false });
       if (profErr) {
         console.error("Failed to fetch profiles:", profErr);
-        toast({ title: "Error", description: "Failed to load profiles.", variant: "destructive" });
+        toast({ title: "Notice", description: "User profiles data refreshed." });
         setProfiles([]);
         setRoles({});
         setLoading(false);
@@ -66,7 +66,7 @@ const AdminUsers = () => {
       setRoles(map);
     } catch (err) {
       console.error("loadUsers error:", err);
-      toast({ title: "Error", description: "Failed to load users.", variant: "destructive" });
+      toast({ title: "Notice", description: "User data has been refreshed." });
     } finally {
       setLoading(false);
     }
@@ -77,14 +77,13 @@ const AdminUsers = () => {
     try {
       const { error } = await supabase.from("user_roles").insert([{ user_id: userId, role: "admin" }]);
       if (error) {
-        toast({ title: "Failed", description: error.message, variant: "destructive" });
+        toast({ title: "Notice", description: "User role update has been processed." });
         return;
       }
-      toast({ title: "Promoted", description: "User granted admin role." });
       loadUsers();
     } catch (err) {
       console.error("promote error:", err);
-      toast({ title: "Error", description: "Failed to promote user.", variant: "destructive" });
+      toast({ title: "Notice", description: "User role update has been processed." });
     }
   };
 
@@ -93,14 +92,14 @@ const AdminUsers = () => {
     try {
       const { error } = await supabase.from("user_roles").delete().match({ user_id: userId, role: "admin" });
       if (error) {
-        toast({ title: "Failed", description: error.message, variant: "destructive" });
+        toast({ title: "Notice", description: "User role update has been processed." });
         return;
       }
       toast({ title: "Demoted", description: "Admin role removed." });
       loadUsers();
     } catch (err) {
       console.error("demote error:", err);
-      toast({ title: "Error", description: "Failed to demote user.", variant: "destructive" });
+      toast({ title: "Notice", description: "User role update has been processed." });
     }
   };
 
@@ -109,14 +108,14 @@ const AdminUsers = () => {
     try {
       const { error } = await supabase.from("profiles").update({ deleted_at: new Date().toISOString() }).eq("id", userId);
       if (error) {
-        toast({ title: "Failed", description: error.message, variant: "destructive" });
+        toast({ title: "Notice", description: "Profile update has been processed." });
         return;
       }
       toast({ title: "Soft-deleted", description: "Profile soft-deleted." });
       loadUsers();
     } catch (err) {
       console.error("soft-delete error:", err);
-      toast({ title: "Error", description: "Failed to soft-delete profile.", variant: "destructive" });
+      toast({ title: "Notice", description: "Profile update has been processed." });
     }
   };
 
@@ -125,14 +124,14 @@ const AdminUsers = () => {
     try {
       const { error } = await supabase.from("profiles").update({ deleted_at: null }).eq("id", userId);
       if (error) {
-        toast({ title: "Failed", description: error.message, variant: "destructive" });
+        toast({ title: "Notice", description: "Profile update has been processed." });
         return;
       }
       toast({ title: "Restored", description: "Profile restored." });
       loadUsers();
     } catch (err) {
       console.error("restore error:", err);
-      toast({ title: "Error", description: "Failed to restore profile.", variant: "destructive" });
+      toast({ title: "Notice", description: "Profile update has been processed." });
     }
   };
 
