@@ -53,16 +53,39 @@ export const Sidebar = () => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:relative md:h-screen md:sticky md:top-0 overflow-y-auto`}
       >
-        {/* Logo */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-          <div className="flex items-center gap-2 justify-between">
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0 hidden md:flex"
-              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-              <AlignLeft className="w-5 h-5" />
-            </button>
+        {/* Logo Section */}
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 relative z-50">
+          <div className="flex items-center gap-3 justify-between">
+            {/* Trip Planner Name / Icon with Hover */}
+            {!isCollapsed && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsCollapsed(true)}
+                  className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm hover:shadow-lg transition-all group relative pointer-events-auto cursor-pointer"
+                  title="Collapse sidebar"
+                  type="button"
+                >
+                  {/* Airplane icon - visible by default */}
+                  <Plane className="w-4 h-4 group-hover:hidden pointer-events-none" />
+                  {/* Hamburger icon - visible on hover */}
+                  <Menu className="w-4 h-4 hidden group-hover:block pointer-events-none" />
+                </button>
+                <span className="font-bold text-lg text-gray-900 dark:text-white">Trip Planner</span>
+              </div>
+            )}
+            {isCollapsed && (
+              <button
+                onClick={() => setIsCollapsed(false)}
+                className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm mx-auto hover:shadow-lg transition-all group relative pointer-events-auto cursor-pointer"
+                title="Expand sidebar"
+                type="button"
+              >
+                {/* Airplane icon - visible by default */}
+                <Plane className="w-4 h-4 group-hover:hidden pointer-events-none" />
+                {/* Hamburger icon - visible on hover */}
+                <Menu className="w-4 h-4 hidden group-hover:block pointer-events-none" />
+              </button>
+            )}
           </div>
           {!isCollapsed && isAuthenticated && (
             <>

@@ -102,8 +102,8 @@ const Index = () => {
       </div>
 
       {/* Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <nav className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none">
+        <div className="max-w-7xl mx-auto flex justify-between items-center pointer-events-auto">
           <div></div>
           <div className="flex items-center gap-2 sm:gap-4">
             <NotificationsMenu />
@@ -120,7 +120,7 @@ const Index = () => {
         backgroundAttachment: 'fixed'
       }}>
         {/* Light overlay for readability */}
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-black/20 pointer-events-none"></div>
 
         {/* Content */}
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-8">
