@@ -160,7 +160,7 @@ const Destinations = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-5xl font-bold text-gray-900 mb-2">Explore Destinations</h1>
-          <p className="text-gray-600">Search and filter destinations by name, country, or price</p>
+          <p className="text-black">Search and filter destinations by name, country, or price</p>
         </div>
 
         {/* Search & Filters Section */}
@@ -294,15 +294,15 @@ const Destinations = () => {
                   <div className="p-4 space-y-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-bold text-white text-lg group-hover:text-cyan-300 transition-colors">{d.name}</h3>
-                        <p className="text-cyan-200/60 text-sm">{d.country || 'Unknown'}</p>
+                        <h3 className="font-bold text-black text-lg group-hover:text-blue-600 transition-colors">{d.name}</h3>
+                        <p className="text-black/60 text-sm">{d.country || 'Unknown'}</p>
                       </div>
                     </div>
 
                     {/* Price */}
-                    <div className="border-t border-cyan-500/10 pt-3">
-                      <p className="text-xs text-cyan-200/50 mb-1">Starting from</p>
-                      <p className="text-lg font-bold text-gradient">
+                    <div className="border-t border-gray-200 pt-3">
+                      <p className="text-xs text-black/50 mb-1">Starting from</p>
+                      <p className="text-lg font-bold text-blue-600">
                         {d.base_price != null ? `PKR ${Number(d.base_price).toLocaleString()}` : "—"}
                       </p>
                     </div>
