@@ -206,7 +206,7 @@ const Destinations = () => {
                   <Button 
                     variant="outline" 
                     onClick={() => { setCountry(""); runSearch(); }}
-                    className="border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     Clear
                   </Button>
@@ -243,7 +243,7 @@ const Destinations = () => {
                 </Button>
                 <Button 
                   onClick={clearFilters}
-                  className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold rounded-lg transition-all-smooth text-sm"
+                  className="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-semibold rounded-lg transition-all-smooth text-sm"
                 >
                   Reset
                 </Button>
