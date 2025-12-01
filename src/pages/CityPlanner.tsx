@@ -186,11 +186,11 @@ const CityPlanner = () => {
                     </div>
                     Select Your Flight
                   </h2>
-                  <p className="text-cyan-200/60">Departing to {selectedCity} for {numDays} days</p>
+                  <p className="text-black">Departing to {selectedCity} for {numDays} days</p>
                 </div>
                 <Button 
                   onClick={() => navigate('/')}
-                  className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 text-white font-semibold glow-tertiary hover:scale-105 transition-all-smooth"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
                 >
                   ← Back
                 </Button>
@@ -259,7 +259,7 @@ const CityPlanner = () => {
                   onClick={() => setStep("hotel")}
                   className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white font-semibold glow-tertiary hover:scale-105 transition-all-smooth"
                 >
-                  ← Back
+                  ←  fi
                 </Button>
               </div>
             </div>
