@@ -32,7 +32,7 @@ const translations: Record<Lang, Record<string, string>> = {
     plan: 'Plan',
     source: 'From',
     source_placeholder: 'Type a city or airport from',
-    destinations_label: 'To (up to 3)',
+    destinations_label: 'Destination',
     destination_placeholder: 'Type destination and press Enter or select from suggestions',
     budget_optional: 'Budget (optional)',
     budget_placeholder: 'Total budget (PKR)',
