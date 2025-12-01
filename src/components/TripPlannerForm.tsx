@@ -19,9 +19,11 @@ export interface TripFormData {
 
 interface TripPlannerFormProps {
   onSearch: (data: TripFormData) => void;
+  onFormStateChange?: (data: TripFormData) => void;
+  onAskAI?: () => void;
 }
 
-const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
+const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFormProps) => {
   const [source, setSource] = useState("");
   const [sourceInput, setSourceInput] = useState("");
   const [sourceSuggestions, setSourceSuggestions] = useState<string[]>([]);
@@ -113,6 +115,20 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
   const removeDestination = (name: string) => {
     setDestinations((d) => d.filter((x) => x !== name));
   };
+
+  // Notify parent component of form state changes
+  useEffect(() => {
+    if (onFormStateChange) {
+      onFormStateChange({
+        source,
+        destinations,
+        budget,
+        startDate,
+        endDate,
+        travellers,
+      });
+    }
+  }, [source, destinations, budget, startDate, endDate, travellers, onFormStateChange]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -335,7 +351,10 @@ const TripPlannerForm = ({ onSearch }: TripPlannerFormProps) => {
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            <Button type="button" onClick={onAskAI}>
+              Ask AI
+            </Button>
             <ShatterButton shatterColor="#06b6d4">
               <Button type="submit">Plan my trip</Button>
             </ShatterButton>

@@ -1,0 +1,195 @@
+interface TripData {
+  source?: string;
+  destinations?: string[];
+  budget?: string;
+  startDate?: string;
+  endDate?: string;
+  travellers?: string | number;
+}
+
+export interface FlightRecommendation {
+  airline: string;
+  departure: string;
+  arrival: string;
+  pricePerPersonPKR: number;
+}
+
+export interface HotelRecommendation {
+  name: string;
+  stars: number;
+  pricePerNightPKR: number;
+  totalStayPKR: number;
+}
+
+export interface ItineraryDay {
+  day: number;
+  activity: string;
+  estimatedCostPKR: number;
+}
+
+export interface BudgetBreakdown {
+  flights: number;
+  accommodation: number;
+  meals: number;
+  activities: number;
+  transport: number;
+  contingency: number;
+  total: number;
+}
+
+export interface TripPackage {
+  destination: string | null;
+  style: "Luxury" | "Comfort" | "Budget";
+  days: number;
+  travellers: number;
+  totalBudgetPKR: number;
+  flights: FlightRecommendation;
+  hotel: HotelRecommendation;
+  itinerary: ItineraryDay[];
+  budgetBreakdown: BudgetBreakdown;
+  notes: string[];
+}
+
+// Mock data for flights and hotels by destination
+const flightPrices: Record<string, number> = {
+  "Dubai": 45000,
+  "London": 75000,
+  "New York": 95000,
+  "Istanbul": 35000,
+};
+
+const hotelsByDestination: Record<string, { [key: number]: { name: string; pricePerNight: number } }> = {
+  "Dubai": {
+    5: { name: "Burj Al Arab", pricePerNight: 50000 },
+    4: { name: "Atlantis The Palm", pricePerNight: 15000 },
+    3: { name: "JW Marriott", pricePerNight: 8000 },
+  },
+  "London": {
+    5: { name: "The Ritz London", pricePerNight: 55000 },
+    4: { name: "Savoy Hotel", pricePerNight: 18000 },
+    3: { name: "Premier Inn", pricePerNight: 7000 },
+  },
+  "New York": {
+    5: { name: "The Plaza", pricePerNight: 60000 },
+    4: { name: "St. Regis", pricePerNight: 20000 },
+    3: { name: "Holiday Inn", pricePerNight: 9000 },
+  },
+  "Istanbul": {
+    5: { name: "Çırağan Palace", pricePerNight: 45000 },
+    4: { name: "Four Seasons", pricePerNight: 12000 },
+    3: { name: "Ramada", pricePerNight: 5000 },
+  },
+};
+
+const sampleActivities: Record<string, string[]> = {
+  "Dubai": ["Desert Safari", "Burj Khalifa Visit", "Gold Souk Tour", "Beach Day", "Dubai Mall Shopping"],
+  "London": ["Tower of London", "Big Ben & Westminster", "British Museum", "West End Show", "Thames River Cruise"],
+  "New York": ["Statue of Liberty", "Central Park Walk", "Broadway Show", "Times Square", "Empire State Building"],
+  "Istanbul": ["Hagia Sophia Tour", "Grand Bazaar", "Blue Mosque", "Bosphorus Cruise", "Topkapi Palace"],
+};
+
+export function generateTripPackage(data: TripData): TripPackage {
+  const dest = (data.destinations && data.destinations[0]) || "Dubai";
+  const travellers = Number(data.travellers || 1) || 1;
+
+  let days = 3;
+  if (data.startDate && data.endDate) {
+    try {
+      const start = new Date(data.startDate);
+      const end = new Date(data.endDate);
+      const diff = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+      days = Math.max(1, diff);
+    } catch (e) {
+      days = 3;
+    }
+  }
+
+  // Parse budget
+  const budgetNum = Number(String(data.budget || "").replace(/[^0-9.-]+/g, "")) || 300000;
+
+  // Determine travel style
+  const perPersonBudget = budgetNum / travellers;
+  let style: TripPackage['style'] = "Budget";
+  let recommendedStars = 3;
+  if (perPersonBudget / days >= 50000) {
+    style = "Luxury";
+    recommendedStars = 5;
+  } else if (perPersonBudget / days >= 15000) {
+    style = "Comfort";
+    recommendedStars = 4;
+  } else {
+    style = "Budget";
+    recommendedStars = 3;
+  }
+
+  // Get flight price
+  const flightPrice = flightPrices[dest as keyof typeof flightPrices] || 50000;
+
+  // Get hotel
+  const hotelOptions = hotelsByDestination[dest as keyof typeof hotelsByDestination] || hotelsByDestination["Dubai"];
+  const hotelData = hotelOptions[recommendedStars] || hotelOptions[3];
+  const hotelPerNight = hotelData.pricePerNight;
+
+  // Calculate budget allocation
+  const flightsTotal = flightPrice * travellers;
+  const hotelTotal = hotelPerNight * (days - 1) * travellers; // -1 because typically last day is travel day
+  const mealsCost = days * 3000 * travellers; // ₨3000 per person per day for meals
+  const activitiesCost = Math.max(0, (budgetNum - flightsTotal - hotelTotal - mealsCost) * 0.25);
+  const transportCost = Math.max(0, (budgetNum - flightsTotal - hotelTotal - mealsCost) * 0.1);
+  const contingency = Math.max(0, budgetNum - flightsTotal - hotelTotal - mealsCost - activitiesCost - transportCost);
+
+  // Generate itinerary
+  const activities = sampleActivities[dest as keyof typeof sampleActivities] || sampleActivities["Dubai"];
+  const itinerary: ItineraryDay[] = [];
+  for (let i = 1; i <= days; i++) {
+    const activity = activities[i % activities.length];
+    const activityCost = i < days ? Math.floor(activitiesCost / (days - 1)) : 0; // Skip last day
+    itinerary.push({
+      day: i,
+      activity: i === 1 ? "Arrival & Check-in" : i === days ? "Departure" : activity,
+      estimatedCostPKR: activityCost,
+    });
+  }
+
+  const notes: string[] = [];
+  notes.push(`✈️ Flight: ${data.source || "Islamabad"} → ${dest}`);
+  notes.push(`🏨 Hotel: ${hotelData.name} (${recommendedStars} stars)`);
+  notes.push(`📅 Duration: ${days} days, ${travellers} ${travellers === 1 ? "person" : "people"}`);
+  notes.push(`💰 Total Budget: ₨${budgetNum.toLocaleString()}`);
+
+  const breakdownTotal = flightsTotal + hotelTotal + mealsCost + activitiesCost + transportCost + contingency;
+
+  return {
+    destination: dest,
+    style,
+    days,
+    travellers,
+    totalBudgetPKR: budgetNum,
+    flights: {
+      airline: "National Carrier",
+      departure: `${data.source || "Islamabad"} (08:00 AM)`,
+      arrival: `${dest} (02:00 PM)`,
+      pricePerPersonPKR: flightPrice,
+    },
+    hotel: {
+      name: hotelData.name,
+      stars: recommendedStars,
+      pricePerNightPKR: hotelPerNight,
+      totalStayPKR: hotelTotal,
+    },
+    itinerary,
+    budgetBreakdown: {
+      flights: flightsTotal,
+      accommodation: hotelTotal,
+      meals: mealsCost,
+      activities: Math.floor(activitiesCost),
+      transport: Math.floor(transportCost),
+      contingency: Math.floor(contingency),
+      total: Math.floor(breakdownTotal),
+    },
+    notes,
+  };
+}
+
+export default generateTripPackage;
+
