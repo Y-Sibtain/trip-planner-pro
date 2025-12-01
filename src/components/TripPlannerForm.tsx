@@ -212,6 +212,38 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
       toast({ title: "Validation error", description: "Start date must be before or equal to end date.", variant: "destructive" });
       return;
     }
+
+    // Destination 2 validation: startDate2 is auto-filled and non-editable; ensure endDate2 exists and is on/after startDate2
+    if (showDestination2 || destination2) {
+      if (!startDate2) {
+        toast({ title: "Validation error", description: "Start Date for Destination 2 is not set.", variant: "destructive" });
+        return;
+      }
+      if (!endDate2) {
+        toast({ title: "Validation error", description: "Please enter an end date for Destination 2.", variant: "destructive" });
+        return;
+      }
+      if (new Date(endDate2) < new Date(startDate2)) {
+        toast({ title: "Validation error", description: "End Date for Destination 2 cannot be before its Start Date.", variant: "destructive" });
+        return;
+      }
+    }
+
+    // Destination 3 validation: startDate3 is auto-filled (from endDate2) and non-editable; ensure endDate3 exists and is on/after startDate3
+    if (showDestination3 || destination3) {
+      if (!startDate3) {
+        toast({ title: "Validation error", description: "Start Date for Destination 3 is not set.", variant: "destructive" });
+        return;
+      }
+      if (!endDate3) {
+        toast({ title: "Validation error", description: "Please enter an end date for Destination 3.", variant: "destructive" });
+        return;
+      }
+      if (new Date(endDate3) < new Date(startDate3)) {
+        toast({ title: "Validation error", description: "End Date for Destination 3 cannot be before its Start Date.", variant: "destructive" });
+        return;
+      }
+    }
     const parsedBudget = Number(budget);
     if (budget && (Number.isNaN(parsedBudget) || parsedBudget < 0)) {
       toast({ title: "Validation error", description: "Enter a valid budget (positive number) or leave empty.", variant: "destructive" });
@@ -608,7 +640,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 <Input
                   type="date"
                   value={startDate2}
-                  onChange={(e) => setStartDate2(e.target.value)}
+                  disabled
                   min={minDate}
                   className="w-full px-4 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                 />
@@ -620,7 +652,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 <Input
                   type="date"
                   value={startDate3}
-                  onChange={(e) => setStartDate3(e.target.value)}
+                  disabled
                   min={minDate}
                   className="w-full px-4 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                 />
