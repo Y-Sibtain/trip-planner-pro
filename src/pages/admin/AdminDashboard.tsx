@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
+import { RefreshCw, Users, MapPin, Calendar, BookOpen } from "lucide-react";
 
 /**
  * Admin Dashboard
@@ -126,8 +127,8 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen p-4">
-      <h1 className="text-2xl font-semibold mb-4">Admin Dashboard</h1>
+    <div className="min-h-screen p-4 bg-white dark:bg-gray-900">
+      <h1 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Admin Dashboard</h1>
 
       <div className="grid md:grid-cols-4 gap-4 mb-6">
         <Card>
@@ -199,13 +200,43 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      <div className="flex gap-2">
-        <Button onClick={loadDashboard}>Refresh</Button>
-        <Button variant="outline" onClick={() => navigate("/admin/users")}>
-          Manage users
-        </Button>
-        <Button variant="ghost" onClick={() => navigate("/admin")}>
-          Manage content
+      <div className="flex gap-2 flex-wrap justify-between items-center">
+        <div className="flex gap-2 flex-wrap">
+          <Button 
+            onClick={() => navigate("/admin/admin-bookings")}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth hover:scale-105"
+          >
+            <BookOpen className="w-4 h-4 mr-2" />
+            Manage Bookings
+          </Button>
+          <Button 
+            onClick={() => navigate("/admin/destinations")}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth hover:scale-105"
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            Manage Destinations
+          </Button>
+          <Button 
+            onClick={() => navigate("/admin/itineraries")}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth hover:scale-105"
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            Manage Itineraries
+          </Button>
+          <Button 
+            onClick={() => navigate("/admin/users")}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth hover:scale-105"
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Manage Users
+          </Button>
+        </div>
+        <Button 
+          onClick={loadDashboard}
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth hover:scale-105"
+        >
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Refresh
         </Button>
       </div>
     </div>

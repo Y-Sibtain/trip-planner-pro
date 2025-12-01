@@ -15,6 +15,14 @@ export interface TripFormData {
   budget: string;
   startDate: string;
   endDate: string;
+  // optional per-destination second dates (for destination 2)
+  startDate2?: string;
+  endDate2?: string;
+  // optional per-destination third dates (for destination 3)
+  startDate3?: string;
+  endDate3?: string;
+  destination2?: string;
+  destination3?: string;
   travellers: string;
 }
 
@@ -37,6 +45,10 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   const [destination3Input, setDestination3Input] = useState("");
   const [destination3, setDestination3] = useState<string>("");
   const [showDestination3, setShowDestination3] = useState(false);
+  const [startDate2, setStartDate2] = useState("");
+  const [endDate2, setEndDate2] = useState("");
+  const [startDate3, setStartDate3] = useState("");
+  const [endDate3, setEndDate3] = useState("");
   const [budget, setBudget] = useState("");
   const [travellers, setTravellers] = useState("");
 
@@ -51,6 +63,10 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
         if (data.budget) setBudget(data.budget);
         if (data.startDate) setStartDate(data.startDate);
         if (data.endDate) setEndDate(data.endDate);
+        if (data.startDate2) setStartDate2(data.startDate2);
+        if (data.endDate2) setEndDate2(data.endDate2);
+        if (data.startDate3) setStartDate3(data.startDate3);
+        if (data.endDate3) setEndDate3(data.endDate3);
         if (data.travellers) setTravellers(data.travellers);
       } catch (e) {
         console.error('Failed to load saved trip data:', e);
@@ -133,10 +149,16 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
         budget,
         startDate,
         endDate,
+        startDate2,
+        endDate2,
+        destination2,
+        destination3,
+        startDate3,
+        endDate3,
         travellers,
       });
     }
-  }, [source, destinations, budget, startDate, endDate, travellers, onFormStateChange]);
+  }, [source, destinations, budget, startDate, endDate, startDate2, endDate2, startDate3, endDate3, destination2, destination3, travellers, onFormStateChange]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,6 +217,12 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
       budget: budget.trim(),
       startDate,
       endDate,
+      startDate2,
+      endDate2,
+      startDate3,
+      endDate3,
+      // pass additional destination fields separately where needed
+      // main destinations array still used for core flow
       travellers: travellers.trim(),
     });
   };
@@ -356,9 +384,11 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 <button
                   type="button"
                   onClick={() => {
-                    setShowDestination2(false);
-                    setDestination2("");
-                    setDestination2Input("");
+                      setShowDestination2(false);
+                      setDestination2("");
+                      setDestination2Input("");
+                      setStartDate2("");
+                      setEndDate2("");
                   }}
                   title="Click to remove Destination 2"
                   className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-all text-red-500 hover:text-red-600"
@@ -435,6 +465,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                     setShowDestination3(false);
                     setDestination3("");
                     setDestination3Input("");
+                    setStartDate3("");
+                    setEndDate3("");
                   }}
                   title="Click to remove Destination 3"
                   className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-all text-red-500 hover:text-red-600"
@@ -442,6 +474,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                   <X className="w-5 h-5" />
                 </button>
               </div>
+
               {destination3 && (
                 <div className="mb-3 inline-flex items-center gap-2 glass px-3 py-1 rounded-full border border-blue-300 bg-blue-50">
                   <span className="text-sm text-gray-900">{destination3}</span>
@@ -450,6 +483,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                   </button>
                 </div>
               )}
+
               <div className="relative">
                 <Input
                   placeholder={t('destination_placeholder')}
@@ -543,6 +577,30 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               min={minDate}
               className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
+            {showDestination2 && (
+              <div className="mt-3">
+                <Label className="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Start Date (Destination 2)</Label>
+                <Input
+                  type="date"
+                  value={startDate2}
+                  onChange={(e) => setStartDate2(e.target.value)}
+                  min={minDate}
+                  className="w-full px-4 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                />
+              </div>
+            )}
+            {showDestination3 && (
+              <div className="mt-3">
+                <Label className="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Start Date (Destination 3)</Label>
+                <Input
+                  type="date"
+                  value={startDate3}
+                  onChange={(e) => setStartDate3(e.target.value)}
+                  min={minDate}
+                  className="w-full px-4 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                />
+              </div>
+            )}
           </div>
 
           {/* End Date */}
@@ -557,6 +615,30 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               min={startDate || minDate}
               className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
+            {showDestination2 && (
+              <div className="mt-3">
+                <Label className="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">End Date (Destination 2)</Label>
+                <Input
+                  type="date"
+                  value={endDate2}
+                  onChange={(e) => setEndDate2(e.target.value)}
+                  min={startDate2 || minDate}
+                  className="w-full px-4 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                />
+              </div>
+            )}
+            {showDestination3 && (
+              <div className="mt-3">
+                <Label className="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">End Date (Destination 3)</Label>
+                <Input
+                  type="date"
+                  value={endDate3}
+                  onChange={(e) => setEndDate3(e.target.value)}
+                  min={startDate3 || minDate}
+                  className="w-full px-4 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+                />
+              </div>
+            )}
           </div>
 
           {/* Travellers */}
