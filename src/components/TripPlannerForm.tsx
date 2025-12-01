@@ -106,8 +106,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
       toast({ title: "Duplicate destination", description: "This destination is already selected." });
       return;
     }
-    if (destinations.length >= 3) {
-      toast({ title: "Maximum reached", description: "You can select up to 3 destinations." });
+    if (destinations.length >= 1) {
+      toast({ title: "Maximum reached", description: "You can select only one destination." });
       return;
     }
     setDestinations((d) => [...d, trimmed]);
@@ -141,11 +141,11 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
       return;
     }
     if (destinations.length === 0) {
-      toast({ title: "Validation error", description: "Select at least one destination (up to 3).", variant: "destructive" });
+      toast({ title: "Validation error", description: "Please select a destination.", variant: "destructive" });
       return;
     }
-    if (destinations.length > 3) {
-      toast({ title: "Validation error", description: "You can select a maximum of 3 destinations.", variant: "destructive" });
+    if (destinations.length > 1) {
+      toast({ title: "Validation error", description: "You can select only one destination.", variant: "destructive" });
       return;
     }
     if (!startDate || !endDate) {
