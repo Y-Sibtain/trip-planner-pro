@@ -50,7 +50,14 @@ export const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-screen ${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-lg transform transition-all duration-300 z-40 border-r border-gray-200 dark:border-gray-700 ${
+        style={{ 
+          position: 'fixed',
+          left: '0 !important',
+          right: 'auto !important',
+          insetInlineStart: 'auto !important',
+          insetInlineEnd: 'auto !important'
+        } as React.CSSProperties}
+        className={`top-0 h-screen ${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-lg transform transition-all duration-300 z-40 border-r border-gray-200 dark:border-gray-700 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:relative md:h-screen md:sticky md:top-0 flex flex-col`}
       >

@@ -135,7 +135,7 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6 pointer-events-none">
         <div className="max-w-7xl mx-auto flex justify-between items-center pointer-events-auto">
           <div></div>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4" style={{ marginLeft: 'auto', marginRight: 0, insetInlineEnd: 'auto', insetInlineStart: 'unset' }}>
             <UserMenu />
           </div>
         </div>

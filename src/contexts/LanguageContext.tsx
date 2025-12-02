@@ -756,6 +756,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (typeof document !== 'undefined' && document.documentElement) {
         document.documentElement.lang = lang;
         const isRtl = lang === 'ar' || lang === 'ur';
+        // Set dir to rtl for text rendering, but sidebar stays in place with CSS
         document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
         document.documentElement.setAttribute('data-lang', lang);
       }
