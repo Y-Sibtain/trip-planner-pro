@@ -11,6 +11,7 @@ import ThemeSwitch from './ThemeSwitch';
 export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useBooking();
@@ -51,15 +52,17 @@ export const Sidebar = () => {
       {/* Sidebar */}
       <div
         style={{ 
-          position: 'fixed',
+          position: 'sticky',
+          top: '0',
           left: '0 !important',
           right: 'auto !important',
           insetInlineStart: 'auto !important',
-          insetInlineEnd: 'auto !important'
-        } as React.CSSProperties}
-        className={`top-0 h-screen ${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-lg transform transition-all duration-300 z-40 border-r border-gray-200 dark:border-gray-700 ${
+          insetInlineEnd: 'auto !important',
+          insetInline: 'auto !important'
+        } as any}
+        className={`h-screen ${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-lg transform transition-all duration-300 z-40 border-r border-gray-200 dark:border-gray-700 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 md:relative md:h-screen md:sticky md:top-0 flex flex-col`}
+        } md:translate-x-0 flex flex-col`}
       >
         {/* Logo Section */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 relative z-50">
@@ -138,18 +141,50 @@ export const Sidebar = () => {
           <div className={`flex items-center ${isCollapsed ? 'gap-1 p-2 flex-col' : 'gap-2 p-3'} border-b border-gray-200 dark:border-gray-700`}>
             {/* Language selector */}
             {isCollapsed ? (
-              <button
-                onClick={() => {
-                  const order: Array<typeof lang> = ['en', 'ur', 'es', 'ar'];
-                  const idx = order.indexOf(lang);
-                  const next = order[(idx + 1) % order.length];
-                  setLang(next);
-                }}
-                title={`Language: ${lang} (click to cycle)`}
-                className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors w-full flex items-center justify-center"
-              >
-                <Globe className="w-4 h-4" />
-              </button>
+              <div className="relative w-full">
+                <button
+                  onMouseEnter={() => setShowLangMenu(true)}
+                  onMouseLeave={() => setShowLangMenu(false)}
+                  title={`Language: ${lang}`}
+                  className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors w-full flex items-center justify-center"
+                >
+                  <Globe className="w-4 h-4" />
+                </button>
+                
+                {/* Dropdown menu on hover - positioned to not overflow */}
+                {showLangMenu && (
+                  <div 
+                    className="fixed bottom-12 left-14 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50 whitespace-nowrap"
+                    onMouseEnter={() => setShowLangMenu(true)}
+                    onMouseLeave={() => setShowLangMenu(false)}
+                  >
+                    <button
+                      onClick={() => { setLang('en'); setShowLangMenu(false); }}
+                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 ${lang === 'en' ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}
+                    >
+                      English (EN)
+                    </button>
+                    <button
+                      onClick={() => { setLang('ur'); setShowLangMenu(false); }}
+                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 ${lang === 'ur' ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}
+                    >
+                      اردو (UR)
+                    </button>
+                    <button
+                      onClick={() => { setLang('es'); setShowLangMenu(false); }}
+                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 ${lang === 'es' ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}
+                    >
+                      Español (ES)
+                    </button>
+                    <button
+                      onClick={() => { setLang('ar'); setShowLangMenu(false); }}
+                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 ${lang === 'ar' ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}
+                    >
+                      العربية (AR)
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <select
                 value={lang}

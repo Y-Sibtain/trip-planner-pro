@@ -212,7 +212,7 @@ const translations: Record<Lang, Record<string, string>> = {
     plan: 'منصوبہ',
     source: 'سے',
     source_placeholder: 'شہر یا ہوائی اڈہ درج کریں',
-    destinations_label: 'کو (3 تک)',
+    destinations_label: 'کو',
     destination_placeholder: 'منزل درج کریں یا منتخب کریں',
     budget_optional: 'بجٹ',
     budget_placeholder: 'کل بجٹ',
@@ -755,10 +755,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       if (typeof document !== 'undefined' && document.documentElement) {
         document.documentElement.lang = lang;
-        const isRtl = lang === 'ar' || lang === 'ur';
-        // Set dir to rtl for text rendering, but sidebar stays in place with CSS
-        document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
         document.documentElement.setAttribute('data-lang', lang);
+        // Direction is handled by App.css based on data-lang attribute
+        // Do NOT set dir here - let CSS handle it
       }
     } catch (e) {
       // ignore

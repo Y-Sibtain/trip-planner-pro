@@ -306,7 +306,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
     : [];
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-3xl mx-auto px-4">
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Source Field */}
         <div>
@@ -439,20 +439,45 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 <Label className="flex items-center gap-2 text-black dark:text-white font-semibold">
                   <Search className="w-4 h-4 text-blue-500" /> Destination 2
                 </Label>
-                <button
-                  type="button"
-                  onClick={() => {
-                      setShowDestination2(false);
-                      setDestination2("");
-                      setDestination2Input("");
-                      setStartDate2("");
-                      setEndDate2("");
-                  }}
-                  title="Click to remove Destination 2"
-                  className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-all text-red-500 hover:text-red-600"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex gap-2">
+                  {!showDestination3 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowDestination3(true)}
+                      title="Click to add Destination 3"
+                      className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all text-blue-500 hover:text-blue-600"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                        // If Destination 3 exists, move it to Destination 2
+                        if (destination3) {
+                          setDestination2(destination3);
+                          setDestination2Input("");
+                          setStartDate2(startDate3);
+                          setEndDate2(endDate3);
+                          setDestination3("");
+                          setDestination3Input("");
+                          setStartDate3("");
+                          setEndDate3("");
+                          setShowDestination3(false);
+                        } else {
+                          setShowDestination2(false);
+                          setDestination2("");
+                          setDestination2Input("");
+                          setStartDate2("");
+                          setEndDate2("");
+                        }
+                    }}
+                    title="Click to remove Destination 2"
+                    className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-all text-red-500 hover:text-red-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
               <div className="relative">
                 <div className="w-full px-3 py-2 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-400/20 transition-all-smooth flex items-center gap-2 flex-wrap">
@@ -592,20 +617,6 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                   </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* Show Destination 3 button if Destination 2 is shown */}
-          {showDestination2 && !showDestination3 && (
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={() => setShowDestination3(true)}
-                title="Click to add Destination 3"
-                className="w-full py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all text-blue-500 hover:text-blue-600 flex items-center justify-center gap-2"
-              >
-                <Plus className="w-5 h-5" /> Add Destination 3
-              </button>
             </div>
           )}
         </div>
