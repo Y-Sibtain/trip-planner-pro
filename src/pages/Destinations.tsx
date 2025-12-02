@@ -198,9 +198,9 @@ const Destinations = () => {
                     onChange={(e) => setCountry(e.target.value)}
                     className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   >
-                    <option value="">{t('all_countries')}</option>
+                    <option value="" className="bg-white text-gray-900 dark:bg-gray-700 dark:text-white">{t('all_countries')}</option>
                     {availableCountries.map((c) => (
-                      <option key={c} value={c} className="bg-white">
+                      <option key={c} value={c} className="bg-white text-gray-900 dark:bg-gray-700 dark:text-white">
                         {c}
                       </option>
                     ))}
@@ -256,25 +256,25 @@ const Destinations = () => {
         {/* Results */}
         <div>
           {loading ? (
-            <div className="glass p-12 rounded-2xl border border-cyan-500/20 text-center">
+            <div className="glass p-12 rounded-2xl border border-blue-500/20 text-center">
               <div className="inline-flex items-center justify-center">
                 <div className="relative w-12 h-12">
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-spin" style={{maskImage: 'conic-gradient(transparent 75%, black)'}}></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full animate-spin" style={{maskImage: 'conic-gradient(transparent 75%, black)'}}></div>
                 </div>
               </div>
-              <p className="text-cyan-200 mt-4 font-semibold">Searching destinations...</p>
+              <p className="text-black-200 mt-4 font-semibold">Searching destinations...</p>
             </div>
           ) : results.length === 0 ? (
-            <div className="glass p-12 rounded-2xl border border-cyan-500/20 text-center">
-              <p className="text-cyan-200/70 text-lg">No destinations match your search/filter.</p>
-              <p className="text-cyan-200/50 text-sm mt-2">Try adjusting your filters or search terms</p>
+            <div className="glass p-12 rounded-2xl border border-blue-500/20 text-center">
+              <p className="text-blue-200/70 text-lg">No destinations match your search/filter.</p>
+              <p className="text-blue-200/50 text-sm mt-2">Try adjusting your filters or search terms</p>
             </div>
           ) : (
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {results.map((d) => (
                 <div 
                   key={d.id}
-                  className="group glass rounded-xl overflow-hidden border border-cyan-500/20 backdrop-blur-lg hover:border-cyan-400/50 hover:glow-primary transition-all-smooth hover:scale-105 cursor-pointer"
+                  className="group glass rounded-xl overflow-hidden border border-blue-500/20 backdrop-blur-lg hover:border-blue-400/50 hover:glow-primary transition-all-smooth hover:scale-105 cursor-pointer"
                 >
                   {/* Image */}
                   <div className="h-48 bg-gradient-to-br from-slate-800 to-slate-900 overflow-hidden relative">
@@ -285,7 +285,7 @@ const Destinations = () => {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-cyan-200/50 text-3xl">📍</div>
+                      <div className="w-full h-full flex items-center justify-center text-blue-200/50 text-3xl">📍</div>
                     )}
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
@@ -310,7 +310,7 @@ const Destinations = () => {
 
                     {/* Plan Button */}
                     <Button 
-                      className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-900 font-semibold rounded-lg glow-primary hover:scale-105 transition-all-smooth mt-4"
+                      className="w-full bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-300 hover:to-blue-400 text-slate-900 font-semibold rounded-lg glow-primary hover:scale-105 transition-all-smooth mt-4"
                       onClick={() => {
                         navigate("/", { state: { prefill: { source: "", destinations: [d.name], budget: "", startDate: "", endDate: "" } } });
                       }}

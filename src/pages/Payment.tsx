@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { CreditCard, AlertCircle } from 'lucide-react';
+import { CreditCard, AlertCircle, Lock } from 'lucide-react';
 
 const Payment = () => {
   const location = useLocation();
@@ -166,7 +166,7 @@ const Payment = () => {
           {/* Demo Warning */}
           <div className="mb-6 p-4 rounded-lg border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20">
             <div className="flex gap-3">
-              <div className="text-2xl">🧪</div>
+              <div className="text-2xl"></div>
               <div className="text-sm text-blue-700 dark:text-blue-300">
                 <strong>Demo Mode:</strong> Use any 16-digit card, future expiry date, and any 3-digit CVV.
               </div>
@@ -263,7 +263,7 @@ const Payment = () => {
           </form>
 
           {/* Security Note */}
-          <p className="text-xs text-gray-600 dark:text-gray-400 text-center mt-6">🔒 Payments are encrypted and secure</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 text-center mt-6"><Lock className="w-4 h-4 inline mr-1" /> Payments are encrypted and secure</p>
         </div>
       </div>
     </div>

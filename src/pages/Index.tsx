@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import TripPlannerForm, { TripFormData } from "@/components/TripPlannerForm";
-import { Plane, Hotel, Utensils, Map } from "lucide-react";
+import { Plane, Hotel, Utensils, Map, MapPin, Calendar, Users, DollarSign, Sparkles, Star } from "lucide-react";
 import { UserMenu } from "@/components/UserMenu";
 import { useBooking } from "@/contexts/BookingContext";
 import { Button } from "@/components/ui/button";
@@ -276,7 +276,7 @@ const Index = () => {
       <Dialog open={aiOpen} onOpenChange={setAiOpen}>
         <DialogContent className="max-h-screen overflow-y-auto max-w-2xl glass border-gray-200 dark:border-gray-700 shadow-lg dark:bg-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-gray-900 dark:text-white">Your Perfect Trip Package ✈️</DialogTitle>
+            <DialogTitle className="text-2xl text-gray-900 dark:text-white flex items-center gap-2">Your Perfect Trip Package <Plane className="w-6 h-6 text-blue-600 dark:text-blue-400" /></DialogTitle>
             <DialogDescription className="text-gray-600 dark:text-gray-400">AI-generated itinerary tailored to your preferences and budget</DialogDescription>
           </DialogHeader>
 
@@ -285,15 +285,18 @@ const Index = () => {
               {packageResults.map((packageResult, idx) => (
                 <div key={idx} className="space-y-4">
                   <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
-                    <div className="font-bold text-xl text-blue-900 dark:text-blue-300 mb-2">📍 {packageResult.destination}</div>
+                    <div className="font-bold text-xl text-blue-900 dark:text-blue-300 mb-2 flex items-center gap-2"><MapPin className="w-5 h-5" /> {packageResult.destination}</div>
                     <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
-                      <div>📅 Duration: <strong className="text-blue-600 dark:text-blue-400">{packageResult.days} days</strong> | 👥 Travelers: <strong className="text-blue-600 dark:text-blue-400">{packageResult.travellers}</strong></div>
-                      <div>💰 Total Budget: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.totalBudgetPKR.toLocaleString()}</strong></div>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Duration: <strong className="text-blue-600 dark:text-blue-400">{packageResult.days} days</strong></div>
+                        <div className="flex items-center gap-2"><Users className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Travelers: <strong className="text-blue-600 dark:text-blue-400">{packageResult.travellers}</strong></div>
+                      </div>
+                      <div className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Total Budget: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.totalBudgetPKR.toLocaleString()}</strong></div>
                     </div>
                   </div>
 
                   <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
-                    <div className="font-bold text-gray-900 dark:text-white mb-2">✈️ Flight</div>
+                    <div className="font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2"><Plane className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Flight</div>
                     <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
                       <div>Airline: <span className="text-blue-600 dark:text-blue-400">{packageResult.flights.airline}</span></div>
                       <div>Route: {packageResult.flights.departure} → {packageResult.flights.arrival}</div>
@@ -302,16 +305,16 @@ const Index = () => {
                   </div>
 
                   <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
-                    <div className="font-bold text-gray-900 dark:text-white mb-2">🏨 Accommodation</div>
+                    <div className="font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2"><Hotel className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Accommodation</div>
                     <div className="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-                      <div>Hotel: <span className="text-blue-600 dark:text-blue-400">{packageResult.hotel.name}</span> ({packageResult.hotel.stars} ⭐)</div>
+                      <div>Hotel: <span className="text-blue-600 dark:text-blue-400">{packageResult.hotel.name}</span> ({packageResult.hotel.stars} <Star className="w-4 h-4 text-blue-400 inline" />)</div>
                       <div>Rate: <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.hotel.pricePerNightPKR.toLocaleString()}</strong> per night</div>
                       <div>Total Stay: <strong>₨{packageResult.hotel.totalStayPKR.toLocaleString()}</strong></div>
                     </div>
                   </div>
 
                   <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
-                    <div className="font-bold text-gray-900 dark:text-white mb-3">💵 Budget Breakdown</div>
+                    <div className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2"><DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Budget Breakdown</div>
                     <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
                       <div className="flex justify-between">
                         <span>Flights:</span>
@@ -345,7 +348,7 @@ const Index = () => {
                   </div>
 
                   <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
-                    <div className="font-bold text-gray-900 dark:text-white mb-3">📅 Day-by-Day Itinerary</div>
+                    <div className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2"><Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Day-by-Day Itinerary</div>
                     <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
                       {packageResult.itinerary.slice(0, 3).map((day) => (
                         <div key={day.day} className="flex justify-between">
@@ -365,8 +368,8 @@ const Index = () => {
                 <Button onClick={() => setAiOpen(false)} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold hover:shadow-lg transition-all-smooth">
                   Decline
                 </Button>
-                <Button onClick={bookAllPackage} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold hover:shadow-lg transition-all-smooth">
-                  Book All 🎉
+                <Button onClick={bookAllPackage} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold hover:shadow-lg transition-all-smooth flex items-center gap-2">
+                  Book All <Sparkles className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -383,7 +386,7 @@ const Index = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-md flex items-center justify-center text-white font-bold">
-                  ✈
+                  <Plane className="w-6 h-6" />
                 </div>
                 <span className="font-bold text-lg text-blue-600 dark:text-blue-400">Trip Planner</span>
               </div>
