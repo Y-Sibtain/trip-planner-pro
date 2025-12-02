@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MapPin, Star, Users, Plane } from "lucide-react";
+import { MapPin, Star, Users, Plane, Hotel, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import FlightSelector from "@/components/planner/FlightSelector";
 import HotelCard from "@/components/planner/HotelCard";
@@ -400,7 +400,7 @@ const CityPlanner = () => {
             
             <div className="space-y-4 mt-6">
               <div className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
-                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-lg">👥 Travelers</h3>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-lg flex items-center gap-2"><Users className="w-5 h-5 text-blue-500" /> Travelers</h3>
                 <div className="inline-block px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold shadow-md">
                   {numPeople} {numPeople === 1 ? "person" : "people"}
                 </div>
@@ -411,7 +411,7 @@ const CityPlanner = () => {
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">{idx + 1}. {dest} — {getDaysForDestination(idx)} day{getDaysForDestination(idx) > 1 ? 's' : ''}</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <h4 className="font-semibold">✈️ Flight</h4>
+                      <h4 className="font-semibold flex items-center gap-2"><Plane className="w-4 h-4 text-blue-500" /> Flight</h4>
                       {selectedFlightsByDest[dest] ? (
                         <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-2">
                           <p className="font-bold text-gray-900 dark:text-white text-lg">{selectedFlightsByDest[dest].airline}</p>
@@ -431,7 +431,7 @@ const CityPlanner = () => {
                       )}
                     </div>
                     <div>
-                      <h4 className="font-semibold">🏨 Hotel</h4>
+                      <h4 className="font-semibold flex items-center gap-2"><Hotel className="w-4 h-4 text-blue-500" /> Hotel</h4>
                       {selectedHotelsByDest[dest] ? (
                         (() => {
                           const hotel = (hotels[dest as keyof typeof hotels] || []).find(h => h.id === selectedHotelsByDest[dest]);
