@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import TripPlannerForm, { TripFormData } from "@/components/TripPlannerForm";
-import { Plane } from "lucide-react";
+import { Plane, Hotel, Utensils, Map } from "lucide-react";
 import { UserMenu } from "@/components/UserMenu";
 import { useBooking } from "@/contexts/BookingContext";
 import { Button } from "@/components/ui/button";
@@ -177,28 +177,28 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Feature 1 */}
+            {/* Feature 1 - Perfect Stays */}
             <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all-smooth hover:shadow-lg cursor-pointer dark:bg-gray-800/50">
-              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
-                🏨
+              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
+                <Hotel className="w-7 h-7 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Perfect Stays</h3>
               <p className="text-gray-600 dark:text-gray-400">Handpicked accommodations that match your style and budget, from luxury resorts to cozy boutiques.</p>
             </div>
 
-            {/* Feature 2 */}
+            {/* Feature 2 - Local Flavors */}
             <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all-smooth hover:shadow-lg cursor-pointer dark:bg-gray-800/50">
-              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
-                🍽️
+              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
+                <Utensils className="w-7 h-7 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Local Flavors</h3>
               <p className="text-gray-600 dark:text-gray-400">Discover authentic dining experiences and local activities that capture the true essence of each destination.</p>
             </div>
 
-            {/* Feature 3 */}
+            {/* Feature 3 - Day-by-Day Plans */}
             <div className="group glass p-6 md:p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all-smooth hover:shadow-lg cursor-pointer dark:bg-gray-800/50">
-              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
-                🗺️
+              <div className="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-all">
+                <Map className="w-7 h-7 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Day-by-Day Plans</h3>
               <p className="text-gray-600 dark:text-gray-400">Detailed itineraries with cost breakdowns, so you can explore confidently and stay within budget.</p>
