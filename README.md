@@ -1,73 +1,98 @@
-# Welcome to your Lovable project
+# Trip Planner Pro
 
-## Project info
+An AI-powered travel planning application that helps users create personalized itineraries with flights, hotels, activities, and dining recommendations.
 
-**URL**: https://lovable.dev/projects/a0c94d6e-1c4b-4e90-8b9c-94db4f226f8a
+## Features
 
-## How can I edit this code?
+- AI-powered trip planning with personalized recommendations
+- Flight, hotel, and activity booking integration
+- Budget breakdown and cost management
+- Day-by-day itinerary planning
+- Support for multiple destinations (up to 3)
+- Dark mode support
+- Multi-language support (English, Urdu, Spanish, Arabic)
+- User profiles and authentication
+- Responsive design for all devices
+- Secure payment processing
 
-There are several ways of editing your application.
+## Getting Started
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a0c94d6e-1c4b-4e90-8b9c-94db4f226f8a) and start prompting.
+- Node.js & npm (Install via [nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+- Git
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Step 1: Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Step 2: Navigate to the project directory
+cd trip-planner-pro
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Step 3: Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Project Structure
 
-**Use GitHub Codespaces**
+- `src/` - Source code
+  - `components/` - Reusable React components
+  - `pages/` - Page components
+  - `contexts/` - React context providers
+  - `hooks/` - Custom React hooks
+  - `lib/` - Utility functions
+  - `integrations/` - Third-party service integrations
+- `public/` - Static assets
+- `server/` - Backend API routes
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Technologies Used
 
-## What technologies are used for this project?
+- **Frontend Framework**: React with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn-ui
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **AI Integration**: Claude API
 
-This project is built with:
+## Development
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Build
 
-## How can I deploy this project?
+```sh
+npm run build
+```
 
-Simply open [Lovable](https://lovable.dev/projects/a0c94d6e-1c4b-4e90-8b9c-94db4f226f8a) and click on Share -> Publish.
+### Run Tests
 
-## Can I connect a custom domain to my Lovable project?
+```sh
+npm run test
+```
 
-Yes, you can!
+### Format Code
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```sh
+npm run format
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Deployment
+
+Build the project and deploy the `dist/` folder to your hosting provider of choice.
+
+```sh
+npm run build
+```
+
+## Contributing
+
+Feel free to open issues and pull requests for any improvements.
+
+
+
