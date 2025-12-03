@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Utensils, MapPin, RefreshCw, ChevronDown } from "lucide-react";
+import { Utensils, MapPin, RefreshCw, ChevronDown, Star } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
@@ -191,7 +191,7 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
                           <p className="text-sm text-muted-foreground">{plan.restaurant.cuisine}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <Badge variant="secondary" className="text-xs">{plan.restaurant.price}</Badge>
-                            <span className="text-xs text-muted-foreground">⭐ {plan.restaurant.rating}</span>
+                            <span className="text-xs text-muted-foreground"><Star className="inline-block w-3 h-3 mr-1" /> {plan.restaurant.rating}</span>
                           </div>
                         </div>
                       </div>

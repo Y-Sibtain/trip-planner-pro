@@ -156,7 +156,7 @@ const Payment = () => {
               <p className="text-gray-600 dark:text-gray-400 text-sm">Secure payment processing</p>
             </div>
             <Button
-              onClick={() => navigate('/city-planner', { state: { booking, openSummary: true } })}
+              onClick={() => navigate('/city-planner', { state: { booking } })}
               className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
             >
               ← Back

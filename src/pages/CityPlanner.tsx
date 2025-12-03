@@ -127,7 +127,6 @@ const CityPlanner = () => {
     }
   }, []);
   
-  // tried something 
   // Open summary when navigated back from Payment or when booking state is provided
   useEffect(() => {
     const state = location.state as any;
@@ -141,6 +140,17 @@ const CityPlanner = () => {
         if (b.plan?.itineraryByDest) {
           setSelectedFlightsByDest(b.plan.itineraryByDest.flights || {});
           setSelectedHotelsByDest(b.plan.itineraryByDest.hotels || {});
+          // Extract destinations from itineraryByDest.flights keys
+          const destKeysFromFlights = Object.keys(b.plan.itineraryByDest.flights || {});
+          if (destKeysFromFlights.length > 0) {
+            setDestinationsList(destKeysFromFlights);
+            setCurrentDestIndex(0);
+            const firstDest = destKeysFromFlights[0];
+            const matchedCity = cities.find(c => c.name.toLowerCase() === firstDest.toLowerCase());
+            if (matchedCity) {
+              setSelectedCity(matchedCity.name);
+            }
+          }
         }
         if (b.plan?.numPeople) setNumPeople(b.plan.numPeople);
         if (b.plan?.numDays) setNumDays(b.plan.numDays);
@@ -210,19 +220,33 @@ const CityPlanner = () => {
     return Math.round(val);
   };
   const getDaysForDestination = (index: number) => {
-    const state = location.state as any;
-    const td = state?.tripData;
-    if (!td) return numDays;
-    if (index === 0) {
-      if (td.startDate && td.endDate) return Math.ceil((new Date(td.endDate).getTime() - new Date(td.startDate).getTime())/(1000*60*60*24))+1;
+    // If destinationsList and its days are already set from booking rehydration, use those
+    if (destinationsList.length > 0) {
+      // Check if we have specific day counts stored in state
+      const state = location.state as any;
+      const td = state?.tripData;
+      if (td) {
+        if (index === 0) {
+          if (td.startDate && td.endDate) {
+            const days = Math.ceil((new Date(td.endDate).getTime() - new Date(td.startDate).getTime())/(1000*60*60*24))+1;
+            return Math.max(1, days);
+          }
+        }
+        if (index === 1) {
+          if (td.startDate2 && td.endDate2) {
+            const days = Math.ceil((new Date(td.endDate2).getTime() - new Date(td.startDate2).getTime())/(1000*60*60*24))+1;
+            return Math.max(1, days);
+          }
+        }
+        if (index === 2) {
+          if (td.startDate3 && td.endDate3) {
+            const days = Math.ceil((new Date(td.endDate3).getTime() - new Date(td.startDate3).getTime())/(1000*60*60*24))+1;
+            return Math.max(1, days);
+          }
+        }
+      }
     }
-    if (index === 1) {
-      if (td.startDate2 && td.endDate2) return Math.ceil((new Date(td.endDate2).getTime() - new Date(td.startDate2).getTime())/(1000*60*60*24))+1;
-    }
-    if (index === 2) {
-      if (td.startDate3 && td.endDate3) return Math.ceil((new Date(td.endDate3).getTime() - new Date(td.startDate3).getTime())/(1000*60*60*24))+1;
-    }
-    return numDays;
+    return Math.max(1, numDays);
   };
 
   return (
