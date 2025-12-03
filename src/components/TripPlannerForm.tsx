@@ -174,9 +174,10 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   }, [showDestination2, endDate]);
 
   // When Destination 3 is shown, default its start date to the end date of Destination 2
+  // Update startDate3 whenever endDate2 changes (always sync, not just on initial set)
   useEffect(() => {
     if (showDestination3) {
-      if (endDate2 && (!startDate3 || startDate3 === "")) {
+      if (endDate2) {
         setStartDate3(endDate2);
       }
     }
