@@ -73,7 +73,7 @@ const HotelCard = ({ hotel, isSelected, onSelect }: HotelCardProps) => {
         )}
         
         <div className="flex items-center justify-between pt-2">
-          <Badge variant="secondary" className="text-sm">{hotel.price}/night</Badge>
+          <Badge className="text-sm bg-blue-500 hover:bg-blue-600 text-white">{hotel.price}/night</Badge>
           <div className="flex gap-2">
             <Button
               size="sm"
