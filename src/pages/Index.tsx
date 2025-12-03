@@ -64,9 +64,43 @@ const Index = () => {
       return;
     }
 
+    // Validate required fields
+    if (!currentFormData.source || !currentFormData.source.trim()) {
+      toast({ title: "Missing source", description: "Please enter a source city or airport.", variant: "destructive" });
+      return;
+    }
+
     const dests = Array.isArray(currentFormData.destinations) ? currentFormData.destinations : [];
     if (dests.length === 0) {
       toast({ title: "No destinations", description: "Please add at least one destination.", variant: "destructive" });
+      return;
+    }
+
+    // Validate dates for destination 1
+    if (!currentFormData.startDate || !currentFormData.endDate) {
+      toast({ title: "Missing dates", description: "Please enter start and end dates for Destination 1.", variant: "destructive" });
+      return;
+    }
+
+    // Validate dates for destination 2 if it exists
+    if (dests.length > 1 && currentFormData.destination2) {
+      if (!currentFormData.startDate2 || !currentFormData.endDate2) {
+        toast({ title: "Missing dates", description: "Please enter start and end dates for Destination 2.", variant: "destructive" });
+        return;
+      }
+    }
+
+    // Validate dates for destination 3 if it exists
+    if (dests.length > 2 && currentFormData.destination3) {
+      if (!currentFormData.startDate3 || !currentFormData.endDate3) {
+        toast({ title: "Missing dates", description: "Please enter start and end dates for Destination 3.", variant: "destructive" });
+        return;
+      }
+    }
+
+    // Validate travelers
+    if (!currentFormData.travellers || !currentFormData.travellers.toString().trim()) {
+      toast({ title: "Missing travelers", description: "Please enter the number of travelers.", variant: "destructive" });
       return;
     }
 
@@ -313,6 +347,21 @@ const Index = () => {
                     </div>
                   </div>
 
+                  <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
+                    <div className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2"><Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Day-by-Day Itinerary</div>
+                    <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
+                      {packageResult.itinerary.slice(0, 3).map((day) => (
+                        <div key={day.day} className="flex justify-between">
+                          <span>Day {day.day}: <strong>{day.activity}</strong></span>
+                          {day.estimatedCostPKR > 0 && <strong className="text-blue-600 dark:text-blue-400">₨{day.estimatedCostPKR.toLocaleString()}</strong>}
+                        </div>
+                      ))}
+                      {packageResult.itinerary.length > 3 && (
+                        <div className="text-xs italic text-gray-600 dark:text-gray-500 pt-2">+ {packageResult.itinerary.length - 3} more days</div>
+                      )}
+                    </div>
+                  </div>
+
                   <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900/20">
                     <div className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2"><DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Budget Breakdown</div>
                     <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
@@ -336,29 +385,10 @@ const Index = () => {
                         <span>Transport:</span>
                         <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.transport.toLocaleString()}</strong>
                       </div>
-                      <div className="flex justify-between pt-2 border-t border-gray-300 dark:border-gray-600">
-                        <span>Contingency:</span>
-                        <strong className="text-blue-600 dark:text-blue-400">₨{packageResult.budgetBreakdown.contingency.toLocaleString()}</strong>
-                      </div>
                       <div className="flex justify-between font-bold pt-2 border-t border-gray-300 dark:border-gray-600 text-lg text-blue-600 dark:text-blue-400">
                         <span>Total:</span>
                         <span>₨{packageResult.budgetBreakdown.total.toLocaleString()}</span>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/30">
-                    <div className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2"><Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Day-by-Day Itinerary</div>
-                    <div className="text-sm space-y-2 text-gray-700 dark:text-gray-300">
-                      {packageResult.itinerary.slice(0, 3).map((day) => (
-                        <div key={day.day} className="flex justify-between">
-                          <span>Day {day.day}: <strong>{day.activity}</strong></span>
-                          {day.estimatedCostPKR > 0 && <strong className="text-blue-600 dark:text-blue-400">₨{day.estimatedCostPKR.toLocaleString()}</strong>}
-                        </div>
-                      ))}
-                      {packageResult.itinerary.length > 3 && (
-                        <div className="text-xs italic text-gray-600 dark:text-gray-500 pt-2">+ {packageResult.itinerary.length - 3} more days</div>
-                      )}
                     </div>
                   </div>
                 </div>

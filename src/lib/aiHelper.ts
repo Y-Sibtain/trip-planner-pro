@@ -33,7 +33,6 @@ export interface BudgetBreakdown {
   meals: number;
   activities: number;
   transport: number;
-  contingency: number;
   total: number;
 }
 
@@ -107,8 +106,16 @@ export function generateTripPackage(data: TripData): TripPackage {
     }
   }
 
-  // Parse budget
-  const budgetNum = Number(String(data.budget || "").replace(/[^0-9.-]+/g, "")) || 300000;
+  // Parse budget - trim and check for actual value
+  const budgetInput = String(data.budget || "").trim();
+  let budgetNum = budgetInput ? Number(budgetInput.replace(/[^0-9.-]+/g, "")) : 0;
+  budgetNum = isNaN(budgetNum) || budgetNum < 0 ? 0 : budgetNum;
+  
+  // If no budget provided, use default per-person budget and multiply by travellers
+  if (budgetNum === 0) {
+    const defaultPerPersonBudget = 150000; // Default per-person budget in PKR
+    budgetNum = defaultPerPersonBudget * travellers;
+  }
 
   // Determine travel style
   const perPersonBudget = budgetNum / travellers;
@@ -196,15 +203,13 @@ export function generateTripPackage(data: TripData): TripPackage {
     }
   }
 
-  // Prepare activity/transport/contingency allocations only if affordable
+  // Prepare activity/transport allocations only if affordable
   let activitiesCost = 0;
   let transportCost = 0;
-  let contingency = 0;
   if (affordable) {
     const remaining = Math.max(0, budgetNum - (flightsTotal + hotelTotal + mealsCost));
-    activitiesCost = Math.floor(remaining * 0.25);
-    transportCost = Math.floor(remaining * 0.1);
-    contingency = Math.floor(remaining - activitiesCost - transportCost);
+    activitiesCost = Math.floor(remaining * 0.5); // 50% of remaining for activities
+    transportCost = Math.max(0, remaining - activitiesCost); // Rest for transport
   }
 
   // Generate itinerary
@@ -226,7 +231,7 @@ export function generateTripPackage(data: TripData): TripPackage {
   notes.push(`📅 Duration: ${days} days, ${travellers} ${travellers === 1 ? "person" : "people"}`);
   notes.push(`💰 Total Budget: ₨${budgetNum.toLocaleString()}`);
 
-  const breakdownTotal = flightsTotal + hotelTotal + mealsCost + activitiesCost + transportCost + contingency;
+  const breakdownTotal = flightsTotal + hotelTotal + mealsCost + activitiesCost + transportCost;
 
   if (affordabilityNotes.length === 0 && chosenStar < recommendedStars) {
     affordabilityNotes.push(`Accommodation downgraded to ${chosenStar}★ to fit your budget.`);
@@ -261,7 +266,6 @@ export function generateTripPackage(data: TripData): TripPackage {
       meals: mealsCost,
       activities: Math.floor(activitiesCost),
       transport: Math.floor(transportCost),
-      contingency: Math.floor(contingency),
       total: Math.floor(breakdownTotal),
     },
     notes,
