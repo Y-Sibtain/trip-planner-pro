@@ -65,7 +65,7 @@ const Payment = () => {
     e.preventDefault();
     if (!validateCard()) return;
     if (!booking || !user?.id) {
-      toast({ title: 'Error', description: 'No booking or user found.', variant: 'destructive' });
+      toast({ title: 'Error', description: 'Login in or sign up to proceed.', variant: 'destructive' });
       return;
     }
 
