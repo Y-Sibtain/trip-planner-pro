@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane, Bookmark, Sun, Moon, ChevronLeft, ChevronRight, AlignLeft, Globe } from 'lucide-react';
+import { Menu, X, Home, LogIn, User, LayoutDashboard, MapPin, Calendar, Users, LogOut, BookOpen, Plane, Bookmark, Sun, Moon, ChevronLeft, ChevronRight, AlignLeft, Globe, Plus, Minus } from 'lucide-react';
 import { useBooking } from '@/contexts/BookingContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -16,7 +16,7 @@ export const Sidebar = () => {
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useBooking();
   const { isAdmin, loading } = useAdmin();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, increaseFontSize, decreaseFontSize } = useTheme();
   const { lang, setLang, t } = useLanguage();
 
   const handleSignOut = async () => {
@@ -137,6 +137,27 @@ export const Sidebar = () => {
 
         {/* Sign Out Button & Theme Switch */}
         <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
+          {/* Font Size Controls Row */}
+          <div className="flex items-center justify-center gap-2 p-2 border-b border-gray-200 dark:border-gray-700">
+            <button
+              onClick={decreaseFontSize}
+              title="Decrease font size (A-)"
+              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center flex-shrink-0"
+              aria-label="Decrease font size"
+            >
+              <Minus size={18} className="text-gray-700 dark:text-gray-300" />
+            </button>
+            <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-1">A</span>
+            <button
+              onClick={increaseFontSize}
+              title="Increase font size (A+)"
+              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center flex-shrink-0"
+              aria-label="Increase font size"
+            >
+              <Plus size={18} className="text-gray-700 dark:text-gray-300" />
+            </button>
+          </div>
+
           {/* Language & Theme Switch Side by Side */}
           <div className={`flex items-center ${isCollapsed ? 'gap-1 p-2 flex-col' : 'gap-2 p-3'} border-b border-gray-200 dark:border-gray-700`}>
             {/* Language selector */}

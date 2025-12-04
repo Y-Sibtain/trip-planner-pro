@@ -1,18 +1,20 @@
-import { MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon, Plus, Minus } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface ThemeSwitchProps extends React.HTMLAttributes<HTMLDivElement> {
   collapsed?: boolean;
+  showFontControls?: boolean;
 }
 
 const ThemeSwitch = ({
   className,
   collapsed = false,
+  showFontControls = true,
   ...props
 }: ThemeSwitchProps) => {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, increaseFontSize, decreaseFontSize } = useTheme();
   const [checked, setChecked] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -36,18 +38,40 @@ const ThemeSwitch = ({
   // When collapsed, show a simple button instead of toggle
   if (collapsed) {
     return (
-      <button
-        onClick={handleClick}
-        title={`Dark mode: ${theme === "dark" ? "on" : "off"} (click to toggle)`}
-        className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors w-full flex items-center justify-center"
-        {...props}
-      >
-        {theme === "dark" ? (
-          <MoonIcon size={16} className="text-blue-400" />
-        ) : (
-          <SunIcon size={16} className="text-yellow-500" />
+      <div className="w-full flex items-center justify-center gap-1">
+        {showFontControls && (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={decreaseFontSize}
+              title="Decrease font size"
+              className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors flex items-center justify-center"
+              aria-label="Decrease font size"
+            >
+              <Minus size={16} className="text-gray-600 dark:text-gray-400" />
+            </button>
+            <button
+              onClick={increaseFontSize}
+              title="Increase font size"
+              className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors flex items-center justify-center"
+              aria-label="Increase font size"
+            >
+              <Plus size={16} className="text-gray-600 dark:text-gray-400" />
+            </button>
+          </div>
         )}
-      </button>
+        <button
+          onClick={handleClick}
+          title={`Dark mode: ${theme === "dark" ? "on" : "off"} (click to toggle)`}
+          className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors flex items-center justify-center"
+          {...props}
+        >
+          {theme === "dark" ? (
+            <MoonIcon size={16} className="text-blue-400" />
+          ) : (
+            <SunIcon size={16} className="text-yellow-500" />
+          )}
+        </button>
+      </div>
     );
   }
 
