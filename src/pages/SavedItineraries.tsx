@@ -251,6 +251,15 @@ const SavedItineraries = () => {
                   <Button 
                     size="sm"
                     onClick={() => {
+                      if (!isAuthenticated) {
+                        toast({
+                          title: 'Authentication Required',
+                          description: 'Sign in or sign up to proceed with booking',
+                          variant: 'destructive'
+                        });
+                        navigate('/auth', { state: { bookingData: true } });
+                        return;
+                      }
                       navigate('/payment', { state: { itinerary: row } });
                     }}
                     className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold hover:shadow-lg transition-all-smooth"

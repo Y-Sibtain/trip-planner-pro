@@ -21,7 +21,7 @@ import {
 const Index = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { tripData, setTripData } = useBooking();
+  const { tripData, setTripData, isAuthenticated } = useBooking();
   const [travellers, setTravellers] = useState('');
   const { toast } = useToast();
   const [aiOpen, setAiOpen] = useState(false);
@@ -126,6 +126,18 @@ const Index = () => {
 
   const bookAllPackage = () => {
     if (!packageResults || packageResults.length === 0) return;
+
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Sign in or sign up to proceed with booking',
+        variant: 'destructive'
+      });
+      navigate('/auth', { state: { bookingData: true } });
+      return;
+    }
+
     let totalAmount = 0;
     let totalDays = 0;
     const itineraryByDest: any = { flights: {}, hotels: {}, days: {}, itineraries: {} };

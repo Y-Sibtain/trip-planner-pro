@@ -11,6 +11,8 @@ import { Link } from "react-router-dom";
 import FlightSelector from "@/components/planner/FlightSelector";
 import HotelCard from "@/components/planner/HotelCard";
 import TripPlan from "@/components/planner/TripPlan";
+import { useBooking } from "@/contexts/BookingContext";
+import { useToast } from "@/hooks/use-toast";
 
 const cities = [
   { name: "Dubai", emoji: "🏜️", color: "bg-amber-500" },
@@ -60,6 +62,8 @@ const hotels = {
 const CityPlanner = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated } = useBooking();
+  const { toast } = useToast();
   const [step, setStep] = useState<"city" | "flight" | "hotel" | "activity" | "plan">("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [numPeople, setNumPeople] = useState<number>(1);
@@ -483,6 +487,17 @@ const CityPlanner = () => {
                 <Button 
                   className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-base rounded-lg hover:scale-105 transition-all-smooth shadow-md"
                   onClick={() => {
+                    // Check if user is authenticated
+                    if (!isAuthenticated) {
+                      toast({
+                        title: 'Authentication Required',
+                        description: 'Sign in or sign up to proceed with booking',
+                        variant: 'destructive'
+                      });
+                      navigate('/auth', { state: { bookingData: true } });
+                      return;
+                    }
+
                     // Compute totals across all destinations
                     let totalAmount = 0;
                     let totalDays = 0;

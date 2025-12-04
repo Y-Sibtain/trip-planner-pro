@@ -10,7 +10,7 @@ import { CreditCard, AlertCircle, Lock } from 'lucide-react';
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useBooking();
+  const { user, isAuthenticated } = useBooking();
   const { toast } = useToast();
 
   const [booking, setBooking] = useState<any>(null);
@@ -40,6 +40,18 @@ const Payment = () => {
       console.log("No booking or itinerary data found in state:", state);
     }
   }, [location.state, user?.id]);
+
+  // Check if user is authenticated when component mounts or when authentication changes
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast({
+        title: 'Authentication Required',
+        description: 'You need to sign in or sign up to proceed with booking',
+        variant: 'destructive'
+      });
+      navigate('/auth', { state: { bookingData: true } });
+    }
+  }, [isAuthenticated, navigate, toast]);
 
   const validateCard = () => {
     if (!cardData.cardName.trim()) {
