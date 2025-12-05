@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import FlightSelector from "@/components/planner/FlightSelector";
 import HotelCard from "@/components/planner/HotelCard";
 import TripPlan from "@/components/planner/TripPlan";
+import TravellerForm, { TravellerDetail } from "@/components/planner/TravellerForm";
 import { useBooking } from "@/contexts/BookingContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -64,7 +65,7 @@ const CityPlanner = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useBooking();
   const { toast } = useToast();
-  const [step, setStep] = useState<"city" | "flight" | "hotel" | "activity" | "plan">("city");
+  const [step, setStep] = useState<"city" | "traveller" | "flight" | "hotel" | "activity" | "plan">("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [numPeople, setNumPeople] = useState<number>(1);
   const [showSummary, setShowSummary] = useState(false);
@@ -75,6 +76,7 @@ const CityPlanner = () => {
   const [currentDestIndex, setCurrentDestIndex] = useState<number>(0);
   const [selectedFlightsByDest, setSelectedFlightsByDest] = useState<Record<string, any>>({});
   const [selectedHotelsByDest, setSelectedHotelsByDest] = useState<Record<string, string>>({});
+  const [travellerDetails, setTravellerDetails] = useState<TravellerDetail[]>([]);
 
   // Calculate number of days from trip data
   useEffect(() => {
@@ -125,7 +127,7 @@ const CityPlanner = () => {
         const matchedCity = cities.find(c => c.name.toLowerCase() === firstDest.toLowerCase());
         if (matchedCity) {
           setSelectedCity(matchedCity.name);
-          setStep("flight");
+          setStep("traveller");
         }
       }
     }
@@ -168,11 +170,6 @@ const CityPlanner = () => {
       setShowSummary(true);
     }
   }, [location.state]);
-
-  const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
-    setStep("flight");
-  };
 
   const handleFlightSelect = (flight: any) => {
     if (!destinationsList[currentDestIndex]) return;
@@ -268,35 +265,16 @@ const CityPlanner = () => {
           <p className="text-gray-600 dark:text-gray-400 mt-2">Plan your perfect {numDays}-day adventure</p>
         </div>
 
-        {/* City Selection */}
-        {step === "city" && (
-          <div className="glass p-8 rounded-lg border border-gray-200 dark:border-gray-700 backdrop-blur-sm shadow-md dark:bg-gray-800/50">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                  <MapPin className="h-6 w-6 text-white" />
-                </div>
-                Choose Your Destination
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">Select a city to begin planning</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {cities.map((city) => (
-                <div
-                  key={city.name}
-                  onClick={() => handleCitySelect(city.name)}
-                  className="group glass p-6 rounded-lg border border-gray-200 dark:border-gray-700 backdrop-blur-sm cursor-pointer transition-all-smooth hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:scale-105 hover:shadow-md dark:bg-gray-800/50"
-                >
-                  <div className="text-6xl mb-4 group-hover:scale-110 transition-all-smooth">{city.emoji}</div>
-                  <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-3">{city.name}</h3>
-                  <div className="inline-block px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-sm text-blue-600 dark:text-blue-300">
-                    {numDays} Days
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Traveller Details Form */}
+        {step === "traveller" && (
+          <TravellerForm
+            numTravellers={numPeople}
+            onBack={() => navigate('/')}
+            onComplete={(travellers) => {
+              setTravellerDetails(travellers);
+              setStep("flight");
+            }}
+          />
         )}
 
         {/* Flight Selection */}
