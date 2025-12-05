@@ -38,40 +38,18 @@ const ThemeSwitch = ({
   // When collapsed, show a simple button instead of toggle
   if (collapsed) {
     return (
-      <div className="w-full flex items-center justify-center gap-1">
-        {showFontControls && (
-          <div className="flex items-center gap-1">
-            <button
-              onClick={decreaseFontSize}
-              title="Decrease font size"
-              className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors flex items-center justify-center"
-              aria-label="Decrease font size"
-            >
-              <Minus size={16} className="text-gray-600 dark:text-gray-400" />
-            </button>
-            <button
-              onClick={increaseFontSize}
-              title="Increase font size"
-              className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors flex items-center justify-center"
-              aria-label="Increase font size"
-            >
-              <Plus size={16} className="text-gray-600 dark:text-gray-400" />
-            </button>
-          </div>
+      <button
+        onClick={handleClick}
+        title={`Dark mode: ${theme === "dark" ? "on" : "off"} (click to toggle)`}
+        className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0 transition-colors flex items-center justify-center w-full"
+        {...props}
+      >
+        {theme === "dark" ? (
+          <MoonIcon size={18} className="text-blue-400" />
+        ) : (
+          <SunIcon size={18} className="text-yellow-500" />
         )}
-        <button
-          onClick={handleClick}
-          title={`Dark mode: ${theme === "dark" ? "on" : "off"} (click to toggle)`}
-          className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors flex items-center justify-center"
-          {...props}
-        >
-          {theme === "dark" ? (
-            <MoonIcon size={16} className="text-blue-400" />
-          ) : (
-            <SunIcon size={16} className="text-yellow-500" />
-          )}
-        </button>
-      </div>
+      </button>
     );
   }
 

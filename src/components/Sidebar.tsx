@@ -138,7 +138,7 @@ export const Sidebar = () => {
         {/* Sign Out Button & Theme Switch */}
         <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
           {/* Font Size Controls Row */}
-          <div className="flex items-center justify-center gap-2 p-2 border-b border-gray-200 dark:border-gray-700">
+          <div className={`flex items-center ${isCollapsed ? 'flex-col gap-1 p-2' : 'gap-2 p-3'} justify-center border-b border-gray-200 dark:border-gray-700`}>
             <button
               onClick={decreaseFontSize}
               title="Decrease font size (A-)"
@@ -147,7 +147,7 @@ export const Sidebar = () => {
             >
               <Minus size={18} className="text-gray-700 dark:text-gray-300" />
             </button>
-            <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-1">A</span>
+            {!isCollapsed && <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-1">A</span>}
             <button
               onClick={increaseFontSize}
               title="Increase font size (A+)"
