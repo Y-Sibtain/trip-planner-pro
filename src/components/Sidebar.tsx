@@ -203,6 +203,18 @@ export const Sidebar = () => {
                     >
                       العربية (AR)
                     </button>
+                    <button
+                      onClick={() => { setLang('ps'); setShowLangMenu(false); }}
+                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 ${lang === 'ps' ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}
+                    >
+                      پشتو (PS)
+                    </button>
+                    <button
+                      onClick={() => { setLang('sd'); setShowLangMenu(false); }}
+                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 ${lang === 'sd' ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}
+                    >
+                      سنڌي (SD)
+                    </button>
                   </div>
                 )}
               </div>
@@ -216,6 +228,8 @@ export const Sidebar = () => {
                 <option value="ur">UR</option>
                 <option value="es">ES</option>
                 <option value="ar">AR</option>
+                <option value="ps">PS</option>
+                <option value="sd">SD</option>
               </select>
             )}
 
