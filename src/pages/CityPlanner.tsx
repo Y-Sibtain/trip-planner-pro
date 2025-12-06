@@ -380,12 +380,6 @@ const CityPlanner = () => {
       />
 
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">
-        {/* Header */}
-        <div>
-          <h1 className="text-5xl font-bold text-gray-900 dark:text-white">City Trip Planner</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Plan your perfect {numDays}-day adventure</p>
-        </div>
-
         {/* Traveller Details Form */}
         {step === "traveller" && (
           <TravellerForm
