@@ -335,28 +335,22 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 value={sourceInput}
                 onChange={(e) => setSourceInput(e.target.value)}
                 onFocus={() => setSourceInputFocused(true)}
-                onBlur={() => setSourceInputFocused(false)}
+                onBlur={() => {
+                  setTimeout(() => setSourceInputFocused(false), 200);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     if (filteredSourceSuggestions.length > 0) {
                       setSource(filteredSourceSuggestions[0]);
                       setSourceInput("");
+                      setSourceInputFocused(false);
                     }
                   }
                 }}
                 disabled={source.length > 0}
                 className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
               />
-              
-              <button
-                type="button"
-                onClick={() => setShowSourceDropdown(!showSourceDropdown)}
-                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex-shrink-0"
-                title="Show suggestions"
-              >
-                <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-              </button>
             </div>
             {sourceInputFocused && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
               <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-y-auto max-h-60 bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -419,36 +413,32 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 value={destinationInput}
                 onChange={(e) => setDestinationInput(e.target.value)}
                 onFocus={() => setDestinationInputFocused(true)}
-                onBlur={() => setDestinationInputFocused(false)}
+                onBlur={() => {
+                  setTimeout(() => setDestinationInputFocused(false), 200);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     if (filteredSuggestions.length > 0) {
                       addDestination(filteredSuggestions[0]);
                       setShowDestinationDropdown(false);
+                      setDestinationInputFocused(false);
                     } else if (destinationInput.trim()) {
                       addDestination(destinationInput);
+                      setDestinationInputFocused(false);
                     }
                   }
                   if (e.key === "Tab") {
                     e.preventDefault();
                     if (filteredSuggestions.length > 0) {
                       addDestination(filteredSuggestions[0]);
+                      setDestinationInputFocused(false);
                     }
                   }
                 }}
                 disabled={destinations.length >= 1}
                 className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
               />
-              
-              <button
-                type="button"
-                onClick={() => setShowDestinationDropdown(!showDestinationDropdown)}
-                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex-shrink-0"
-                title="Show suggestions"
-              >
-                <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-              </button>
             </div>
             {destinationInputFocused && (filteredSuggestions.length > 0 || loadingSuggestions) && (
               <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-y-auto max-h-60 bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -717,7 +707,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               type="number"
               min={0}
               step={1000}
-              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:bg-gray-700/30 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
           </div>
 
@@ -809,7 +799,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               type="number"
               min="1"
               max="50"
-              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:bg-gray-700/30 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
           </div>
         </div>
