@@ -38,25 +38,29 @@ const ThemeSwitch = ({
   // When collapsed, show a simple button instead of toggle
   if (collapsed) {
     return (
-      <button
-        onClick={handleClick}
-        title={`Dark mode: ${theme === "dark" ? "on" : "off"} (click to toggle)`}
-        className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0 transition-colors flex items-center justify-center w-full"
-        {...props}
-      >
-        {theme === "dark" ? (
-          <MoonIcon size={18} className="text-blue-400" />
-        ) : (
-          <SunIcon size={18} className="text-yellow-500" />
+      <div className="relative group w-full">
+        <button
+          onClick={handleClick}
+          className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0 transition-colors flex items-center justify-center w-full"
+          {...props}
+        >
+          {theme === "dark" ? (
+            <MoonIcon size={18} className="text-blue-400" />
+          ) : (
+            <SunIcon size={18} className="text-yellow-500" />
         )}
-      </button>
+        </button>
+        <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+          Toggle {theme === "dark" ? "light" : "dark"} mode
+        </div>
+      </div>
     );
   }
 
   return (
     <div
       className={cn(
-        "relative flex items-center justify-center cursor-pointer",
+        "relative flex items-center justify-center cursor-pointer group",
         "h-9 w-20",
         className
       )}
@@ -113,6 +117,11 @@ const ThemeSwitch = ({
           )}
         />
       </span>
+
+      {/* Tooltip */}
+      <div className="absolute left-24 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+        Toggle {theme === "dark" ? "light" : "dark"} mode
+      </div>
     </div>
   );
 };

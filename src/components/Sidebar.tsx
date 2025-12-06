@@ -70,10 +70,29 @@ export const Sidebar = () => {
             {/* Trip Planner Name / Icon with Hover */}
             {!isCollapsed && (
               <div className="flex items-center gap-2">
+                <div className="relative group">
+                  <button
+                    onClick={() => setIsCollapsed(true)}
+                    className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm hover:shadow-lg transition-all group relative pointer-events-auto cursor-pointer"
+                    type="button"
+                  >
+                    {/* Airplane icon - visible by default */}
+                    <Plane className="w-4 h-4 group-hover:hidden pointer-events-none" />
+                    {/* Hamburger icon - visible on hover */}
+                    <Menu className="w-4 h-4 hidden group-hover:block pointer-events-none" />
+                  </button>
+                  <div className="absolute left-10 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                    Collapse
+                  </div>
+                </div>
+                <span className="font-bold text-lg text-gray-900 dark:text-white">Trip Planner</span>
+              </div>
+            )}
+            {isCollapsed && (
+              <div className="relative group">
                 <button
-                  onClick={() => setIsCollapsed(true)}
-                  className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm hover:shadow-lg transition-all group relative pointer-events-auto cursor-pointer"
-                  title="Collapse sidebar"
+                  onClick={() => setIsCollapsed(false)}
+                  className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm mx-auto hover:shadow-lg transition-all group relative pointer-events-auto cursor-pointer"
                   type="button"
                 >
                   {/* Airplane icon - visible by default */}
@@ -81,21 +100,10 @@ export const Sidebar = () => {
                   {/* Hamburger icon - visible on hover */}
                   <Menu className="w-4 h-4 hidden group-hover:block pointer-events-none" />
                 </button>
-                <span className="font-bold text-lg text-gray-900 dark:text-white">Trip Planner</span>
+                <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                  Expand
+                </div>
               </div>
-            )}
-            {isCollapsed && (
-              <button
-                onClick={() => setIsCollapsed(false)}
-                className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm mx-auto hover:shadow-lg transition-all group relative pointer-events-auto cursor-pointer"
-                title="Expand sidebar"
-                type="button"
-              >
-                {/* Airplane icon - visible by default */}
-                <Plane className="w-4 h-4 group-hover:hidden pointer-events-none" />
-                {/* Hamburger icon - visible on hover */}
-                <Menu className="w-4 h-4 hidden group-hover:block pointer-events-none" />
-              </button>
             )}
           </div>
           {!isCollapsed && isAuthenticated && (
@@ -107,7 +115,7 @@ export const Sidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2 overflow-y-auto flex-1">
+        <nav className="p-4 space-y-2 flex-1 overflow-visible">
           {navItems.map((item) => {
             if (item.hideIfAuth && isAuthenticated) return null;
             if (!item.public && !isAuthenticated) return null;
@@ -115,22 +123,27 @@ export const Sidebar = () => {
 
             const Icon = item.icon;
             return (
-              <button
-                key={item.path}
-                onClick={() => {
-                  navigate(item.path);
-                  setIsOpen(false);
-                }}
-                className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3 px-4'} py-3 rounded-lg transition-all-smooth ${
-                  isActive(item.path)
-                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent'
-                }`}
-                title={isCollapsed ? item.label : ''}
-              >
-                <Icon className="w-5 h-5" />
-                {!isCollapsed && <span className="font-medium">{item.label}</span>}
-              </button>
+              <div key={item.path} className="relative group">
+                <button
+                  onClick={() => {
+                    navigate(item.path);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3 px-4'} py-3 rounded-lg transition-all-smooth ${
+                    isActive(item.path)
+                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
+                      : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {!isCollapsed && <span className="font-medium">{item.label}</span>}
+                </button>
+                {isCollapsed && (
+                  <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                    {item.label}
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
@@ -139,38 +152,48 @@ export const Sidebar = () => {
         <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
           {/* Font Size Controls Row */}
           <div className={`flex items-center ${isCollapsed ? 'flex-col gap-1 p-2' : 'gap-2 p-3'} justify-center border-b border-gray-200 dark:border-gray-700`}>
-            <button
-              onClick={decreaseFontSize}
-              title="Decrease font size (A-)"
-              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center flex-shrink-0"
-              aria-label="Decrease font size"
-            >
-              <Minus size={18} className="text-gray-700 dark:text-gray-300" />
-            </button>
+            <div className="relative group">
+              <button
+                onClick={decreaseFontSize}
+                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center flex-shrink-0"
+                aria-label="Decrease font size"
+              >
+                <Minus size={18} className="text-gray-700 dark:text-gray-300" />
+              </button>
+              <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                Decrease text size
+              </div>
+            </div>
             {!isCollapsed && <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-1">A</span>}
-            <button
-              onClick={increaseFontSize}
-              title="Increase font size (A+)"
-              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center flex-shrink-0"
-              aria-label="Increase font size"
-            >
-              <Plus size={18} className="text-gray-700 dark:text-gray-300" />
-            </button>
+            <div className="relative group">
+              <button
+                onClick={increaseFontSize}
+                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center flex-shrink-0"
+                aria-label="Increase font size"
+              >
+                <Plus size={18} className="text-gray-700 dark:text-gray-300" />
+              </button>
+              <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                Increase text size
+              </div>
+            </div>
           </div>
 
           {/* Language & Theme Switch Side by Side */}
           <div className={`flex items-center ${isCollapsed ? 'gap-1 p-2 flex-col' : 'gap-2 p-3'} border-b border-gray-200 dark:border-gray-700`}>
             {/* Language selector */}
             {isCollapsed ? (
-              <div className="relative w-full">
+              <div className="relative w-full group">
                 <button
                   onMouseEnter={() => setShowLangMenu(true)}
                   onMouseLeave={() => setShowLangMenu(false)}
-                  title={`Language: ${lang}`}
                   className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 transition-colors w-full flex items-center justify-center"
                 >
                   <Globe className="w-4 h-4" />
                 </button>
+                <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                  Change language
+                </div>
                 
                 {/* Dropdown menu on hover - positioned to not overflow */}
                 {showLangMenu && (
@@ -219,18 +242,23 @@ export const Sidebar = () => {
                 )}
               </div>
             ) : (
-              <select
-                value={lang}
-                onChange={(e) => setLang(e.target.value as any)}
-                className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground flex-1"
-              >
-                <option value="en">English (EN)</option>
-                <option value="ur">اردو (UR)</option>
-                <option value="es">Español (ES)</option>
-                <option value="ar">العربية (AR)</option>
-                <option value="ps">پشتو (PS)</option>
-                <option value="sd">سنڌي (SD)</option>
-              </select>
+              <div className="relative group flex-1">
+                <select
+                  value={lang}
+                  onChange={(e) => setLang(e.target.value as any)}
+                  className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground flex-1"
+                >
+                  <option value="en">English (EN)</option>
+                  <option value="ur">اردو (UR)</option>
+                  <option value="es">Español (ES)</option>
+                  <option value="ar">العربية (AR)</option>
+                  <option value="ps">پشتو (PS)</option>
+                  <option value="sd">سنڌي (SD)</option>
+                </select>
+                <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                  Change your preferred language
+                </div>
+              </div>
             )}
 
             {/* Theme switch beside language */}
@@ -239,7 +267,7 @@ export const Sidebar = () => {
 
           {/* Sign Out Button */}
           {isAuthenticated && (
-            <div className="p-3">
+            <div className={`${isCollapsed ? 'p-2' : 'p-3'} relative group`}>
               <Button
                 onClick={handleSignOut}
                 className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg transition-all-smooth hover:shadow-lg flex items-center gap-2 justify-center text-sm py-2"
@@ -247,6 +275,11 @@ export const Sidebar = () => {
                 <LogOut className="w-4 h-4" />
                 {!isCollapsed && t('sign_out')}
               </Button>
+              {isCollapsed && (
+                <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                  Sign out
+                </div>
+              )}
             </div>
           )}
         </div>
