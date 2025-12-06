@@ -31,7 +31,7 @@ const translations: Record<Lang, Record<string, string>> = {
     no_results: 'No results found',
     plan: 'Plan',
     source: 'From',
-    source_placeholder: 'Type a city or airport from',
+    source_placeholder: 'Select a city or airport',
     destinations_label: 'Destination',
     destination_placeholder: 'Type destination and press Enter or select from suggestions',
     budget_optional: 'Budget (optional)',
