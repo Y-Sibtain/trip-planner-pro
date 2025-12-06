@@ -132,7 +132,15 @@ const Auth = () => {
 
         setIsAuthenticated(true);
         toast({ title: 'Welcome back!', description: "You've successfully logged in." });
-        navigate('/');
+        
+        // Check if there's a return URL stored in sessionStorage
+        const returnUrl = sessionStorage.getItem('authReturnUrl');
+        if (returnUrl) {
+          sessionStorage.removeItem('authReturnUrl');
+          navigate(returnUrl);
+        } else {
+          navigate('/');
+        }
       } else {
         // Sign up - only ask for email and password
         const { data: authData, error: authError } = await supabase.auth.signUp({

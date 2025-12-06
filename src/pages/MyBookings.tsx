@@ -30,6 +30,8 @@ const MyBookings = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
+      // Store current page for redirect after auth
+      sessionStorage.setItem('authReturnUrl', '/my-bookings');
       navigate('/auth');
       return;
     }

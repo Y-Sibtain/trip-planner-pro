@@ -44,6 +44,8 @@ const SavedItineraries = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
+      // Store current page for redirect after auth
+      sessionStorage.setItem('authReturnUrl', '/saved-itineraries');
       navigate('/auth');
       return;
     }
@@ -281,6 +283,8 @@ const SavedItineraries = () => {
                     size="sm"
                     onClick={() => {
                       if (!isAuthenticated) {
+                        // Store current page for redirect after auth
+                        sessionStorage.setItem('authReturnUrl', '/saved-itineraries');
                         toast({
                           title: 'Authentication Required',
                           description: 'Sign in or sign up to proceed with booking',

@@ -259,6 +259,8 @@ const CityPlanner = () => {
   const saveBookingAsPending = async (bookingData: any) => {
     try {
       if (!isAuthenticated || !user?.id) {
+        // Store current page for redirect after auth
+        sessionStorage.setItem('authReturnUrl', '/city-planner');
         toast({
           title: 'Authentication Required',
           description: 'Sign in to save your booking',
@@ -587,6 +589,8 @@ const CityPlanner = () => {
                   onClick={() => {
                     // Check if user is authenticated
                     if (!isAuthenticated) {
+                      // Store current page for redirect after auth
+                      sessionStorage.setItem('authReturnUrl', '/city-planner');
                       toast({
                         title: 'Authentication Required',
                         description: 'Sign in or sign up to proceed with booking',

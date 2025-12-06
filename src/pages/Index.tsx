@@ -129,6 +129,8 @@ const Index = () => {
 
     // Check if user is authenticated
     if (!isAuthenticated) {
+      // Store current page for redirect after auth
+      sessionStorage.setItem('authReturnUrl', '/');
       toast({
         title: 'Authentication Required',
         description: 'Sign in or sign up to proceed with booking',

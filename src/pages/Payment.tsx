@@ -44,6 +44,8 @@ const Payment = () => {
   // Check if user is authenticated when component mounts or when authentication changes
   useEffect(() => {
     if (!isAuthenticated) {
+      // Store current page for redirect after auth
+      sessionStorage.setItem('authReturnUrl', '/payment');
       toast({
         title: 'Authentication Required',
         description: 'You need to sign in or sign up to proceed with booking',
