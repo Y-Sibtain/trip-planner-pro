@@ -107,7 +107,7 @@ const MyBookings = () => {
               onClick={() => navigate('/saved-itineraries')}
               className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth"
             >
-              Book a Saved Itinerary →
+              Book Now →
             </Button>
           </div>
         ) : (
