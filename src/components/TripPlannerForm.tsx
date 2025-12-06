@@ -717,7 +717,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           {/* Travellers */}
           <div>
             <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2 text-sm">
-                <Users className="w-4 h-4 text-blue-500" /> {t('travellers')} (Optional)
+                <Users className="w-4 h-4 text-blue-500" /> {t('travellers')}
               </Label>
               <Input
                 placeholder={t('travellers_placeholder')}
