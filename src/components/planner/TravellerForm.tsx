@@ -149,16 +149,26 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
 
       <div className="max-w-6xl mx-auto p-4 space-y-6 relative z-10">
         {/* Header */}
-        <div>
-          <h1 className="text-5xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-              <Users className="h-6 w-6 text-white" />
+        <div className="glass p-8 rounded-2xl border border-cyan-500/20 dark:border-cyan-500/10 backdrop-blur-xl dark:bg-gray-800/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+                Traveller Details
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300">
+                Please provide details for all {numTravellers} traveller{numTravellers > 1 ? "s" : ""}
+              </p>
             </div>
-            Traveller Details
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Please provide details for all {numTravellers} traveller{numTravellers > 1 ? "s" : ""}
-          </p>
+            <Button 
+              onClick={onBack}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
+            >
+              ← Back
+            </Button>
+          </div>
         </div>
 
         {/* Traveller Cards */}
@@ -302,15 +312,8 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
           {/* Action Buttons */}
           <div className="flex gap-3 pt-6">
             <Button
-              type="button"
-              onClick={onBack}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
-            >
-              ← Back
-            </Button>
-            <Button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
             >
               Proceed to Payment →
             </Button>
