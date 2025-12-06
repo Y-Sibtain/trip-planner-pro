@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { CreditCard, AlertCircle, Lock } from 'lucide-react';
+import { CreditCard, Lock } from 'lucide-react';
 
 const Payment = () => {
   const location = useLocation();
@@ -112,19 +112,33 @@ const Payment = () => {
 
       console.log('Booking created:', data);
 
-      // Delete from pending bookings if exists
-      if (booking.id && !booking.id.startsWith('booking-')) {
-        try {
-          await supabase.from('bookings').delete().eq('id', booking.id);
-        } catch (delErr) {
-          console.warn('Failed to delete pending booking:', delErr);
+      // Delete any pending bookings with the same title and payment_status for this user
+      // This ensures we don't delete confirmed bookings with the same title
+      try {
+        const { error: deleteError } = await supabase
+          .from('confirmed_bookings')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('status', 'pending')
+          .eq('payment_status', 'pending')
+          .eq('itinerary_title', booking.itinerary_title);
+        
+        if (deleteError) {
+          console.warn('Failed to delete pending booking:', deleteError);
+        } else {
+          console.log('Pending bookings deleted successfully');
         }
+      } catch (delErr) {
+        console.warn('Failed to delete pending booking:', delErr);
       }
 
       toast({
         title: 'Payment Successful!',
         description: `Transaction ID: ${transactionId}. Your booking is confirmed.`,
       });
+
+      // Clear traveller data from session storage after successful booking
+      sessionStorage.removeItem('travellerData');
 
       // Redirect to bookings page or home after 2 seconds
       setTimeout(() => {

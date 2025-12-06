@@ -15,6 +15,7 @@ import TravellerForm, { TravellerDetail } from "@/components/planner/TravellerFo
 import StepProgress from "@/components/planner/StepProgress";
 import { useBooking } from "@/contexts/BookingContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const cities = [
   { name: "Dubai", emoji: "🏜️", color: "bg-amber-500" },
@@ -64,7 +65,7 @@ const hotels = {
 const CityPlanner = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useBooking();
+  const { isAuthenticated, user } = useBooking();
   const { toast } = useToast();
   const [step, setStep] = useState<"city" | "flight" | "hotel" | "activity" | "traveller" | "plan">("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
@@ -255,6 +256,67 @@ const CityPlanner = () => {
     return Math.max(1, numDays);
   };
 
+  const saveBookingAsPending = async (bookingData: any) => {
+    try {
+      if (!isAuthenticated || !user?.id) {
+        toast({
+          title: 'Authentication Required',
+          description: 'Sign in to save your booking',
+          variant: 'destructive'
+        });
+        navigate('/auth');
+        return;
+      }
+
+      // Create pending booking
+      const pendingBooking = {
+        user_id: user.id,
+        itinerary_title: bookingData.itinerary_title || 'Trip Booking',
+        total_amount: bookingData.total_amount || 0,
+        itinerary_data: bookingData.plan || {},
+        status: 'pending',
+        payment_status: 'pending',
+      };
+
+      const { data, error } = await supabase
+        .from('confirmed_bookings')
+        .insert([pendingBooking])
+        .select();
+
+      if (error) {
+        console.error('Booking save error:', error);
+        toast({ 
+          title: 'Error', 
+          description: `Failed to save booking: ${error.message}`, 
+          variant: 'destructive' 
+        });
+        return;
+      }
+
+      console.log('Pending booking created:', data);
+
+      toast({
+        title: 'Booking Saved!',
+        description: 'Your trip has been saved with pending status. Complete payment anytime from My Bookings.',
+      });
+
+      // Clear traveller data from session storage after successful save
+      sessionStorage.removeItem('travellerData');
+
+      // Redirect to home page after 2 seconds
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (err) {
+      console.error('Booking save error:', err);
+      toast({ 
+        title: 'Error', 
+        description: 'Failed to save booking. Please try again.', 
+        variant: 'destructive' 
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden">
       {/* Subtle background decoration */}
@@ -286,9 +348,9 @@ const CityPlanner = () => {
               setStep("activity");
               setCurrentDestIndex(Math.max(0, destinationsList.length - 1));
             }}
-            onComplete={(travellers) => {
+            onComplete={(travellers, action) => {
               setTravellerDetails(travellers);
-              // Proceed to payment using AI booking data if available, otherwise compute from selections
+              // Proceed to payment or save booking using AI booking data if available, otherwise compute from selections
               const bookingData = aiBookingData || (() => {
                 let totalAmount = 0;
                 let totalDays = 0;
@@ -322,7 +384,15 @@ const CityPlanner = () => {
               
               // Clear AI booking data after use
               setAiBookingData(null);
-              navigate('/payment', { state: { booking: bookingData } });
+              
+              // Handle save or pay action
+              if (action === 'save') {
+                // Save booking directly to database
+                saveBookingAsPending(bookingData);
+              } else {
+                // Navigate to payment page
+                navigate('/payment', { state: { booking: bookingData, action: 'pay' } });
+              }
             }}
           />
         )}

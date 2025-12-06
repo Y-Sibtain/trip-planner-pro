@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,13 +18,28 @@ export interface TravellerDetail {
 
 interface TravellerFormProps {
   numTravellers: number;
-  onComplete: (travellers: TravellerDetail[]) => void;
+  onComplete: (travellers: TravellerDetail[], action: 'save' | 'pay') => void;
   onBack: () => void;
 }
 
 const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps) => {
   const { toast } = useToast();
   const [travellers, setTravellers] = useState<TravellerDetail[]>(() => {
+    // Try to load saved traveller data from sessionStorage
+    try {
+      const savedData = sessionStorage.getItem('travellerData');
+      if (savedData) {
+        const parsed = JSON.parse(savedData);
+        // Verify it matches the current number of travellers
+        if (parsed.length === numTravellers) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load saved traveller data:', e);
+    }
+    
+    // Default: create empty traveller forms
     return Array.from({ length: numTravellers }, (_, i) => ({
       id: `traveller-${i}`,
       firstName: "",
@@ -35,6 +50,11 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
       phone: "",
     }));
   });
+
+  // Save traveller data to sessionStorage whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem('travellerData', JSON.stringify(travellers));
+  }, [travellers]);
 
   const [expandedTravellers, setExpandedTravellers] = useState<Set<string>>(
     new Set(Array.from({ length: numTravellers }, (_, i) => `traveller-${i}`))
@@ -93,7 +113,7 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent, action: 'save' | 'pay' = 'pay') => {
     e.preventDefault();
 
     // Validate all fields are filled
@@ -154,7 +174,7 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
       return;
     }
 
-    onComplete(travellers);
+    onComplete(travellers, action);
   };
 
   return (
@@ -330,10 +350,17 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
           {/* Action Buttons */}
           <div className="flex gap-3 pt-6">
             <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
+              type="button"
+              onClick={(e) => handleSubmit(e as any, 'save')}
+              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
             >
-              Proceed to Payment →
+              Save Booking
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
+            >
+              Pay Now →
             </Button>
           </div>
         </form>
