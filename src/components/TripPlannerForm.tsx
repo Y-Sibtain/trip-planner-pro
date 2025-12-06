@@ -4,7 +4,7 @@ import ShatterButton from "@/components/ui/shatter-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, DollarSign, Calendar, Search, X, Plus, Users } from "lucide-react";
+import { MapPin, DollarSign, Calendar, Search, X, Plus, Users, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -55,6 +55,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   const [endDate3, setEndDate3] = useState("");
   const [budget, setBudget] = useState("");
   const [travellers, setTravellers] = useState("");
+  const [showSourceDropdown, setShowSourceDropdown] = useState(false);
+  const [showDestinationDropdown, setShowDestinationDropdown] = useState(false);
 
   // Load initial data from localStorage if available
   useEffect(() => {
@@ -288,10 +290,19 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   };
 
   // Filtered suggestion list for autocomplete dropdown
+<<<<<<< HEAD
   // Show all suggestions when focused, filter when typing
   const filteredSuggestions = destinationInput.trim()
     ? suggestions.filter((s) => s.toLowerCase().includes(destinationInput.toLowerCase().trim()))
     : suggestions;
+=======
+  // Only show dropdown when user is typing (destinationInput is not empty)
+  const filteredSuggestions = destinationInput
+    ? suggestions.filter((s) => s.toLowerCase().includes(destinationInput.toLowerCase()) && !destinations.includes(s)).slice(0, 6)
+    : showDestinationDropdown
+    ? suggestions.filter((s) => !destinations.includes(s)).slice(0, 6)
+    : [];
+>>>>>>> 792610e3940f4c0fc4d08d608ed2de02e9aafd99
 
   // Filtered suggestions for Destination 2
   const filteredDestination2Suggestions = destination2Input.trim()
@@ -305,8 +316,15 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
 
   // Filtered source suggestions for source dropdown (single-select)
   const filteredSourceSuggestions = sourceInput
+<<<<<<< HEAD
     ? sourceSuggestions.filter((s) => s.toLowerCase().includes(sourceInput.toLowerCase()))
     : sourceSuggestions;
+=======
+    ? sourceSuggestions.filter((s) => s.toLowerCase().includes(sourceInput.toLowerCase())).slice(0, 6)
+    : showSourceDropdown
+    ? sourceSuggestions.slice(0, 6)
+    : [];
+>>>>>>> 792610e3940f4c0fc4d08d608ed2de02e9aafd99
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4">
@@ -346,9 +364,23 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 disabled={source.length > 0}
                 className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
               />
+              
+              <button
+                type="button"
+                onClick={() => setShowSourceDropdown(!showSourceDropdown)}
+                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex-shrink-0"
+                title="Show suggestions"
+              >
+                <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+              </button>
             </div>
+<<<<<<< HEAD
             {sourceInputFocused && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
               <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-y-auto max-h-60 bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+=======
+            {(sourceInput || showSourceDropdown) && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
+              <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white max-h-64 overflow-y-auto">
+>>>>>>> 792610e3940f4c0fc4d08d608ed2de02e9aafd99
                 {loadingSuggestions ? (
                   <div className="p-3 text-sm text-gray-600">Loading...</div>
                 ) : filteredSourceSuggestions.length > 0 ? (
@@ -361,7 +393,11 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                       onClick={() => {
                         setSource(s);
                         setSourceInput("");
+<<<<<<< HEAD
                         setSourceInputFocused(false);
+=======
+                        setShowSourceDropdown(false);
+>>>>>>> 792610e3940f4c0fc4d08d608ed2de02e9aafd99
                       }}
                     >
                       {s}
@@ -424,9 +460,23 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 disabled={destinations.length >= 1}
                 className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
               />
+              
+              <button
+                type="button"
+                onClick={() => setShowDestinationDropdown(!showDestinationDropdown)}
+                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex-shrink-0"
+                title="Show suggestions"
+              >
+                <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+              </button>
             </div>
+<<<<<<< HEAD
             {destinationInputFocused && (filteredSuggestions.length > 0 || loadingSuggestions) && (
               <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-y-auto max-h-60 bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+=======
+            {(destinationInput || showDestinationDropdown) && (filteredSuggestions.length > 0 || loadingSuggestions) && (
+              <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white max-h-64 overflow-y-auto">
+>>>>>>> 792610e3940f4c0fc4d08d608ed2de02e9aafd99
                 {loadingSuggestions ? (
                   <div className="p-3 text-sm text-gray-600">Loading...</div>
                 ) : filteredSuggestions.length > 0 ? (
@@ -435,10 +485,16 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                       key={s}
                       type="button"
                       className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+<<<<<<< HEAD
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => {
                         addDestination(s);
                         setDestinationInputFocused(false);
+=======
+                      onClick={() => {
+                        addDestination(s);
+                        setShowDestinationDropdown(false);
+>>>>>>> 792610e3940f4c0fc4d08d608ed2de02e9aafd99
                       }}
                     >
                       {s}

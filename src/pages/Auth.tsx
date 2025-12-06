@@ -8,13 +8,65 @@ import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Eye, EyeOff, Check, X } from 'lucide-react';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Password strength checker
+const checkPasswordStrength = (password: string) => {
+  return {
+    hasMinLength: password.length >= 8,
+    hasUppercase: /[A-Z]/.test(password),
+    hasLowercase: /[a-z]/.test(password),
+    hasNumber: /\d/.test(password),
+    hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+  };
+};
+
+const getPasswordStrengthColor = (password: string) => {
+  const strength = checkPasswordStrength(password);
+  const metRequirements = Object.values(strength).filter(Boolean).length;
+  
+  if (metRequirements <= 1) return 'bg-red-500';
+  if (metRequirements <= 2) return 'bg-orange-500';
+  if (metRequirements <= 3) return 'bg-yellow-500';
+  if (metRequirements <= 4) return 'bg-blue-500';
+  return 'bg-green-500';
+};
+
+const getPasswordStrengthLabel = (password: string) => {
+  const strength = checkPasswordStrength(password);
+  const metRequirements = Object.values(strength).filter(Boolean).length;
+  
+  if (!password) return '';
+  if (metRequirements <= 1) return 'Weak';
+  if (metRequirements <= 2) return 'Fair';
+  if (metRequirements <= 3) return 'Good';
+  if (metRequirements <= 4) return 'Strong';
+  return 'Very Strong';
+};
+
+// Requirement Item Component
+const RequirementItem = ({ met, text }: { met: boolean; text: string }) => (
+  <div className={`flex items-center gap-2 text-xs ${met ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+    {met ? (
+      <Check size={14} className="flex-shrink-0" />
+    ) : (
+      <X size={14} className="flex-shrink-0" />
+    )}
+    <span>{text}</span>
+  </div>
+);
+
+
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [isRecoveryMode, setIsRecoveryMode] = useState(false);
@@ -241,27 +293,45 @@ const Auth = () => {
               <form onSubmit={handleRecoveryPasswordUpdate} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="newPassword" className="text-gray-900 dark:text-gray-100 font-semibold">New Password</Label>
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    placeholder="At least 8 characters"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                    className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
-                  />
+                  <div className="relative">
+                    <Input
+                      id="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      placeholder="At least 8 characters"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                      className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                    >
+                      {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword" className="text-gray-900 dark:text-gray-100 font-semibold">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="Confirm your password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
-                  />
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
                 <Button 
                   type="submit" 
@@ -288,15 +358,66 @@ const Auth = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-gray-900 dark:text-gray-100 font-semibold">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder={isLogin ? '' : 'At least 8 characters'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder={isLogin ? '' : 'At least 8 characters'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  
+                  {/* Password Strength Checker - Only show on signup */}
+                  {!isLogin && password && (
+                    <div className="mt-3 space-y-2">
+                      {/* Strength Bar */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full transition-all duration-300 ${getPasswordStrengthColor(password)}`}
+                            style={{ width: `${(Object.values(checkPasswordStrength(password)).filter(Boolean).length / 5) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 min-w-16">
+                          {getPasswordStrengthLabel(password)}
+                        </span>
+                      </div>
+                      
+                      {/* Requirements Checklist */}
+                      <div className="space-y-1">
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasMinLength} 
+                          text="At least 8 characters" 
+                        />
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasUppercase} 
+                          text="At least one uppercase letter (A-Z)" 
+                        />
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasLowercase} 
+                          text="At least one lowercase letter (a-z)" 
+                        />
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasNumber} 
+                          text="At least one number (0-9)" 
+                        />
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasSpecialChar} 
+                          text="At least one special character (!@#$%^&*)" 
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center justify-between">
                   <Button 
