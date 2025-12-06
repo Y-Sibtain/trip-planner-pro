@@ -12,6 +12,7 @@ import FlightSelector from "@/components/planner/FlightSelector";
 import HotelCard from "@/components/planner/HotelCard";
 import TripPlan from "@/components/planner/TripPlan";
 import TravellerForm, { TravellerDetail } from "@/components/planner/TravellerForm";
+import StepProgress from "@/components/planner/StepProgress";
 import { useBooking } from "@/contexts/BookingContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -261,6 +262,13 @@ const CityPlanner = () => {
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-20 dark:opacity-10"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-10 dark:opacity-5"></div>
       </div>
+
+      {/* Step Progress Bar */}
+      <StepProgress
+        currentStep={step}
+        totalDestinations={destinationsList.length || 1}
+        currentDestinationIndex={currentDestIndex}
+      />
 
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">
         {/* Header */}
