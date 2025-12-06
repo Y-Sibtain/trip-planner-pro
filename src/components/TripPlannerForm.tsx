@@ -418,7 +418,12 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    addDestination(destinationInput);
+                    if (filteredSuggestions.length > 0) {
+                      addDestination(filteredSuggestions[0]);
+                      setShowDestinationDropdown(false);
+                    } else if (destinationInput.trim()) {
+                      addDestination(destinationInput);
+                    }
                   }
                 }}
                 disabled={destinations.length >= 1}
@@ -523,10 +528,22 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
-                        const trimmed = destination2Input.trim();
-                        if (trimmed && trimmed !== destinations[0] && trimmed !== destination3) {
-                          setDestination2(trimmed);
-                          setDestination2Input("");
+                        if (filteredDestination2Suggestions.length > 0) {
+                          const selected = filteredDestination2Suggestions[0];
+                          if (selected !== destinations[0] && selected !== destination3) {
+                            setDestination2(selected);
+                            setDestination2Input("");
+                          } else {
+                            toast({ title: "Duplicate destination", description: "This destination is already selected." });
+                          }
+                        } else if (destination2Input.trim()) {
+                          const trimmed = destination2Input.trim();
+                          if (trimmed !== destinations[0] && trimmed !== destination3) {
+                            setDestination2(trimmed);
+                            setDestination2Input("");
+                          } else {
+                            toast({ title: "Duplicate destination", description: "This destination is already selected." });
+                          }
                         }
                       }
                     }}
@@ -605,10 +622,22 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
-                        const trimmed = destination3Input.trim();
-                        if (trimmed && trimmed !== destinations[0] && trimmed !== destination2) {
-                          setDestination3(trimmed);
-                          setDestination3Input("");
+                        if (filteredDestination3Suggestions.length > 0) {
+                          const selected = filteredDestination3Suggestions[0];
+                          if (selected !== destinations[0] && selected !== destination2) {
+                            setDestination3(selected);
+                            setDestination3Input("");
+                          } else {
+                            toast({ title: "Duplicate destination", description: "This destination is already selected." });
+                          }
+                        } else if (destination3Input.trim()) {
+                          const trimmed = destination3Input.trim();
+                          if (trimmed !== destinations[0] && trimmed !== destination2) {
+                            setDestination3(trimmed);
+                            setDestination3Input("");
+                          } else {
+                            toast({ title: "Duplicate destination", description: "This destination is already selected." });
+                          }
                         }
                       }
                     }}
@@ -662,7 +691,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               type="number"
               min={0}
               step={1000}
-              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:bg-gray-700/30 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
           </div>
 
@@ -754,7 +783,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               type="number"
               min="1"
               max="50"
-              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
+              className="w-full px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:bg-gray-700/30 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
           </div>
         </div>

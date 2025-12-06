@@ -178,6 +178,12 @@ const Destinations = () => {
                     placeholder={t('search_by_name')}
                     value={queryText}
                     onChange={(e) => setQueryText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        runSearch();
+                      }
+                    }}
                     className="flex-1 px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
                   />
                   <Button 
@@ -224,6 +230,12 @@ const Destinations = () => {
                   placeholder="Min (PKR)" 
                   value={minPrice} 
                   onChange={(e) => setMinPrice(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      runSearch();
+                    }
+                  }}
                   className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth text-sm"
                 />
                 <input 
@@ -231,6 +243,12 @@ const Destinations = () => {
                   placeholder="Max (PKR)" 
                   value={maxPrice} 
                   onChange={(e) => setMaxPrice(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      runSearch();
+                    }
+                  }}
                   className="px-4 py-3 rounded-lg glass border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth text-sm"
                 />
               </div>
