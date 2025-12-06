@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { MapPin, Star, Users, Plane, Hotel, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import FlightSelector from "@/components/planner/FlightSelector";
@@ -80,6 +81,7 @@ const CityPlanner = () => {
   const [selectedHotelsByDest, setSelectedHotelsByDest] = useState<Record<string, string>>({});
   const [travellerDetails, setTravellerDetails] = useState<TravellerDetail[]>([]);
   const [aiBookingData, setAiBookingData] = useState<any>(null);
+  const [hotelSortOrder, setHotelSortOrder] = useState<"default" | "price-asc" | "price-desc" | "popularity">("default");
 
   // Calculate number of days from trip data
   useEffect(() => {
@@ -491,15 +493,54 @@ const CityPlanner = () => {
               </div>
             </div>
 
+            {/* Sort Options */}
+            <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
+              <label className="text-sm font-semibold text-gray-900 dark:text-white">
+                Sort by:
+              </label>
+              <Select value={hotelSortOrder} onValueChange={(val) => setHotelSortOrder(val as any)}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="default">Default</SelectItem>
+                  <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                  <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                  <SelectItem value="popularity">Popularity (Stars)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(hotels[currentDestName as keyof typeof hotels] || []).map((hotel) => (
-                <HotelCard
-                  key={hotel.id}
-                  hotel={hotel}
-                  isSelected={selectedHotelsByDest[currentDestName || ''] === hotel.id}
-                  onSelect={() => handleHotelSelect(hotel.id)}
-                />
-              ))}
+              {(() => {
+                const hotelList = hotels[currentDestName as keyof typeof hotels] || [];
+                let sortedHotels = [...hotelList];
+                
+                if (hotelSortOrder === "price-asc") {
+                  sortedHotels.sort((a, b) => {
+                    const priceA = parseInt(a.price.replace(/[^\d]/g, '')) || 0;
+                    const priceB = parseInt(b.price.replace(/[^\d]/g, '')) || 0;
+                    return priceA - priceB;
+                  });
+                } else if (hotelSortOrder === "price-desc") {
+                  sortedHotels.sort((a, b) => {
+                    const priceA = parseInt(a.price.replace(/[^\d]/g, '')) || 0;
+                    const priceB = parseInt(b.price.replace(/[^\d]/g, '')) || 0;
+                    return priceB - priceA;
+                  });
+                } else if (hotelSortOrder === "popularity") {
+                  sortedHotels.sort((a, b) => b.stars - a.stars);
+                }
+                
+                return sortedHotels.map((hotel) => (
+                  <HotelCard
+                    key={hotel.id}
+                    hotel={hotel}
+                    isSelected={selectedHotelsByDest[currentDestName || ''] === hotel.id}
+                    onSelect={() => handleHotelSelect(hotel.id)}
+                  />
+                ));
+              })()}
             </div>
           </>
         )}

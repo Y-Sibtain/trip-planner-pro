@@ -12,7 +12,7 @@ const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIn
     { id: "city", label: "Destination" },
     { id: "flight", label: "Flight" },
     { id: "hotel", label: "Hotel" },
-    { id: "activity", label: "Activity" },
+    { id: "activity", label: "Activities" },
     { id: "traveller", label: "Travelers" },
     { id: "plan", label: "Review Plan" },
   ];
