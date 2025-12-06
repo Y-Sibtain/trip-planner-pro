@@ -22,6 +22,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Destination {
   id: string;
@@ -37,6 +48,7 @@ export default function ManageDestinations() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDestination, setEditingDestination] = useState<Destination | null>(null);
   const { toast } = useToast();
+  const [deleteDestinationId, setDeleteDestinationId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -111,10 +123,10 @@ export default function ManageDestinations() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this destination?')) return;
+  const handleDelete = async () => {
+    if (!deleteDestinationId) return;
 
-    const { error } = await supabase.from('destinations').delete().eq('id', id);
+    const { error } = await supabase.from('destinations').delete().eq('id', deleteDestinationId);
 
     if (error) {
       toast({
@@ -125,6 +137,7 @@ export default function ManageDestinations() {
       toast({ title: 'Complete', description: 'Destination has been removed.' });
       fetchDestinations();
     }
+    setDeleteDestinationId(null);
   };
 
   const handleEdit = (destination: Destination) => {
@@ -245,13 +258,31 @@ export default function ManageDestinations() {
                       >
                         <Pencil className="w-4 h-4" />
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDelete(destination.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <AlertDialog open={deleteDestinationId === destination.id} onOpenChange={(open) => !open && setDeleteDestinationId(null)}>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => setDeleteDestinationId(destination.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Destination?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will permanently delete this destination. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </TableCell>
                 </TableRow>

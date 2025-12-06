@@ -23,6 +23,17 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -50,6 +61,7 @@ export default function ManageItineraries() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItinerary, setEditingItinerary] = useState<Itinerary | null>(null);
   const { toast } = useToast();
+  const [deleteItineraryId, setDeleteItineraryId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -138,10 +150,10 @@ export default function ManageItineraries() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this itinerary?')) return;
+  const handleDelete = async () => {
+    if (!deleteItineraryId) return;
 
-    const { error } = await supabase.from('itineraries').delete().eq('id', id);
+    const { error } = await supabase.from('itineraries').delete().eq('id', deleteItineraryId);
 
     if (error) {
       toast({
@@ -152,6 +164,7 @@ export default function ManageItineraries() {
       toast({ title: 'Complete', description: 'Itinerary has been removed.' });
       fetchItineraries();
     }
+    setDeleteItineraryId(null);
   };
 
   const handleEdit = (itinerary: Itinerary) => {
@@ -291,13 +304,31 @@ export default function ManageItineraries() {
                       >
                         <Pencil className="w-4 h-4" />
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDelete(itinerary.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <AlertDialog open={deleteItineraryId === itinerary.id} onOpenChange={(open) => !open && setDeleteItineraryId(null)}>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => setDeleteItineraryId(itinerary.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Itinerary?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will permanently delete this itinerary. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </TableCell>
                 </TableRow>

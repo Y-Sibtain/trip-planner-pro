@@ -4,6 +4,27 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +38,9 @@ const SavedItineraries = () => {
   const [saved, setSaved] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteItineraryId, setDeleteItineraryId] = useState<string | null>(null);
+  const [renameItineraryId, setRenameItineraryId] = useState<string | null>(null);
+  const [renameTitle, setRenameTitle] = useState('');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -49,14 +73,16 @@ const SavedItineraries = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to permanently delete this saved itinerary?')) return;
-    setDeletingId(id);
+  const handleDelete = async () => {
+    if (!deleteItineraryId) return;
+    setDeletingId(deleteItineraryId);
     try {
-      const { error } = await supabase.from('saved_itineraries').delete().eq('id', id);
+      const { error } = await supabase.from('saved_itineraries').delete().eq('id', deleteItineraryId);
       if (error) {
         console.error('Delete error:', error);
         toast({ title: 'Delete failed', description: error.message, variant: 'destructive' });
+        setDeletingId(null);
+        setDeleteItineraryId(null);
         return;
       }
 
@@ -85,19 +111,19 @@ const SavedItineraries = () => {
       toast({ title: 'Error', description: 'Failed to delete saved itinerary.', variant: 'destructive' });
     } finally {
       setDeletingId(null);
+      setDeleteItineraryId(null);
     }
   };
 
-  const handleRename = async (id: string) => {
-    const newTitle = prompt('Enter new itinerary title:');
-    if (newTitle === null) return; // cancelled
-    const trimmed = newTitle.trim();
+  const handleRename = async () => {
+    if (!renameItineraryId) return;
+    const trimmed = renameTitle.trim();
     if (!trimmed) {
       toast({ title: 'Invalid title', description: 'Title cannot be empty.', variant: 'destructive' });
       return;
     }
     try {
-      const { error } = await supabase.from('saved_itineraries').update({ title: trimmed }).eq('id', id);
+      const { error } = await supabase.from('saved_itineraries').update({ title: trimmed }).eq('id', renameItineraryId);
       if (error) {
         console.error('Rename error:', error);
         toast({ title: 'Rename failed', description: error.message, variant: 'destructive' });
@@ -127,6 +153,9 @@ const SavedItineraries = () => {
     } catch (err) {
       console.error('Rename saved error:', err);
       toast({ title: 'Error', description: 'Failed to rename itinerary.', variant: 'destructive' });
+    } finally {
+      setRenameItineraryId(null);
+      setRenameTitle('');
     }
   };
 
@@ -269,26 +298,89 @@ const SavedItineraries = () => {
 
                   <Button 
                     size="sm"
-                    onClick={() => handleRename(row.id)}
+                    onClick={() => {
+                      setRenameItineraryId(row.id);
+                      setRenameTitle(row.title || '');
+                    }}
                     className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold hover:shadow-lg transition-all-smooth"
                   >
                     <Edit className="w-4 h-4 mr-2" /> Rename
                   </Button>
 
-                  <Button 
-                    size="sm"
-                    onClick={() => handleDelete(row.id)}
-                    disabled={deletingId === row.id}
-                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold hover:shadow-lg transition-all-smooth disabled:opacity-50"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" /> Delete
-                  </Button>
+                  <AlertDialog open={deleteItineraryId === row.id} onOpenChange={(open) => !open && setDeleteItineraryId(null)}>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        size="sm"
+                        onClick={() => setDeleteItineraryId(row.id)}
+                        disabled={deletingId === row.id}
+                        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold hover:shadow-lg transition-all-smooth disabled:opacity-50"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" /> Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Saved Itinerary?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete your saved itinerary.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Rename Dialog */}
+      <Dialog open={renameItineraryId !== null} onOpenChange={(open) => {
+        if (!open) {
+          setRenameItineraryId(null);
+          setRenameTitle('');
+        }
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename Itinerary</DialogTitle>
+            <DialogDescription>
+              Enter a new title for your saved itinerary.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="rename-title">Title</Label>
+            <Input
+              id="rename-title"
+              value={renameTitle}
+              onChange={(e) => setRenameTitle(e.target.value)}
+              placeholder="Enter new title"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleRename();
+                }
+              }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setRenameItineraryId(null);
+              setRenameTitle('');
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={handleRename}>
+              Rename
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

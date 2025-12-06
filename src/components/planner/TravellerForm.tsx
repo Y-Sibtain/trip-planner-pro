@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Users, Plus, Trash2, ChevronDown } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export interface TravellerDetail {
   id: string;
@@ -22,6 +23,7 @@ interface TravellerFormProps {
 }
 
 const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps) => {
+  const { toast } = useToast();
   const [travellers, setTravellers] = useState<TravellerDetail[]>(() => {
     return Array.from({ length: numTravellers }, (_, i) => ({
       id: `traveller-${i}`,
@@ -106,7 +108,11 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
     );
 
     if (!isValid) {
-      alert("Please fill in all traveller details");
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all traveller details",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -114,7 +120,11 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
     const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
     const cnicValid = travellers.every((t) => cnicRegex.test(t.cnic));
     if (!cnicValid) {
-      alert("Please enter valid CNIC format (e.g., 12345-1234567-1)");
+      toast({
+        title: "Invalid CNIC Format",
+        description: "Please enter valid CNIC format (e.g., 12345-1234567-1)",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -124,7 +134,11 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
       return !isNaN(age) && age >= 0 && age <= 150;
     });
     if (!ageValid) {
-      alert("Please enter valid ages (0-150)");
+      toast({
+        title: "Invalid Age",
+        description: "Please enter valid ages (0-150)",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -132,7 +146,11 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const emailValid = travellers.every((t) => emailRegex.test(t.email));
     if (!emailValid) {
-      alert("Please enter valid email addresses");
+      toast({
+        title: "Invalid Email",
+        description: "Please enter valid email addresses",
+        variant: "destructive",
+      });
       return;
     }
 

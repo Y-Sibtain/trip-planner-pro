@@ -4,6 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -32,6 +43,7 @@ const AdminBookings = () => {
   const [userEmails, setUserEmails] = useState<Record<string, string>>({});
   const [selectedBooking, setSelectedBooking] = useState<ConfirmedBooking | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [rejectBookingId, setRejectBookingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -89,14 +101,14 @@ const AdminBookings = () => {
     }
   };
 
-  const handleReject = async (bookingId: string) => {
-    if (!confirm('Reject this booking? This will cancel it.')) return;
+  const handleReject = async () => {
+    if (!rejectBookingId) return;
 
     try {
       const { error } = await supabase
         .from('confirmed_bookings')
         .update({ status: 'rejected' })
-        .eq('id', bookingId);
+        .eq('id', rejectBookingId);
 
       if (error) {
         console.error('Reject error:', error);
@@ -109,6 +121,8 @@ const AdminBookings = () => {
     } catch (err) {
       console.error('Error rejecting booking:', err);
       toast({ title: 'Notice', description: 'Booking rejection operation completed.' });
+    } finally {
+      setRejectBookingId(null);
     }
   };
 
@@ -189,13 +203,31 @@ const AdminBookings = () => {
                               >
                                 <CheckCircle className="w-4 h-4 mr-1" /> Approve
                               </Button>
-                              <Button 
-                                size="sm" 
-                                variant="destructive"
-                                onClick={() => handleReject(booking.id)}
-                              >
-                                <XCircle className="w-4 h-4 mr-1" /> Reject
-                              </Button>
+                              <AlertDialog open={rejectBookingId === booking.id} onOpenChange={(open) => !open && setRejectBookingId(null)}>
+                                <AlertDialogTrigger asChild>
+                                  <Button 
+                                    size="sm" 
+                                    variant="destructive"
+                                    onClick={() => setRejectBookingId(booking.id)}
+                                  >
+                                    <XCircle className="w-4 h-4 mr-1" /> Reject
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Reject Booking?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This will cancel this booking. This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleReject} className="bg-red-600 hover:bg-red-700">
+                                      Reject
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             </>
                           )}
                         </div>

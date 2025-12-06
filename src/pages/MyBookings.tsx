@@ -3,6 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,6 +25,7 @@ const MyBookings = () => {
 
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [cancelBookingId, setCancelBookingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -56,10 +67,10 @@ const MyBookings = () => {
     });
   };
 
-  const handleCancel = async (bookingId: string) => {
-    if (!confirm('Cancel this booking? This action cannot be undone.')) return;
+  const handleCancel = async () => {
+    if (!cancelBookingId) return;
     try {
-      const { error } = await supabase.from('confirmed_bookings').delete().eq('id', bookingId);
+      const { error } = await supabase.from('confirmed_bookings').delete().eq('id', cancelBookingId);
       if (error) {
         toast({ title: 'Error', description: 'Failed to cancel booking.', variant: 'destructive' });
         return;
@@ -68,6 +79,8 @@ const MyBookings = () => {
       fetchBookings();
     } catch (err) {
       toast({ title: 'Error', description: 'Failed to cancel booking.', variant: 'destructive' });
+    } finally {
+      setCancelBookingId(null);
     }
   };
 
@@ -154,13 +167,31 @@ const MyBookings = () => {
                     >
                       <Eye className="w-4 h-4 mr-2" /> Details
                     </Button>
-                    <Button 
-                      size="sm"
-                      onClick={() => handleCancel(booking.id)}
-                      className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold hover:shadow-lg transition-all-smooth"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" /> Cancel
-                    </Button>
+                    <AlertDialog open={cancelBookingId === booking.id} onOpenChange={(open) => !open && setCancelBookingId(null)}>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          size="sm"
+                          onClick={() => setCancelBookingId(booking.id)}
+                          className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold hover:shadow-lg transition-all-smooth"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" /> Cancel
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Cancel Booking?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently cancel your booking.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>No, keep it</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleCancel} className="bg-red-600 hover:bg-red-700">
+                            Yes, cancel booking
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </div>

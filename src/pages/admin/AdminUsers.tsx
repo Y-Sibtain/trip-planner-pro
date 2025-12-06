@@ -3,6 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -26,6 +37,10 @@ const AdminUsers = () => {
   >([]);
   const [roles, setRoles] = useState<Record<string, string[]>>({}); // user_id -> [roles]
   const [selected, setSelected] = useState<string | null>(null);
+  const [promoteUserId, setPromoteUserId] = useState<string | null>(null);
+  const [demoteUserId, setDemoteUserId] = useState<string | null>(null);
+  const [softDeleteUserId, setSoftDeleteUserId] = useState<string | null>(null);
+  const [restoreUserId, setRestoreUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -72,10 +87,10 @@ const AdminUsers = () => {
     }
   };
 
-  const promoteToAdmin = async (userId: string) => {
-    if (!confirm("Promote this user to admin?")) return;
+  const promoteToAdmin = async () => {
+    if (!promoteUserId) return;
     try {
-      const { error } = await supabase.from("user_roles").insert([{ user_id: userId, role: "admin" }]);
+      const { error } = await supabase.from("user_roles").insert([{ user_id: promoteUserId, role: "admin" }]);
       if (error) {
         toast({ title: "Notice", description: "User role update has been processed." });
         return;
@@ -84,13 +99,15 @@ const AdminUsers = () => {
     } catch (err) {
       console.error("promote error:", err);
       toast({ title: "Notice", description: "User role update has been processed." });
+    } finally {
+      setPromoteUserId(null);
     }
   };
 
-  const demoteFromAdmin = async (userId: string) => {
-    if (!confirm("Remove admin role from this user?")) return;
+  const demoteFromAdmin = async () => {
+    if (!demoteUserId) return;
     try {
-      const { error } = await supabase.from("user_roles").delete().match({ user_id: userId, role: "admin" });
+      const { error } = await supabase.from("user_roles").delete().match({ user_id: demoteUserId, role: "admin" });
       if (error) {
         toast({ title: "Notice", description: "User role update has been processed." });
         return;
@@ -100,13 +117,15 @@ const AdminUsers = () => {
     } catch (err) {
       console.error("demote error:", err);
       toast({ title: "Notice", description: "User role update has been processed." });
+    } finally {
+      setDemoteUserId(null);
     }
   };
 
-  const softDeleteProfile = async (userId: string) => {
-    if (!confirm("Soft-delete this profile (set deleted_at)? This hides the profile from users.")) return;
+  const softDeleteProfile = async () => {
+    if (!softDeleteUserId) return;
     try {
-      const { error } = await supabase.from("profiles").update({ deleted_at: new Date().toISOString() }).eq("id", userId);
+      const { error } = await supabase.from("profiles").update({ deleted_at: new Date().toISOString() }).eq("id", softDeleteUserId);
       if (error) {
         toast({ title: "Notice", description: "Profile update has been processed." });
         return;
@@ -116,19 +135,28 @@ const AdminUsers = () => {
     } catch (err) {
       console.error("soft-delete error:", err);
       toast({ title: "Notice", description: "Profile update has been processed." });
+    } finally {
+      setSoftDeleteUserId(null);
     }
   };
 
-  const restoreProfile = async (userId: string) => {
-    if (!confirm("Restore this profile?")) return;
+  const restoreProfile = async () => {
+    if (!restoreUserId) return;
     try {
-      const { error } = await supabase.from("profiles").update({ deleted_at: null }).eq("id", userId);
+      const { error } = await supabase.from("profiles").update({ deleted_at: null }).eq("id", restoreUserId);
       if (error) {
         toast({ title: "Notice", description: "Profile update has been processed." });
         return;
       }
       toast({ title: "Restored", description: "Profile restored." });
       loadUsers();
+    } catch (err) {
+      console.error("restore error:", err);
+      toast({ title: "Notice", description: "Profile update has been processed." });
+    } finally {
+      setRestoreUserId(null);
+    }
+  };      loadUsers();
     } catch (err) {
       console.error("restore error:", err);
       toast({ title: "Notice", description: "Profile update has been processed." });
@@ -170,22 +198,88 @@ const AdminUsers = () => {
                   <TableCell>
                     <div className="flex gap-2">
                       {(roles[p.id] || []).includes("admin") ? (
-                        <Button size="sm" variant="outline" onClick={() => demoteFromAdmin(p.id)}>
-                          Remove admin
-                        </Button>
+                        <AlertDialog open={demoteUserId === p.id} onOpenChange={(open) => !open && setDemoteUserId(null)}>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="outline" onClick={() => setDemoteUserId(p.id)}>
+                              Remove admin
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Remove Admin Role?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will remove admin privileges from this user.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={demoteFromAdmin}>Remove Admin</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       ) : (
-                        <Button size="sm" onClick={() => promoteToAdmin(p.id)}>
-                          Promote to admin
-                        </Button>
+                        <AlertDialog open={promoteUserId === p.id} onOpenChange={(open) => !open && setPromoteUserId(null)}>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" onClick={() => setPromoteUserId(p.id)}>
+                              Promote to admin
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Promote to Admin?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will grant admin privileges to this user.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={promoteToAdmin}>Promote</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       )}
                       {p.deleted_at ? (
-                        <Button size="sm" variant="ghost" onClick={() => restoreProfile(p.id)}>
-                          Restore
-                        </Button>
+                        <AlertDialog open={restoreUserId === p.id} onOpenChange={(open) => !open && setRestoreUserId(null)}>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="ghost" onClick={() => setRestoreUserId(p.id)}>
+                              Restore
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Restore Profile?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will restore this user's profile and make it visible again.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={restoreProfile}>Restore</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       ) : (
-                        <Button size="sm" variant="destructive" onClick={() => softDeleteProfile(p.id)}>
-                          Soft-delete
-                        </Button>
+                        <AlertDialog open={softDeleteUserId === p.id} onOpenChange={(open) => !open && setSoftDeleteUserId(null)}>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="destructive" onClick={() => setSoftDeleteUserId(p.id)}>
+                              Soft-delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Soft-Delete Profile?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will hide the profile from users. You can restore it later.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={softDeleteProfile} className="bg-red-600 hover:bg-red-700">
+                                Soft-Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       )}
                     </div>
                   </TableCell>
