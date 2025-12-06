@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 interface StepProgressProps {
   currentStep: "city" | "flight" | "hotel" | "activity" | "traveller" | "plan";
@@ -8,12 +8,12 @@ interface StepProgressProps {
 
 const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIndex = 0 }: StepProgressProps) => {
   const steps = [
-    { id: "city", label: "Destination", icon: "🌍" },
-    { id: "flight", label: "Flight", icon: "✈️" },
-    { id: "hotel", label: "Hotel", icon: "🏨" },
-    { id: "activity", label: "Activity", icon: "🎯" },
-    { id: "traveller", label: "Travelers", icon: "👥" },
-    { id: "plan", label: "Review Plan", icon: "📋" },
+    { id: "city", label: "Destination" },
+    { id: "flight", label: "Flight" },
+    { id: "hotel", label: "Hotel" },
+    { id: "activity", label: "Activity" },
+    { id: "traveller", label: "Travelers" },
+    { id: "plan", label: "Review Plan" },
   ];
 
   const stepOrder = ["city", "flight", "hotel", "activity", "traveller", "plan"];
@@ -24,45 +24,58 @@ const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIn
   const destProgress = isMultiDestination ? `(${currentDestinationIndex + 1}/${totalDestinations})` : "";
 
   return (
-    <div className="w-full bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-800/80 border-b border-blue-200 dark:border-gray-700 px-4 py-8 sticky top-0 z-40">
-      <div className="max-w-6xl mx-auto">
+    <div className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-8 py-6 sticky top-0 z-40 shadow-sm">
+      <div className="max-w-4xl mx-auto">
         {/* Progress Title */}
-        <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+        <div className="mb-6 text-center">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
             Step {currentStepIndex + 1} of {steps.length}
           </h3>
           {isMultiDestination && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
               Destination {destProgress}
             </p>
           )}
         </div>
 
-        {/* Steps Container with Timeline */}
-        <div className="flex items-center justify-between gap-2 px-4">
+        {/* Horizontal Steps Container */}
+        <div className="relative">
+          {/* Background and Progress Lines */}
+          <div className="absolute top-5 left-0 right-0 flex items-center">
+            <div className="flex-1 h-0.5 bg-gray-300 dark:bg-gray-600"></div>
+          </div>
+          <div 
+            className="absolute top-5 left-0 h-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500"
+            style={{
+              width: currentStepIndex === 0 ? '0%' : `${(currentStepIndex / (steps.length - 1)) * 100}%`,
+            }}
+          ></div>
+
           {/* Step Items */}
-          <div className="flex items-start justify-between w-full relative z-10 gap-3">
+          <div className="relative flex items-start justify-between">
             {steps.map((step, index) => {
               const isCompleted = index < currentStepIndex;
               const isCurrent = index === currentStepIndex;
               const isUpcoming = index > currentStepIndex;
 
               return (
-                <div key={step.id} className="flex flex-col items-center flex-1">
+                <div key={step.id} className="flex flex-col items-center relative z-10 flex-1">
                   {/* Circle Node */}
                   <div
-                    className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 border-3 flex-shrink-0 ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2 ${
                       isCompleted
-                        ? "bg-blue-500 border-blue-600 text-white shadow-lg shadow-blue-500/50 ring-2 ring-blue-400/30"
+                        ? "bg-blue-500 border-blue-600 text-white shadow-md"
                         : isCurrent
-                        ? "bg-gradient-to-br from-blue-500 to-cyan-500 border-cyan-500 text-white shadow-2xl shadow-cyan-500/50 scale-110 ring-4 ring-cyan-400/20"
-                        : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400"
+                        ? "bg-blue-500 border-blue-600 text-white shadow-lg ring-4 ring-blue-400/20"
+                        : "bg-transparent border-gray-300 dark:border-gray-600 text-gray-400"
                     }`}
                   >
                     {isCompleted ? (
-                      <Check className="w-7 h-7" />
+                      <Check className="w-5 h-5" />
+                    ) : isCurrent ? (
+                      <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
                     ) : (
-                      <span className="text-xl">{step.icon}</span>
+                      <X className="w-5 h-5" />
                     )}
                   </div>
 
@@ -71,22 +84,17 @@ const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIn
                     className={`mt-3 text-center font-semibold text-sm transition-colors duration-300 whitespace-nowrap ${
                       isCompleted || isCurrent
                         ? "text-gray-900 dark:text-white"
-                        : "text-gray-500 dark:text-gray-400"
+                        : "text-gray-400 dark:text-gray-500"
                     }`}
                   >
                     {step.label}
                   </p>
 
-                  {/* Connector Line to next step */}
-                  {index < steps.length - 1 && (
-                    <div
-                      className={`h-0.5 w-12 -mx-6 transition-all duration-300 ${
-                        isCompleted
-                          ? "bg-blue-500"
-                          : "bg-gray-300 dark:bg-gray-600"
-                      }`}
-                      style={{ marginTop: "0.75rem", marginBottom: "-0.75rem" }}
-                    ></div>
+                  {/* In Progress Indicator */}
+                  {isCurrent && (
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 font-medium">
+                      In Progress
+                    </p>
                   )}
                 </div>
               );
