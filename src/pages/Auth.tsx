@@ -8,9 +8,57 @@ import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Check, X } from 'lucide-react';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Password strength checker
+const checkPasswordStrength = (password: string) => {
+  return {
+    hasMinLength: password.length >= 8,
+    hasUppercase: /[A-Z]/.test(password),
+    hasLowercase: /[a-z]/.test(password),
+    hasNumber: /\d/.test(password),
+    hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+  };
+};
+
+const getPasswordStrengthColor = (password: string) => {
+  const strength = checkPasswordStrength(password);
+  const metRequirements = Object.values(strength).filter(Boolean).length;
+  
+  if (metRequirements <= 1) return 'bg-red-500';
+  if (metRequirements <= 2) return 'bg-orange-500';
+  if (metRequirements <= 3) return 'bg-yellow-500';
+  if (metRequirements <= 4) return 'bg-blue-500';
+  return 'bg-green-500';
+};
+
+const getPasswordStrengthLabel = (password: string) => {
+  const strength = checkPasswordStrength(password);
+  const metRequirements = Object.values(strength).filter(Boolean).length;
+  
+  if (!password) return '';
+  if (metRequirements <= 1) return 'Weak';
+  if (metRequirements <= 2) return 'Fair';
+  if (metRequirements <= 3) return 'Good';
+  if (metRequirements <= 4) return 'Strong';
+  return 'Very Strong';
+};
+
+// Requirement Item Component
+const RequirementItem = ({ met, text }: { met: boolean; text: string }) => (
+  <div className={`flex items-center gap-2 text-xs ${met ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+    {met ? (
+      <Check size={14} className="flex-shrink-0" />
+    ) : (
+      <X size={14} className="flex-shrink-0" />
+    )}
+    <span>{text}</span>
+  </div>
+);
+
+
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -328,6 +376,48 @@ const Auth = () => {
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
+                  
+                  {/* Password Strength Checker - Only show on signup */}
+                  {!isLogin && password && (
+                    <div className="mt-3 space-y-2">
+                      {/* Strength Bar */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full transition-all duration-300 ${getPasswordStrengthColor(password)}`}
+                            style={{ width: `${(Object.values(checkPasswordStrength(password)).filter(Boolean).length / 5) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 min-w-16">
+                          {getPasswordStrengthLabel(password)}
+                        </span>
+                      </div>
+                      
+                      {/* Requirements Checklist */}
+                      <div className="space-y-1">
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasMinLength} 
+                          text="At least 8 characters" 
+                        />
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasUppercase} 
+                          text="At least one uppercase letter (A-Z)" 
+                        />
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasLowercase} 
+                          text="At least one lowercase letter (a-z)" 
+                        />
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasNumber} 
+                          text="At least one number (0-9)" 
+                        />
+                        <RequirementItem 
+                          met={checkPasswordStrength(password).hasSpecialChar} 
+                          text="At least one special character (!@#$%^&*)" 
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center justify-between">
                   <Button 
