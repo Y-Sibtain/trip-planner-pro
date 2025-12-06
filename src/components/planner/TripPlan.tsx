@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Utensils, MapPin, RefreshCw, ChevronDown, Star } from "lucide-react";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
@@ -127,7 +128,7 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
 
   const changeRestaurant = (day: number) => {
     const currentRest = selectedPlan[day].restaurant;
-    const availableRests = cityData.restaurants.filter(r => r.name !== currentRest.name);
+    const availableRests = cityData.restaurants.filter(r => r.name !== (currentRest?.name ?? ""));
     const newRest = availableRests[Math.floor(Math.random() * availableRests.length)];
     setSelectedPlan(prev => ({
       ...prev,
@@ -163,7 +164,7 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
 
                 <div className="space-y-3">
                   <div className="bg-muted/50 rounded-lg p-3">
-                    <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between">
                       <div className="flex items-start gap-2 flex-1">
                         <MapPin className="h-5 w-5 text-primary mt-0.5" />
                         <div>
@@ -172,37 +173,88 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
                           <Badge variant="outline" className="mt-1 text-xs">{plan.activity.time}</Badge>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => changeActivity(day)}
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
+                      <div className="ml-3">
+                        <Select
+                          onValueChange={(val) => {
+                            const selected = cityData.activities.find((a) => a.name === val);
+                            if (selected) {
+                              setSelectedPlan((prev) => ({
+                                ...prev,
+                                [day]: { ...prev[day], activity: selected },
+                              }));
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Change" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {cityData.activities.map((act) => (
+                              <SelectItem key={act.name} value={act.name}>
+                                {act.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
 
                   <div className="bg-muted/50 rounded-lg p-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-2 flex-1">
-                        <Utensils className="h-5 w-5 text-primary mt-0.5" />
-                        <div>
-                          <p className="font-semibold">{plan.restaurant.name}</p>
-                          <p className="text-sm text-muted-foreground">{plan.restaurant.cuisine}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary" className="text-xs">{plan.restaurant.price}</Badge>
-                            <span className="text-xs text-muted-foreground"><Star className="inline-block w-3 h-3 mr-1" /> {plan.restaurant.rating}</span>
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-2 flex-1">
+                          <Utensils className="h-5 w-5 text-primary mt-0.5" />
+                          <div>
+                            {plan.restaurant ? (
+                              <>
+                                <p className="font-semibold">{plan.restaurant.name}</p>
+                                <p className="text-sm text-muted-foreground">{plan.restaurant.cuisine}</p>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <Badge variant="secondary" className="text-xs">{plan.restaurant.price}</Badge>
+                                  <span className="text-xs text-muted-foreground"><Star className="inline-block w-3 h-3 mr-1" /> {plan.restaurant.rating}</span>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <p className="font-semibold">No restaurant</p>
+                                <p className="text-sm text-muted-foreground">No dining selected</p>
+                              </>
+                            )}
                           </div>
                         </div>
+                        <div className="ml-3">
+                          <Select
+                            onValueChange={(val) => {
+                              if (val === "__NONE__") {
+                                setSelectedPlan((prev) => ({
+                                  ...prev,
+                                  [day]: { ...prev[day], restaurant: null },
+                                }));
+                                return;
+                              }
+                              const selected = cityData.restaurants.find((r) => r.name === val);
+                              if (selected) {
+                                setSelectedPlan((prev) => ({
+                                  ...prev,
+                                  [day]: { ...prev[day], restaurant: selected },
+                                }));
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="w-40">
+                              <SelectValue placeholder="Change" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem key="none" value="__NONE__">None</SelectItem>
+                              {cityData.restaurants.map((rest) => (
+                                <SelectItem key={rest.name} value={rest.name}>
+                                  {rest.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => changeRestaurant(day)}
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
-                    </div>
                   </div>
                 </div>
 
@@ -223,7 +275,7 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
                     <p className="text-sm font-medium mt-3">Alternative Restaurants:</p>
                     <div className="flex flex-wrap gap-2">
                       {cityData.restaurants
-                        .filter(r => r.name !== plan.restaurant.name)
+                        .filter(r => r.name !== plan.restaurant?.name)
                         .slice(0, 3)
                         .map((rest, i) => (
                           <Badge key={i} variant="outline" className="text-xs">
