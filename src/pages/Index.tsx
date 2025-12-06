@@ -441,7 +441,7 @@ const Index = () => {
               <ul className="space-y-2 text-sm">
                 <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all" onClick={() => navigate('/city-planner')}>Itineraries</span></li>
                 <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all" onClick={() => navigate('/destinations')}>Destinations</span></li>
-                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all" onClick={() => navigate('/saved-itineraries')}>Saved Plans</span></li>
+                <li><span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all" onClick={() => navigate('/my-bookings')}>My Bookings</span></li>
               </ul>
             </div>
 

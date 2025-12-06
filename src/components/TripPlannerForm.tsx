@@ -36,15 +36,19 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   const [source, setSource] = useState("");
   const [sourceInput, setSourceInput] = useState("");
   const [sourceSuggestions, setSourceSuggestions] = useState<string[]>([]);
+  const [sourceInputFocused, setSourceInputFocused] = useState(false);
   const [destinationInput, setDestinationInput] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [destinations, setDestinations] = useState<string[]>([]);
+  const [destinationInputFocused, setDestinationInputFocused] = useState(false);
   const [destination2Input, setDestination2Input] = useState("");
   const [destination2, setDestination2] = useState<string>("");
   const [showDestination2, setShowDestination2] = useState(false);
+  const [destination2InputFocused, setDestination2InputFocused] = useState(false);
   const [destination3Input, setDestination3Input] = useState("");
   const [destination3, setDestination3] = useState<string>("");
   const [showDestination3, setShowDestination3] = useState(false);
+  const [destination3InputFocused, setDestination3InputFocused] = useState(false);
   const [startDate2, setStartDate2] = useState("");
   const [endDate2, setEndDate2] = useState("");
   const [startDate3, setStartDate3] = useState("");
@@ -286,29 +290,25 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
   };
 
   // Filtered suggestion list for autocomplete dropdown
-  // Only show dropdown when user is typing (destinationInput is not empty)
-  const filteredSuggestions = destinationInput
-    ? suggestions.filter((s) => s.toLowerCase().includes(destinationInput.toLowerCase()) && !destinations.includes(s)).slice(0, 6)
-    : showDestinationDropdown
-    ? suggestions.filter((s) => !destinations.includes(s)).slice(0, 6)
-    : [];
+  // Show all suggestions when focused, filter when typing
+  const filteredSuggestions = destinationInput.trim()
+    ? suggestions.filter((s) => s.toLowerCase().includes(destinationInput.toLowerCase().trim()))
+    : suggestions;
 
   // Filtered suggestions for Destination 2
-  const filteredDestination2Suggestions = destination2Input
-    ? suggestions.filter((s) => s.toLowerCase().includes(destination2Input.toLowerCase()) && s !== destinations[0] && s !== destination3).slice(0, 6)
-    : [];
+  const filteredDestination2Suggestions = destination2Input.trim()
+    ? suggestions.filter((s) => s.toLowerCase().includes(destination2Input.toLowerCase().trim()))
+    : suggestions;
 
   // Filtered suggestions for Destination 3
-  const filteredDestination3Suggestions = destination3Input
-    ? suggestions.filter((s) => s.toLowerCase().includes(destination3Input.toLowerCase()) && s !== destinations[0] && s !== destination2).slice(0, 6)
-    : [];
+  const filteredDestination3Suggestions = destination3Input.trim()
+    ? suggestions.filter((s) => s.toLowerCase().includes(destination3Input.toLowerCase().trim()))
+    : suggestions;
 
   // Filtered source suggestions for source dropdown (single-select)
   const filteredSourceSuggestions = sourceInput
-    ? sourceSuggestions.filter((s) => s.toLowerCase().includes(sourceInput.toLowerCase())).slice(0, 6)
-    : showSourceDropdown
-    ? sourceSuggestions.slice(0, 6)
-    : [];
+    ? sourceSuggestions.filter((s) => s.toLowerCase().includes(sourceInput.toLowerCase()))
+    : sourceSuggestions;
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4">
@@ -334,6 +334,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 placeholder={t('source_placeholder')}
                 value={sourceInput}
                 onChange={(e) => setSourceInput(e.target.value)}
+                onFocus={() => setSourceInputFocused(true)}
+                onBlur={() => setSourceInputFocused(false)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -356,8 +358,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               </button>
             </div>
-            {(sourceInput || showSourceDropdown) && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
-              <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white max-h-64 overflow-y-auto">
+            {sourceInputFocused && (filteredSourceSuggestions.length > 0 || loadingSuggestions) && (
+              <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-y-auto max-h-60 bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {loadingSuggestions ? (
                   <div className="p-3 text-sm text-gray-600">Loading...</div>
                 ) : filteredSourceSuggestions.length > 0 ? (
@@ -366,10 +368,11 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                       key={s}
                       type="button"
                       className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+                      onMouseDown={(e) => e.preventDefault()}
                       onClick={() => {
                         setSource(s);
                         setSourceInput("");
-                        setShowSourceDropdown(false);
+                        setSourceInputFocused(false);
                       }}
                     >
                       {s}
@@ -415,6 +418,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 placeholder={t('destination_placeholder')}
                 value={destinationInput}
                 onChange={(e) => setDestinationInput(e.target.value)}
+                onFocus={() => setDestinationInputFocused(true)}
+                onBlur={() => setDestinationInputFocused(false)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -423,6 +428,12 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                       setShowDestinationDropdown(false);
                     } else if (destinationInput.trim()) {
                       addDestination(destinationInput);
+                    }
+                  }
+                  if (e.key === "Tab") {
+                    e.preventDefault();
+                    if (filteredSuggestions.length > 0) {
+                      addDestination(filteredSuggestions[0]);
                     }
                   }
                 }}
@@ -439,8 +450,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                 <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               </button>
             </div>
-            {(destinationInput || showDestinationDropdown) && (filteredSuggestions.length > 0 || loadingSuggestions) && (
-              <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white max-h-64 overflow-y-auto">
+            {destinationInputFocused && (filteredSuggestions.length > 0 || loadingSuggestions) && (
+              <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-y-auto max-h-60 bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {loadingSuggestions ? (
                   <div className="p-3 text-sm text-gray-600">Loading...</div>
                 ) : filteredSuggestions.length > 0 ? (
@@ -449,9 +460,10 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                       key={s}
                       type="button"
                       className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+                      onMouseDown={(e) => e.preventDefault()}
                       onClick={() => {
                         addDestination(s);
-                        setShowDestinationDropdown(false);
+                        setDestinationInputFocused(false);
                       }}
                     >
                       {s}
@@ -525,6 +537,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                     placeholder={t('destination_placeholder')}
                     value={destination2Input}
                     onChange={(e) => setDestination2Input(e.target.value)}
+                    onFocus={() => setDestination2InputFocused(true)}
+                    onBlur={() => setDestination2InputFocused(false)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
@@ -546,13 +560,20 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                           }
                         }
                       }
+                      if (e.key === "Tab") {
+                        e.preventDefault();
+                        if (filteredDestination2Suggestions.length > 0) {
+                          setDestination2(filteredDestination2Suggestions[0]);
+                          setDestination2Input("");
+                        }
+                      }
                     }}
                     disabled={destination2.length > 0}
                     className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
                   />
                 </div>
-                {destination2Input && (filteredDestination2Suggestions.length > 0 || loadingSuggestions) && (
-                  <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
+                {destination2InputFocused && (filteredDestination2Suggestions.length > 0 || loadingSuggestions) && (
+                  <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-y-auto max-h-60 bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     {loadingSuggestions ? (
                       <div className="p-3 text-sm text-gray-600">Loading...</div>
                     ) : filteredDestination2Suggestions.length > 0 ? (
@@ -561,13 +582,11 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                           key={s}
                           type="button"
                           className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+                          onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
-                            if (s !== destinations[0] && s !== destination3) {
-                              setDestination2(s);
-                              setDestination2Input("");
-                            } else {
-                              toast({ title: "Duplicate destination", description: "This destination is already selected." });
-                            }
+                            setDestination2(s);
+                            setDestination2Input("");
+                            setDestination2InputFocused(false);
                           }}
                         >
                           {s}
@@ -619,6 +638,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                     placeholder={t('destination_placeholder')}
                     value={destination3Input}
                     onChange={(e) => setDestination3Input(e.target.value)}
+                    onFocus={() => setDestination3InputFocused(true)}
+                    onBlur={() => setDestination3InputFocused(false)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
@@ -640,13 +661,20 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                           }
                         }
                       }
+                      if (e.key === "Tab") {
+                        e.preventDefault();
+                        if (filteredDestination3Suggestions.length > 0) {
+                          setDestination3(filteredDestination3Suggestions[0]);
+                          setDestination3Input("");
+                        }
+                      }
                     }}
                     disabled={destination3.length > 0}
                     className="flex-1 min-w-[140px] bg-transparent outline-none px-1 py-2 disabled:opacity-70"
                   />
                 </div>
-                {destination3Input && (filteredDestination3Suggestions.length > 0 || loadingSuggestions) && (
-                  <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-hidden bg-white">
+                {destination3InputFocused && (filteredDestination3Suggestions.length > 0 || loadingSuggestions) && (
+                  <div className="absolute z-20 mt-1 w-full glass rounded-lg shadow-md border border-gray-300 overflow-y-auto max-h-60 bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     {loadingSuggestions ? (
                       <div className="p-3 text-sm text-gray-600">Loading...</div>
                     ) : filteredDestination3Suggestions.length > 0 ? (
@@ -655,13 +683,11 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
                           key={s}
                           type="button"
                           className="w-full text-left p-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all border-b border-gray-200 last:border-b-0"
+                          onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
-                            if (s !== destinations[0] && s !== destination2) {
-                              setDestination3(s);
-                              setDestination3Input("");
-                            } else {
-                              toast({ title: "Duplicate destination", description: "This destination is already selected." });
-                            }
+                            setDestination3(s);
+                            setDestination3Input("");
+                            setDestination3InputFocused(false);
                           }}
                         >
                           {s}

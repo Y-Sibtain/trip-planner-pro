@@ -156,7 +156,7 @@ export const Sidebar = () => {
               <button
                 onClick={decreaseFontSize}
                 className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center flex-shrink-0"
-                aria-label="Decrease font size"
+                aria-label="Zoom out"
               >
                 <Minus size={18} className="text-gray-700 dark:text-gray-300" />
               </button>
@@ -169,7 +169,7 @@ export const Sidebar = () => {
               <button
                 onClick={increaseFontSize}
                 className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center flex-shrink-0"
-                aria-label="Increase font size"
+                aria-label="Zoom in"
               >
                 <Plus size={18} className="text-gray-700 dark:text-gray-300" />
               </button>
