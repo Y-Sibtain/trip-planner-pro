@@ -175,15 +175,7 @@ const Payment = () => {
             </Button>
           </div>
 
-          {/* Demo Warning */}
-          <div className="mb-6 p-4 rounded-lg border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20">
-            <div className="flex gap-3">
-              <div className="text-2xl"></div>
-              <div className="text-sm text-blue-700 dark:text-blue-300">
-                <strong>Demo Mode:</strong> Use any 16-digit card, future expiry date, and any 3-digit CVV.
-              </div>
-            </div>
-          </div>
+          
 
           {/* Booking Summary */}
           <div className="mb-8 rounded-lg border border-gray-300 dark:border-gray-700 p-4 space-y-3 bg-gray-50 dark:bg-gray-800/30">
