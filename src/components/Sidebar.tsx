@@ -224,12 +224,12 @@ export const Sidebar = () => {
                 onChange={(e) => setLang(e.target.value as any)}
                 className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground flex-1"
               >
-                <option value="en">EN</option>
-                <option value="ur">UR</option>
-                <option value="es">ES</option>
-                <option value="ar">AR</option>
-                <option value="ps">PS</option>
-                <option value="sd">SD</option>
+                <option value="en">English (EN)</option>
+                <option value="ur">اردو (UR)</option>
+                <option value="es">Español (ES)</option>
+                <option value="ar">العربية (AR)</option>
+                <option value="ps">پشتو (PS)</option>
+                <option value="sd">سنڌي (SD)</option>
               </select>
             )}
 
