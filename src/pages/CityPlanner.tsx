@@ -217,6 +217,48 @@ const CityPlanner = () => {
 
   const currentDestName = destinationsList[currentDestIndex] || selectedCity || null;
 
+  const stepOrder = ["city", "flight", "hotel", "activity", "traveller", "plan"] as const;
+
+  const handleStepClick = (targetStepId: string, targetIndex: number) => {
+    const currentIndex = stepOrder.indexOf(step as any);
+    // If user clicked the Destination (first) step, send them back to the planner page
+    if (targetStepId === 'city') {
+      navigate('/');
+      return;
+    }
+
+    // Allow backward navigation freely for non-city steps
+    if (targetIndex <= currentIndex) {
+      setStep(targetStepId as any);
+      return;
+    }
+
+    // Forward navigation: validate required fields for current step before allowing
+    // We'll check the current step's minimal required selection
+    const cur = step;
+    if (cur === 'city') {
+      if (!currentDestName) {
+        toast({ title: 'Please select a destination first', variant: 'destructive' });
+        return;
+      }
+    }
+    if (cur === 'flight') {
+      if (!currentDestName || !selectedFlightsByDest[currentDestName]) {
+        toast({ title: 'Please select a flight for this destination before proceeding', variant: 'destructive' });
+        return;
+      }
+    }
+    if (cur === 'hotel') {
+      if (!currentDestName || !selectedHotelsByDest[currentDestName]) {
+        toast({ title: 'Please select a hotel for this destination before proceeding', variant: 'destructive' });
+        return;
+      }
+    }
+
+    // If all checks pass, allow navigation to target step
+    setStep(targetStepId as any);
+  };
+
   const parsePriceRangeToNumber = (priceStr?: string) => {
     if (!priceStr) return 0;
     // try to extract the first number and multiplier (k)
@@ -332,6 +374,7 @@ const CityPlanner = () => {
         currentStep={step}
         totalDestinations={destinationsList.length || 1}
         currentDestinationIndex={currentDestIndex}
+        onStepClick={handleStepClick}
       />
 
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">
@@ -423,6 +466,7 @@ const CityPlanner = () => {
               destination={currentDestName || selectedCity}
               numPeople={numPeople}
               onSelect={handleFlightSelect}
+              selectedFlightId={selectedFlightsByDest[currentDestName || '']?.id}
             />
           </>
         )}

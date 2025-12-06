@@ -42,9 +42,10 @@ interface FlightSelectorProps {
   destination: string;
   numPeople: number;
   onSelect: (flight: any) => void;
+  selectedFlightId?: string | null;
 }
 
-const FlightSelector = ({ destination, numPeople, onSelect }: FlightSelectorProps) => {
+const FlightSelector = ({ destination, numPeople, onSelect, selectedFlightId }: FlightSelectorProps) => {
   const flights = flightData[destination as keyof typeof flightData] || [];
 
   const categories = {
@@ -116,9 +117,17 @@ const FlightSelector = ({ destination, numPeople, onSelect }: FlightSelectorProp
                               Total: PKR {(flight.price * numPeople).toLocaleString()}
                             </div>
                           )}
-                          <Button onClick={() => onSelect(flight)}>
-                            Select Flight
-                          </Button>
+                          <div>
+                            {selectedFlightId === flight.id ? (
+                              <Button disabled className="opacity-90 bg-green-600 border-green-600">
+                                Selected
+                              </Button>
+                            ) : (
+                              <Button onClick={() => onSelect(flight)}>
+                                Select Flight
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </CardContent>
