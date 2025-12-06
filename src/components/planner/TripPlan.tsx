@@ -241,7 +241,7 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
 
       <div className="flex justify-center pt-4">
         <Button size="lg" onClick={onFinalize} className="px-8">
-          Finalize Itinerary
+          Finalise Trip
         </Button>
       </div>
     </div>

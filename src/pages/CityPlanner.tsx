@@ -65,7 +65,7 @@ const CityPlanner = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useBooking();
   const { toast } = useToast();
-  const [step, setStep] = useState<"city" | "traveller" | "flight" | "hotel" | "activity" | "plan">("city");
+  const [step, setStep] = useState<"city" | "flight" | "hotel" | "activity" | "traveller" | "plan">("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [numPeople, setNumPeople] = useState<number>(1);
   const [showSummary, setShowSummary] = useState(false);
@@ -77,6 +77,7 @@ const CityPlanner = () => {
   const [selectedFlightsByDest, setSelectedFlightsByDest] = useState<Record<string, any>>({});
   const [selectedHotelsByDest, setSelectedHotelsByDest] = useState<Record<string, string>>({});
   const [travellerDetails, setTravellerDetails] = useState<TravellerDetail[]>([]);
+  const [aiBookingData, setAiBookingData] = useState<any>(null);
 
   // Calculate number of days from trip data
   useEffect(() => {
@@ -127,7 +128,7 @@ const CityPlanner = () => {
         const matchedCity = cities.find(c => c.name.toLowerCase() === firstDest.toLowerCase());
         if (matchedCity) {
           setSelectedCity(matchedCity.name);
-          setStep("traveller");
+          setStep("flight");
         }
       }
     }
@@ -138,10 +139,13 @@ const CityPlanner = () => {
     const state = location.state as any;
     if (!state) return;
 
-    // If Payment navigated back with booking, rehydrate selection and open summary
+    // If AI or Payment navigated with booking, rehydrate selection
     if (state.booking) {
       const b = state.booking;
       try {
+        // Store the booking data for use when traveller form completes
+        setAiBookingData(b);
+        
         // Rehydrate per-destination selections if present
         if (b.plan?.itineraryByDest) {
           setSelectedFlightsByDest(b.plan.itineraryByDest.flights || {});
@@ -160,8 +164,8 @@ const CityPlanner = () => {
         }
         if (b.plan?.numPeople) setNumPeople(b.plan.numPeople);
         if (b.plan?.numDays) setNumDays(b.plan.numDays);
-        setStep('plan');
-        setShowSummary(true);
+        // Go to traveller form instead of showing summary directly
+        setStep('traveller');
       } catch (err) {
         console.warn('Failed to rehydrate booking state:', err);
         setShowSummary(true);
@@ -269,10 +273,48 @@ const CityPlanner = () => {
         {step === "traveller" && (
           <TravellerForm
             numTravellers={numPeople}
-            onBack={() => navigate('/')}
+            onBack={() => {
+              // Go back to activity selection
+              setStep("activity");
+              setCurrentDestIndex(Math.max(0, destinationsList.length - 1));
+            }}
             onComplete={(travellers) => {
               setTravellerDetails(travellers);
-              setStep("flight");
+              // Proceed to payment using AI booking data if available, otherwise compute from selections
+              const bookingData = aiBookingData || (() => {
+                let totalAmount = 0;
+                let totalDays = 0;
+                const itineraryByDest: any = { flights: {}, hotels: {}, days: {} };
+                destinationsList.forEach((dest, idx) => {
+                  const days = getDaysForDestination(idx) || 1;
+                  totalDays += days;
+                  const flight = selectedFlightsByDest[dest];
+                  const hotelId = selectedHotelsByDest[dest];
+                  itineraryByDest.flights[dest] = flight || null;
+                  itineraryByDest.hotels[dest] = hotelId || null;
+                  itineraryByDest.days[dest] = days;
+                  if (flight && flight.price) totalAmount += (flight.price || 0) * numPeople;
+                  if (hotelId) {
+                    const hotel = (hotels[dest as keyof typeof hotels] || []).find(h => h.id === hotelId);
+                    const hotelPrice = parsePriceRangeToNumber(hotel?.price);
+                    totalAmount += hotelPrice * days;
+                  }
+                });
+
+                return {
+                  itinerary_title: `${destinationsList.join(' > ')} - ${totalDays} Days`,
+                  total_amount: totalAmount,
+                  plan: {
+                    numPeople,
+                    numDays: totalDays,
+                    itineraryByDest,
+                  },
+                };
+              })();
+              
+              // Clear AI booking data after use
+              setAiBookingData(null);
+              navigate('/payment', { state: { booking: bookingData } });
             }}
           />
         )}
@@ -476,39 +518,12 @@ const CityPlanner = () => {
                       return;
                     }
 
-                    // Compute totals across all destinations
-                    let totalAmount = 0;
-                    let totalDays = 0;
-                    const itineraryByDest: any = { flights: {}, hotels: {}, days: {} };
-                    destinationsList.forEach((dest, idx) => {
-                      const days = getDaysForDestination(idx) || 1;
-                      totalDays += days;
-                      const flight = selectedFlightsByDest[dest];
-                      const hotelId = selectedHotelsByDest[dest];
-                      itineraryByDest.flights[dest] = flight || null;
-                      itineraryByDest.hotels[dest] = hotelId || null;
-                      itineraryByDest.days[dest] = days;
-                      if (flight && flight.price) totalAmount += (flight.price || 0) * numPeople;
-                      if (hotelId) {
-                        const hotel = (hotels[dest as keyof typeof hotels] || []).find(h => h.id === hotelId);
-                        const hotelPrice = parsePriceRangeToNumber(hotel?.price);
-                        totalAmount += hotelPrice * days;
-                      }
-                    });
-
-                    const bookingData = {
-                      itinerary_title: `${destinationsList.join(' > ')} - ${totalDays} Days`,
-                      total_amount: totalAmount,
-                      plan: {
-                        numPeople,
-                        numDays: totalDays,
-                        itineraryByDest,
-                      },
-                    };
-                    navigate('/payment', { state: { booking: bookingData } });
+                    // Go to traveller details form
+                    setShowSummary(false);
+                    setStep("traveller");
                   }}
                 >
-                  Proceed to Payment →
+                  Proceed →
                 </Button>
                 <Button 
                   onClick={() => setShowSummary(false)}

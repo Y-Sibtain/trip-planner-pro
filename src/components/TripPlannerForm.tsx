@@ -254,12 +254,8 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
       return;
     }
 
-    // Travellers is required
-    if (!travellers || travellers.trim() === "") {
-      toast({ title: "Validation error", description: "Please enter the number of travellers.", variant: "destructive" });
-      return;
-    }
-    const parsedTravellers = Number(travellers);
+    // Travellers is optional - default to 1 if not provided
+    const parsedTravellers = travellers ? Number(travellers) : 1;
     if (Number.isNaN(parsedTravellers) || parsedTravellers < 1) {
       toast({ title: "Validation error", description: "Enter a valid number of travellers (minimum 1).", variant: "destructive" });
       return;
@@ -281,7 +277,9 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
       endDate2,
       startDate3,
       endDate3,
-      travellers: travellers.trim(),
+      destination2,
+      destination3,
+      travellers: String(parsedTravellers),
     });
   };
 
@@ -719,7 +717,7 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
           {/* Travellers */}
           <div>
             <Label className="flex items-center gap-2 text-black dark:text-white font-semibold mb-2 text-sm">
-                <Users className="w-4 h-4 text-blue-500" /> {t('travellers')}
+                <Users className="w-4 h-4 text-blue-500" /> {t('travellers')} (Optional)
               </Label>
               <Input
                 placeholder={t('travellers_placeholder')}
@@ -728,7 +726,6 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
               type="number"
               min="1"
               max="50"
-              required
               className="w-full px-4 py-3 rounded-lg glass border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all-smooth"
             />
           </div>

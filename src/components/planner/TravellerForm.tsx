@@ -295,7 +295,7 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
               type="submit"
               className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
             >
-              Continue to Flights →
+              Proceed to Payment →
             </Button>
           </div>
         </form>

@@ -166,7 +166,8 @@ const Index = () => {
     };
 
     setAiOpen(false);
-    navigate('/payment', { state: { booking } });
+    // Navigate to city-planner with booking data to go through traveller form first
+    navigate('/city-planner', { state: { booking } });
   };
 
   return (
@@ -263,12 +264,12 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative">
             {/* Step 1 */}
-            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50">
+            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50 h-full flex flex-col">
               <div className="absolute -top-6 -left-6 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                 1
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Tell Us Your Dreams</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Select destinations, set your dates, and define your budget. Add as many as 3 destinations to explore.</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-4 flex-grow">Select destinations, set your dates, and define your budget. Add as many as 3 destinations to explore.</p>
               <div className="flex gap-2 flex-wrap">
                 <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Destinations</span>
                 <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Budget</span>
@@ -277,12 +278,12 @@ const Index = () => {
             </div>
 
             {/* Step 2 */}
-            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50 md:mt-8">
+            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50 h-full flex flex-col">
               <div className="absolute -top-6 -left-6 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                 2
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">AI Plans Your Trip</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Our AI creates personalized itineraries with flights, hotels, activities, and dining recommendations.</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-4 flex-grow">Our AI creates personalized itineraries with flights, hotels, activities, and dining recommendations.</p>
               <div className="flex gap-2 flex-wrap">
                 <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">AI Powered</span>
                 <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Personalized</span>
@@ -290,12 +291,12 @@ const Index = () => {
             </div>
 
             {/* Step 3 */}
-            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50">
+            <div className="relative glass p-8 rounded-lg backdrop-blur-sm border border-gray-200 dark:border-gray-700 group hover:shadow-lg transition-all-smooth dark:bg-gray-800/50 h-full flex flex-col">
               <div className="absolute -top-6 -left-6 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                 3
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Book & Explore</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Review your perfect itinerary, save it for later, or book immediately with our secure payment.</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-4 flex-grow">Review your perfect itinerary, save it for later, or book immediately with our secure payment.</p>
               <div className="flex gap-2 flex-wrap">
                 <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Save</span>
                 <span className="text-xs px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Book</span>
