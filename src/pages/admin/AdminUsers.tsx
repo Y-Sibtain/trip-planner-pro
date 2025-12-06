@@ -156,11 +156,6 @@ const AdminUsers = () => {
     } finally {
       setRestoreUserId(null);
     }
-  };      loadUsers();
-    } catch (err) {
-      console.error("restore error:", err);
-      toast({ title: "Notice", description: "Profile update has been processed." });
-    }
   };
 
   if (adminLoading || loading) {

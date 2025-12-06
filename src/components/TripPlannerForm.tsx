@@ -295,15 +295,21 @@ const TripPlannerForm = ({ onSearch, onFormStateChange, onAskAI }: TripPlannerFo
     ? suggestions.filter((s) => s.toLowerCase().includes(destinationInput.toLowerCase().trim()))
     : suggestions;
 
-  // Filtered suggestions for Destination 2
+  // Filtered suggestions for Destination 2 (cannot be same as Destination 1)
   const filteredDestination2Suggestions = destination2Input.trim()
-    ? suggestions.filter((s) => s.toLowerCase().includes(destination2Input.toLowerCase().trim()))
-    : suggestions;
+    ? suggestions.filter((s) => 
+        s.toLowerCase().includes(destination2Input.toLowerCase().trim()) && 
+        s !== destinations[0]
+      )
+    : suggestions.filter((s) => s !== destinations[0]);
 
-  // Filtered suggestions for Destination 3
+  // Filtered suggestions for Destination 3 (cannot be same as Destination 2, but can be same as 1)
   const filteredDestination3Suggestions = destination3Input.trim()
-    ? suggestions.filter((s) => s.toLowerCase().includes(destination3Input.toLowerCase().trim()))
-    : suggestions;
+    ? suggestions.filter((s) => 
+        s.toLowerCase().includes(destination3Input.toLowerCase().trim()) && 
+        s !== destination2
+      )
+    : suggestions.filter((s) => s !== destination2);
 
   // Filtered source suggestions for source dropdown (single-select)
   const filteredSourceSuggestions = sourceInput
