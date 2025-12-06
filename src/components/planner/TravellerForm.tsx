@@ -52,10 +52,26 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
     }
   };
 
+  const formatPhone = (input: string): string => {
+    // Remove all non-digits
+    const digits = input.replace(/\D/g, "").slice(0, 11);
+    
+    // Add dash after 4 digits: 0xxx-xxxxxxx
+    if (digits.length <= 4) {
+      return digits;
+    } else {
+      return digits.slice(0, 4) + "-" + digits.slice(4);
+    }
+  };
+
   const handleInputChange = (id: string, field: keyof TravellerDetail, value: string) => {
     // Format CNIC automatically
     if (field === "cnic") {
       value = formatCNIC(value);
+    }
+    // Format phone automatically
+    if (field === "phone") {
+      value = formatPhone(value);
     }
 
     setTravellers((prev) =>
@@ -268,8 +284,9 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
                     </Label>
                     <Input
                       type="tel"
-                      placeholder="e.g., +92 300 1234567"
+                      placeholder="e.g., 0300-1234567"
                       value={traveller.phone}
+                      maxLength={12}
                       onChange={(e) =>
                         handleInputChange(traveller.id, "phone", e.target.value)
                       }
