@@ -1,7 +1,7 @@
 import { Check, Plane, Hotel, Target, Users, ReceiptText, MapPin, X } from "lucide-react";
 
 interface StepProgressProps {
-  currentStep: "city" | "flight" | "hotel" | "activity" | "traveller" | "plan";
+  currentStep: "city" | "flight" | "hotel" | "activity" | "traveller" | "review" | "plan";
   totalDestinations?: number;
   currentDestinationIndex?: number;
 }
@@ -13,10 +13,10 @@ const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIn
     { id: "hotel", label: "Hotel", icon: <Hotel /> },
     { id: "activity", label: "Activity", icon: <Target /> },
     { id: "traveller", label: "Travelers", icon: <Users /> },
-    { id: "plan", label: "Review Plan", icon: <ReceiptText /> },
+    { id: "review", label: "Review", icon: <ReceiptText /> },
   ];
 
-  const stepOrder = ["city", "flight", "hotel", "activity", "traveller", "plan"];
+  const stepOrder = ["city", "flight", "hotel", "activity", "traveller", "review"];
   const currentStepIndex = stepOrder.indexOf(currentStep);
 
   // For multi-destination, show progress per destination

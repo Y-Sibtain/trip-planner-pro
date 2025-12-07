@@ -29,32 +29,15 @@ const MyBookings = () => {
   const [cancelBookingId, setCancelBookingId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      // Store current page for redirect after auth
-      sessionStorage.setItem('authReturnUrl', '/my-bookings');
-      navigate('/auth');
-      return;
-    }
+    setLoading(true);
     fetchBookings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, user?.id]);
+  }, []);
 
   const fetchBookings = async () => {
-    if (!user?.id) return;
-    setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('confirmed_bookings')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Failed to load bookings:', error);
-        toast({ title: 'Error', description: 'Failed to load bookings.', variant: 'destructive' });
-        return;
-      }
-      setBookings(data || []);
+      // Get bookings from localStorage
+      const storedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      setBookings(storedBookings);
     } catch (err) {
       console.error('Fetch bookings error:', err);
       toast({ title: 'Error', description: 'Failed to load bookings.', variant: 'destructive' });
@@ -73,11 +56,10 @@ const MyBookings = () => {
   const handleCancel = async () => {
     if (!cancelBookingId) return;
     try {
-      const { error } = await supabase.from('confirmed_bookings').delete().eq('id', cancelBookingId);
-      if (error) {
-        toast({ title: 'Error', description: 'Failed to cancel booking.', variant: 'destructive' });
-        return;
-      }
+      const storedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      const updatedBookings = storedBookings.filter((b: any) => b.id !== cancelBookingId);
+      localStorage.setItem('bookings', JSON.stringify(updatedBookings));
+      
       toast({ title: 'Cancelled', description: 'Booking has been cancelled.' });
       fetchBookings();
     } catch (err) {

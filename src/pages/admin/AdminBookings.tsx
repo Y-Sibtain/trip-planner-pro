@@ -17,20 +17,18 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { CheckCircle, XCircle, Eye } from 'lucide-react';
 
-interface ConfirmedBooking {
+interface BookingObject {
   id: string;
-  user_id: string;
+  status: 'pending' | 'confirmed' | 'processed' | 'rejected';
+  payment_status: string;
   itinerary_title: string;
   total_amount: number;
-  status: string;
-  payment_status: string;
-  transaction_id: string;
-  card_last_four: string;
-  created_at: string;
+  transaction_id?: string;
+  card_last_four?: string;
   itinerary_data?: any;
+  created_at: string;
 }
 
 const AdminBookings = () => {
@@ -38,10 +36,9 @@ const AdminBookings = () => {
   const { isAdmin, loading: adminLoading } = useAdmin();
   const { toast } = useToast();
 
-  const [bookings, setBookings] = useState<ConfirmedBooking[]>([]);
+  const [bookings, setBookings] = useState<BookingObject[]>([]);
   const [loading, setLoading] = useState(false);
-  const [userEmails, setUserEmails] = useState<Record<string, string>>({});
-  const [selectedBooking, setSelectedBooking] = useState<ConfirmedBooking | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<BookingObject | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [rejectBookingId, setRejectBookingId] = useState<string | null>(null);
 
@@ -56,71 +53,69 @@ const AdminBookings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, adminLoading]);
 
-  const fetchBookings = async () => {
+  const fetchBookings = () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('confirmed_bookings')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Failed to load bookings:', error);
-        toast({ title: 'Notice', description: 'Booking data has been refreshed.' });
-        return;
-      }
-
-      console.log('Bookings loaded:', data);
-      setBookings(data || []);
+      // Get bookings from localStorage
+      const bookingsData = localStorage.getItem('bookings');
+      const allBookings: BookingObject[] = bookingsData ? JSON.parse(bookingsData) : [];
+      
+      // Sort by created_at descending - show all bookings regardless of status
+      allBookings.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      
+      console.log('Bookings loaded from localStorage:', allBookings);
+      setBookings(allBookings);
     } catch (err) {
       console.error('Fetch bookings error:', err);
-      toast({ title: 'Notice', description: 'Booking data refresh completed.' });
+      toast({ title: 'Error', description: 'Failed to load bookings.' });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleApprove = async (bookingId: string) => {
+  const handleApprove = (bookingId: string) => {
     try {
-      const { error } = await supabase
-        .from('confirmed_bookings')
-        .update({ status: 'processed' })
-        .eq('id', bookingId);
-
-      if (error) {
-        console.error('Approve error:', error);
-        toast({ title: 'Notice', description: 'Booking status has been updated.' });
-        return;
+      const bookingsData = localStorage.getItem('bookings');
+      const allBookings: BookingObject[] = bookingsData ? JSON.parse(bookingsData) : [];
+      
+      // Find and update the booking
+      const bookingIndex = allBookings.findIndex(b => b.id === bookingId);
+      if (bookingIndex !== -1) {
+        allBookings[bookingIndex].status = 'processed';
+        localStorage.setItem('bookings', JSON.stringify(allBookings));
+        
+        toast({ title: 'Success', description: 'Booking marked as processed.' });
+        fetchBookings();
+      } else {
+        toast({ title: 'Error', description: 'Booking not found.' });
       }
-
-      toast({ title: 'Success', description: 'Booking marked as processed.' });
-      await fetchBookings();
     } catch (err) {
       console.error('Error approving booking:', err);
-      toast({ title: 'Notice', description: 'Booking update operation completed.' });
+      toast({ title: 'Error', description: 'Failed to approve booking.' });
     }
   };
 
-  const handleReject = async () => {
+  const handleReject = () => {
     if (!rejectBookingId) return;
 
     try {
-      const { error } = await supabase
-        .from('confirmed_bookings')
-        .update({ status: 'rejected' })
-        .eq('id', rejectBookingId);
-
-      if (error) {
-        console.error('Reject error:', error);
-        toast({ title: 'Notice', description: 'Booking has been rejected and processed.' });
-        return;
+      const bookingsData = localStorage.getItem('bookings');
+      const allBookings: BookingObject[] = bookingsData ? JSON.parse(bookingsData) : [];
+      
+      // Find and update the booking
+      const bookingIndex = allBookings.findIndex(b => b.id === rejectBookingId);
+      if (bookingIndex !== -1) {
+        allBookings[bookingIndex].status = 'rejected';
+        localStorage.setItem('bookings', JSON.stringify(allBookings));
+        
+        toast({ title: 'Rejected', description: 'Booking has been rejected.' });
+        fetchBookings();
+      } else {
+        toast({ title: 'Error', description: 'Booking not found.' });
       }
-
-      toast({ title: 'Rejected', description: 'Booking has been rejected.' });
-      await fetchBookings();
     } catch (err) {
       console.error('Error rejecting booking:', err);
-      toast({ title: 'Notice', description: 'Booking rejection operation completed.' });
+      toast({ title: 'Error', description: 'Failed to reject booking.' });
     } finally {
       setRejectBookingId(null);
     }
@@ -156,12 +151,11 @@ const AdminBookings = () => {
               <Table className="dark:bg-gray-800">
                 <TableHeader className="dark:bg-gray-700">
                   <TableRow className="dark:border-gray-700 dark:hover:bg-gray-600">
-                    <TableHead className="text-gray-700 dark:text-gray-300">User ID</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Booking ID</TableHead>
                     <TableHead className="text-gray-700 dark:text-gray-300">Itinerary</TableHead>
                     <TableHead className="text-gray-700 dark:text-gray-300">Amount</TableHead>
-                    <TableHead className="text-gray-700 dark:text-gray-300">Transaction ID</TableHead>
-                    <TableHead className="text-gray-700 dark:text-gray-300">Card</TableHead>
-                    <TableHead className="text-gray-700 dark:text-gray-300">Status</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Payment Status</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Booking Status</TableHead>
                     <TableHead className="text-gray-700 dark:text-gray-300">Date</TableHead>
                     <TableHead className="text-gray-700 dark:text-gray-300">Actions</TableHead>
                   </TableRow>
@@ -169,14 +163,22 @@ const AdminBookings = () => {
                 <TableBody>
                   {bookings.map((booking) => (
                     <TableRow key={booking.id} className="dark:border-gray-700 dark:hover:bg-gray-700/50">
-                      <TableCell className="font-mono text-sm text-gray-900 dark:text-gray-200">{booking.user_id.slice(0, 8)}...</TableCell>
+                      <TableCell className="font-mono text-sm text-gray-900 dark:text-gray-200">{booking.id.slice(0, 8)}...</TableCell>
                       <TableCell className="text-gray-900 dark:text-gray-200">{booking.itinerary_title}</TableCell>
                       <TableCell className="text-gray-900 dark:text-gray-200">PKR {Number(booking.total_amount).toFixed(2)}</TableCell>
-                      <TableCell className="text-sm font-mono text-gray-900 dark:text-gray-200">{booking.transaction_id}</TableCell>
-                      <TableCell className="text-gray-900 dark:text-gray-200">****{booking.card_last_four}</TableCell>
+                      <TableCell>
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          booking.payment_status === 'paid' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                          booking.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                          'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                        }`}>
+                          {booking.payment_status}
+                        </span>
+                      </TableCell>
                       <TableCell>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                           booking.status === 'confirmed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                          booking.status === 'pending' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300' :
                           booking.status === 'processed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
                           booking.status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
                           'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
@@ -194,7 +196,7 @@ const AdminBookings = () => {
                           >
                             <Eye className="w-4 h-4 mr-1" /> View
                           </Button>
-                          {booking.status === 'confirmed' && (
+                          {(booking.status === 'confirmed' || booking.status === 'pending') && (
                             <>
                               <Button 
                                 size="sm" 
@@ -257,10 +259,6 @@ const AdminBookings = () => {
                   <p className="font-mono text-sm text-gray-900 dark:text-gray-200">{selectedBooking.id}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">User ID</p>
-                  <p className="font-mono text-sm text-gray-900 dark:text-gray-200">{selectedBooking.user_id}</p>
-                </div>
-                <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Itinerary</p>
                   <p className="font-semibold text-gray-900 dark:text-white">{selectedBooking.itinerary_title}</p>
                 </div>
@@ -269,26 +267,38 @@ const AdminBookings = () => {
                   <p className="font-semibold text-gray-900 dark:text-white">PKR {Number(selectedBooking.total_amount).toFixed(2)}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Transaction ID</p>
-                  <p className="font-mono text-sm text-gray-900 dark:text-gray-200">{selectedBooking.transaction_id}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Card Last 4</p>
-                  <p className="font-mono text-sm text-gray-900 dark:text-gray-200">****{selectedBooking.card_last_four}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Status</p>
-                  <p className="font-semibold text-gray-900 dark:text-white">{selectedBooking.status}</p>
-                </div>
-                <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Payment Status</p>
                   <p className="font-semibold text-gray-900 dark:text-white">{selectedBooking.payment_status}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Booking Status</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{selectedBooking.status}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Created At</p>
                   <p className="text-sm text-gray-900 dark:text-gray-200">{new Date(selectedBooking.created_at).toLocaleString()}</p>
                 </div>
+                {selectedBooking.transaction_id && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Transaction ID</p>
+                    <p className="font-mono text-sm text-gray-900 dark:text-gray-200">{selectedBooking.transaction_id}</p>
+                  </div>
+                )}
+                {selectedBooking.card_last_four && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Card Last 4</p>
+                    <p className="font-mono text-sm text-gray-900 dark:text-gray-200">****{selectedBooking.card_last_four}</p>
+                  </div>
+                )}
               </div>
+              {selectedBooking.itinerary_data && (
+                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Itinerary Data</p>
+                  <pre className="text-xs text-gray-900 dark:text-gray-200 overflow-auto max-h-48">
+                    {JSON.stringify(selectedBooking.itinerary_data, null, 2)}
+                  </pre>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

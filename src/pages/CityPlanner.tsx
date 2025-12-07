@@ -7,13 +7,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { MapPin, Star, Users, Plane, Hotel, Calendar } from "lucide-react";
+import { MapPin, Star, Users, Plane, Hotel, Calendar, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import FlightSelector from "@/components/planner/FlightSelector";
 import HotelCard from "@/components/planner/HotelCard";
 import TripPlan from "@/components/planner/TripPlan";
 import TravellerForm, { TravellerDetail } from "@/components/planner/TravellerForm";
 import StepProgress from "@/components/planner/StepProgress";
+import { BookingSummaryCard } from "@/components/BookingSummaryCard";
 import { useBooking } from "@/contexts/BookingContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,10 +69,9 @@ const CityPlanner = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useBooking();
   const { toast } = useToast();
-  const [step, setStep] = useState<"city" | "flight" | "hotel" | "activity" | "traveller" | "plan">("city");
+  const [step, setStep] = useState<"city" | "flight" | "hotel" | "activity" | "traveller" | "review" >("city");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [numPeople, setNumPeople] = useState<number>(1);
-  const [showSummary, setShowSummary] = useState(false);
   const [numDays, setNumDays] = useState<number>(7);
 
   // Multi-destination booking support
@@ -82,6 +82,62 @@ const CityPlanner = () => {
   const [travellerDetails, setTravellerDetails] = useState<TravellerDetail[]>([]);
   const [aiBookingData, setAiBookingData] = useState<any>(null);
   const [hotelSortOrder, setHotelSortOrder] = useState<"default" | "price-asc" | "price-desc" | "popularity">("default");
+  const [reviewBookingData, setReviewBookingData] = useState<any>(null);
+
+  // Save state to localStorage whenever selections change
+  useEffect(() => {
+    const stateToSave = {
+      step,
+      destinationsList,
+      currentDestIndex,
+      selectedFlightsByDest,
+      selectedHotelsByDest,
+      travellerDetails,
+      numPeople,
+      numDays,
+      reviewBookingData,
+      selectedCity,
+    };
+    localStorage.setItem('cityPlannerState', JSON.stringify(stateToSave));
+  }, [step, destinationsList, currentDestIndex, selectedFlightsByDest, selectedHotelsByDest, travellerDetails, numPeople, numDays, reviewBookingData, selectedCity]);
+
+  // Restore state from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedState = localStorage.getItem('cityPlannerState');
+      if (savedState) {
+        const state = JSON.parse(savedState);
+        setDestinationsList(state.destinationsList || []);
+        setCurrentDestIndex(state.currentDestIndex || 0);
+        setSelectedFlightsByDest(state.selectedFlightsByDest || {});
+        setSelectedHotelsByDest(state.selectedHotelsByDest || {});
+        setTravellerDetails(state.travellerDetails || []);
+        setNumPeople(state.numPeople || 1);
+        setNumDays(state.numDays || 7);
+        if (state.reviewBookingData) setReviewBookingData(state.reviewBookingData);
+        
+        // Restore selected city - if we have destinations, set the city for the current destination
+        if (state.destinationsList && state.destinationsList.length > 0) {
+          const currentDest = state.destinationsList[state.currentDestIndex || 0];
+          const matchedCity = cities.find(c => c.name.toLowerCase() === currentDest.toLowerCase());
+          if (matchedCity) {
+            setSelectedCity(matchedCity.name);
+          } else if (state.selectedCity) {
+            setSelectedCity(state.selectedCity);
+          }
+        } else if (state.selectedCity) {
+          setSelectedCity(state.selectedCity);
+        }
+        
+        // Only restore step if it's not the initial "city" step
+        if (state.step && state.step !== 'city' && state.destinationsList?.length > 0) {
+          setStep(state.step);
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to restore state from localStorage:', err);
+    }
+  }, []);
 
   // Calculate number of days from trip data
   useEffect(() => {
@@ -143,6 +199,35 @@ const CityPlanner = () => {
     const state = location.state as any;
     if (!state) return;
 
+    // If returning from Payment with returnStep, go directly to that step
+    if (state.returnStep) {
+      setStep(state.returnStep);
+      // Restore all selections from fullState
+      if (state.fullState) {
+        const fs = state.fullState;
+        if (fs.destinationsList && fs.destinationsList.length > 0) {
+          setDestinationsList(fs.destinationsList);
+          setCurrentDestIndex(0);
+        }
+        if (fs.selectedFlightsByDest) {
+          setSelectedFlightsByDest(fs.selectedFlightsByDest);
+        }
+        if (fs.selectedHotelsByDest) {
+          setSelectedHotelsByDest(fs.selectedHotelsByDest);
+        }
+        if (fs.travellerDetails && fs.travellerDetails.length > 0) {
+          setTravellerDetails(fs.travellerDetails);
+        }
+        if (fs.numPeople) setNumPeople(fs.numPeople);
+        if (fs.numDays) setNumDays(fs.numDays);
+      }
+      // Also rehydrate the booking data if provided
+      if (state.booking) {
+        setReviewBookingData(state.booking);
+      }
+      return;
+    }
+
     // If AI or Payment navigated with booking, rehydrate selection
     if (state.booking) {
       const b = state.booking;
@@ -172,10 +257,7 @@ const CityPlanner = () => {
         setStep('traveller');
       } catch (err) {
         console.warn('Failed to rehydrate booking state:', err);
-        setShowSummary(true);
       }
-    } else if (state.openSummary) {
-      setShowSummary(true);
     }
   }, [location.state]);
 
@@ -209,9 +291,8 @@ const CityPlanner = () => {
       // start the next destination flow with flight selection
       setStep('flight');
     } else {
-      // finished selecting for all destinations
-      setStep('plan');
-      setShowSummary(true);
+      // finished selecting for all destinations, go to traveller form
+      setStep('traveller');
     }
   };
 
@@ -219,7 +300,7 @@ const CityPlanner = () => {
 
   const currentDestName = destinationsList[currentDestIndex] || selectedCity || null;
 
-  const stepOrder = ["city", "flight", "hotel", "activity", "traveller", "plan"] as const;
+  const stepOrder = ["city", "flight", "hotel", "activity", "traveller", "review"] as const;
 
   const handleStepClick = (targetStepId: string, targetIndex: number) => {
     const currentIndex = stepOrder.indexOf(step as any);
@@ -363,6 +444,47 @@ const CityPlanner = () => {
     }
   };
 
+  const handleSaveBooking = () => {
+    if (reviewBookingData) {
+      try {
+        // Get existing bookings from localStorage
+        const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        
+        // Add new booking with pending status
+        const newBooking = {
+          id: `booking-${Date.now()}`,
+          ...reviewBookingData,
+          status: 'pending',
+          payment_status: 'pending',
+          created_at: new Date().toISOString(),
+        };
+        
+        existingBookings.push(newBooking);
+        localStorage.setItem('bookings', JSON.stringify(existingBookings));
+        
+        toast({
+          title: 'Booking Saved!',
+          description: 'Your booking has been saved. You can review it in My Bookings.',
+        });
+        
+        // Clear traveller data from session storage
+        sessionStorage.removeItem('travellerData');
+        
+        // Redirect to home after 2 seconds
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
+      } catch (err) {
+        console.error('Error saving booking:', err);
+        toast({
+          title: 'Error',
+          description: 'Failed to save booking. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden">
       {/* Subtle background decoration */}
@@ -390,7 +512,7 @@ const CityPlanner = () => {
             }}
             onComplete={(travellers, action) => {
               setTravellerDetails(travellers);
-              // Proceed to payment or save booking using AI booking data if available, otherwise compute from selections
+              // Proceed to review step
               const bookingData = aiBookingData || (() => {
                 let totalAmount = 0;
                 let totalDays = 0;
@@ -425,14 +547,9 @@ const CityPlanner = () => {
               // Clear AI booking data after use
               setAiBookingData(null);
               
-              // Handle save or pay action
-              if (action === 'save') {
-                // Save booking directly to database
-                saveBookingAsPending(bookingData);
-              } else {
-                // Navigate to payment page
-                navigate('/payment', { state: { booking: bookingData, action: 'pay' } });
-              }
+              // Store booking data and action for review step
+              setReviewBookingData({ ...bookingData, action });
+              setStep('review');
             }}
           />
         )}
@@ -538,6 +655,7 @@ const CityPlanner = () => {
           </>
         )}
 
+
         {/* Trip Plan */}
         {/* Activity Selection (per-destination) */}
         {step === "activity" && selectedCity && (
@@ -568,153 +686,134 @@ const CityPlanner = () => {
           </>
         )}
 
-        {step === "plan" && (destinationsList.length > 0 || selectedCity) && (
-          <>
-            <div className="glass p-8 rounded-2xl border border-pink-500/20 dark:border-pink-500/10 backdrop-blur-xl dark:bg-gray-800/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                    Your {numDays}-Day Itinerary
-                  </h2>
-                  <p className="text-gray-700 dark:text-gray-300">Activities and dining recommendations</p>
-                </div>
+
+        {/* Review Plan */}
+        {step === "review" && reviewBookingData && (
+          <div className="space-y-6">
+            <div className="glass p-8 rounded-2xl border border-blue-500/20 dark:border-blue-500/10 backdrop-blur-xl dark:bg-gray-800/50">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  Review Your Booking
+                </h2>
                 <Button 
-                  onClick={() => setStep("hotel")}
+                  onClick={() => setStep("traveller")}
                   className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
                 >
                   ← Back
                 </Button>
               </div>
+              <p className="text-gray-600 dark:text-gray-400">Review all your trip details before proceeding to payment</p>
             </div>
 
-            <TripPlan
-              city={selectedCity}
-              numPeople={numPeople}
-              numDays={numDays}
-              onFinalize={() => setShowSummary(true)}
-            />
-          </>
-        )}
-
-        {/* Summary Modal */}
-        <Dialog open={showSummary} onOpenChange={setShowSummary}>
-          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl">
-            <DialogHeader className="border-b border-gray-200 dark:border-gray-700 pb-6 -mx-6 px-6 py-6 bg-gradient-to-r from-indigo-700 via-blue-700 to-cyan-600 dark:from-indigo-800 dark:via-blue-800 dark:to-cyan-700">
-              <DialogTitle className="text-3xl font-semibold text-white drop-shadow-sm">Booking Summary</DialogTitle>
-              <DialogDescription className="text-white/90 dark:text-white/85 text-sm mt-2">Review and confirm your complete trip details</DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-6 mt-6">
-              {/* Travelers Section */}
-              <div className="bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/15 dark:to-teal-900/15 p-6 rounded-lg border border-emerald-200 dark:border-emerald-800/60">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-emerald-500 rounded-lg">
-                    <Users className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">Travelers</h3>
-                </div>
-                <p className="text-emerald-900 dark:text-emerald-50 font-medium text-base ml-11">{numPeople} {numPeople === 1 ? "person" : "people"}</p>
-              </div>
-
-              {/* Destinations Section */}
-              {destinationsList.map((dest, idx) => (
-                <div key={dest} className="bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/15 dark:to-teal-900/15 p-6 rounded-lg border border-emerald-200 dark:border-emerald-800/60">
-                  <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-50 mb-5">
-                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500 text-white text-sm font-bold mr-3">{idx + 1}</span>
-                    {dest} • {getDaysForDestination(idx)} day{getDaysForDestination(idx) > 1 ? 's' : ''}
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    {/* Flight */}
-                    <div className="bg-white dark:bg-gray-900/40 p-4 rounded-lg border border-emerald-100 dark:border-emerald-900/40">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded">
-                          <Plane className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
-                        </div>
-                        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">Flight</h4>
-                      </div>
-                      {selectedFlightsByDest[dest] ? (
-                        <div className="ml-6 space-y-2">
-                          <p className="text-gray-900 dark:text-white font-medium">{selectedFlightsByDest[dest].airline}</p>
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-100 border border-emerald-300 dark:border-emerald-800">
-                              {selectedFlightsByDest[dest].class}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Price: {selectedFlightsByDest[dest].price ? `${selectedFlightsByDest[dest].price}` : 'N/A'}</p>
-                        </div>
-                      ) : (
-                        <div className="text-sm text-gray-500 ml-6">Not selected</div>
-                      )}
-                    </div>
-
-                    {/* Hotel */}
-                    <div className="bg-white dark:bg-gray-900/40 p-4 rounded-lg border border-emerald-100 dark:border-emerald-900/40">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded">
-                          <Hotel className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
-                        </div>
-                        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">Hotel</h4>
-                      </div>
-                      {selectedHotelsByDest[dest] ? (
-                        (() => {
-                          const hotel = (hotels[dest as keyof typeof hotels] || []).find(h => h.id === selectedHotelsByDest[dest]);
-                          return (
-                            <div className="ml-6 space-y-2">
-                              <p className="text-gray-900 dark:text-white font-medium">{hotel?.name}</p>
-                              <div className="flex items-center gap-1">
-                                {Array.from({ length: hotel?.stars || 0 }).map((_, i) => (
-                                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                                ))}
-                                <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">{hotel?.stars} Stars</span>
-                              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Main Summary Card */}
+              <div className="md:col-span-2 space-y-6">
+                {/* Trip Items */}
+                <Card className="shadow-lg border-0 bg-white dark:bg-gray-800">
+                  <CardContent className="p-6 space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Trip Details</h3>
+                    
+                    {(() => {
+                      const itinerary = reviewBookingData.plan?.itineraryByDest;
+                      return destinationsList.map((dest, idx) => (
+                        <div key={dest} className="space-y-3 pb-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0 last:pb-0">
+                          <p className="font-semibold text-gray-900 dark:text-white">{dest}</p>
+                          
+                          {/* Flight */}
+                          {itinerary?.flights?.[dest] && (
+                            <div className="pl-4 text-sm">
+                              {(() => {
+                                const flight = itinerary.flights[dest];
+                                const flightClass = flight.class || (flight.departure ? `${flight.departure} → ${flight.arrival}` : 'Economy');
+                                const price = flight.price || flight.pricePerPersonPKR || 0;
+                                
+                                return (
+                                  <>
+                                    <p className="text-gray-600 dark:text-gray-400">Flight: <span className="text-gray-900 dark:text-white font-medium">{flight.airline} ({flightClass})</span></p>
+                                    <p className="text-gray-500 dark:text-gray-400 mt-1">PKR {parseInt(String(price).replace(/[^\d]/g, '')).toLocaleString()}</p>
+                                  </>
+                                );
+                              })()}
                             </div>
-                          );
-                        })()
-                      ) : (
-                        <div className="text-sm text-gray-500 ml-6">Not selected</div>
-                      )}
+                          )}
+                          
+                          {/* Hotel */}
+                          {itinerary?.hotels?.[dest] && (
+                            <div className="pl-4 text-sm">
+                              {(() => {
+                                const hotelData = itinerary.hotels[dest];
+                                const nights = itinerary.days?.[dest] || 1;
+                                
+                                // Handle both object (from AI) and ID (from manual selection)
+                                let hotel;
+                                if (typeof hotelData === 'string') {
+                                  // It's an ID - look it up
+                                  hotel = (hotels[dest as keyof typeof hotels] || []).find(h => h.id === hotelData);
+                                } else {
+                                  // It's already an object from AI
+                                  hotel = hotelData;
+                                }
+                                
+                                return (
+                                  <>
+                                    <p className="text-gray-600 dark:text-gray-400">Hotel: <span className="text-gray-900 dark:text-white font-medium">{hotel?.name} ({nights} nights)</span></p>
+                                    <p className="text-gray-500 dark:text-gray-400 mt-1">PKR {parseInt(String(hotel?.price || '0').replace(/[^\d]/g, '')) * nights}</p>
+                                  </>
+                                );
+                              })()}
+                            </div>
+                          )}
+                        </div>
+                      ));
+                    })()}
+                  </CardContent>
+                </Card>
+
+                {/* Travelers Info */}
+                <Card className="shadow-lg border-0 bg-white dark:bg-gray-800">
+                  <CardContent className="p-6 space-y-4">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Travelers ({numPeople})</h3>
+                    <div className="space-y-3">
+                      {travellerDetails.map((traveller, idx) => (
+                        <div key={idx} className="p-3 bg-gray-50 dark:bg-gray-900/30 rounded-lg text-sm">
+                          <p className="font-medium text-gray-900 dark:text-white">{traveller.firstName} {traveller.lastName}</p>
+                          <p className="text-gray-600 dark:text-gray-400">{traveller.email}</p>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Right Sidebar - Price Summary & Actions */}
+              <div className="col-span-1 space-y-4">
+                <BookingSummaryCard
+                  title={reviewBookingData.itinerary_title || `${numDays}-Day Trip`}
+                  destination={destinationsList.join(' → ')}
+                  subtotal={reviewBookingData.total_amount || 0}
+                  total={reviewBookingData.total_amount || 0}
+                  currency="PKR"
+                />
+
+                <div className="space-y-3">
+                  <Button 
+                    onClick={() => navigate('/payment', { state: { booking: reviewBookingData } })}
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 rounded-lg transition-all-smooth"
+                  >
+                    Proceed to Payment
+                  </Button>
+
+                  <Button 
+                    onClick={() => handleSaveBooking()}
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 rounded-lg transition-all-smooth"
+                  >
+                    Save Booking
+                  </Button>
                 </div>
-              ))}
-
-              {/* Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button 
-                  className="flex-1 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 font-semibold text-base rounded-lg transition-colors"
-                  onClick={() => {
-                    // Check if user is authenticated
-                    if (!isAuthenticated) {
-                      // Store current page for redirect after auth
-                      sessionStorage.setItem('authReturnUrl', '/city-planner');
-                      toast({
-                        title: 'Authentication Required',
-                        description: 'Sign in or sign up to proceed with booking',
-                        variant: 'destructive'
-                      });
-                      navigate('/auth', { state: { bookingData: true } });
-                      return;
-                    }
-
-                    // Go to traveller details form
-                    setShowSummary(false);
-                    setStep("traveller");
-                  }}
-                >
-                  Proceed →
-                </Button>
-                <Button 
-                  onClick={() => setShowSummary(false)}
-                  variant="outline"
-                  className="flex-1 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold text-base rounded-lg transition-colors"
-                >
-                  Edit Trip
-                </Button>
               </div>
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+        )}
       </div>
     </div>
   );

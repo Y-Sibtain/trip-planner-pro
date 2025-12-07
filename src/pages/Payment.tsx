@@ -78,61 +78,60 @@ const Payment = () => {
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateCard()) return;
-    if (!booking || !user?.id) {
-      toast({ title: 'Error', description: 'Login in or sign up to proceed.', variant: 'destructive' });
+    if (!booking) {
+      toast({ title: 'Error', description: 'No booking data found.', variant: 'destructive' });
       return;
     }
 
     setLoading(true);
     try {
-      // Simulate payment processing with dummy gateway
+      // Generate transaction ID
       const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-      // Create confirmed booking
-      const confirmedBooking = {
-        user_id: user.id,
-        itinerary_title: booking.itinerary_title || 'Trip Booking',
-        total_amount: booking.total_amount || 0,
-        itinerary_data: booking.plan || booking.itinerary_data || {},
-        status: 'confirmed',
-        payment_status: 'paid',
-        transaction_id: transactionId,
-        card_last_four: cardData.cardNumber.slice(-4),
-      };
-
-      const { data, error } = await supabase
-        .from('confirmed_bookings')
-        .insert([confirmedBooking])
-        .select();
-
-      if (error) {
-        console.error('Booking creation error:', error);
-        toast({ title: 'Error', description: `Failed to create booking: ${error.message}`, variant: 'destructive' });
-        setLoading(false);
-        return;
-      }
-
-      console.log('Booking created:', data);
-
-      // Delete any pending bookings with the same title and payment_status for this user
-      // This ensures we don't delete confirmed bookings with the same title
-      try {
-        const { error: deleteError } = await supabase
-          .from('confirmed_bookings')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('status', 'pending')
-          .eq('payment_status', 'pending')
-          .eq('itinerary_title', booking.itinerary_title);
-        
-        if (deleteError) {
-          console.warn('Failed to delete pending booking:', deleteError);
+      // Get existing bookings from localStorage
+      const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      
+      // If this booking already exists (from pending), update it to confirmed
+      if (booking.id) {
+        const bookingIndex = existingBookings.findIndex((b: any) => b.id === booking.id);
+        if (bookingIndex >= 0) {
+          // Update existing pending booking to confirmed
+          existingBookings[bookingIndex] = {
+            ...existingBookings[bookingIndex],
+            status: 'confirmed',
+            payment_status: 'paid',
+            transaction_id: transactionId,
+            card_last_four: cardData.cardNumber.slice(-4),
+            updated_at: new Date().toISOString(),
+          };
         } else {
-          console.log('Pending bookings deleted successfully');
+          // Booking doesn't exist, create new confirmed booking
+          existingBookings.push({
+            id: booking.id,
+            ...booking,
+            status: 'confirmed',
+            payment_status: 'paid',
+            transaction_id: transactionId,
+            card_last_four: cardData.cardNumber.slice(-4),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
         }
-      } catch (delErr) {
-        console.warn('Failed to delete pending booking:', delErr);
+      } else {
+        // No booking ID, create new confirmed booking
+        existingBookings.push({
+          id: `booking-${Date.now()}`,
+          ...booking,
+          status: 'confirmed',
+          payment_status: 'paid',
+          transaction_id: transactionId,
+          card_last_four: cardData.cardNumber.slice(-4),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
       }
+      
+      localStorage.setItem('bookings', JSON.stringify(existingBookings));
 
       toast({
         title: 'Payment Successful!',
@@ -142,9 +141,9 @@ const Payment = () => {
       // Clear traveller data from session storage after successful booking
       sessionStorage.removeItem('travellerData');
 
-      // Redirect to bookings page or home after 2 seconds
+      // Redirect to bookings page after 2 seconds
       setTimeout(() => {
-        navigate('/');
+        navigate('/my-bookings');
       }, 2000);
     } catch (err) {
       console.error('Payment processing error:', err);
@@ -184,7 +183,24 @@ const Payment = () => {
               <p className="text-gray-600 dark:text-gray-400 text-sm">Secure payment processing</p>
             </div>
             <Button
-              onClick={() => navigate('/city-planner', { state: { booking } })}
+              onClick={() => {
+                // Get the saved CityPlanner state to restore traveller details
+                const savedState = JSON.parse(localStorage.getItem('cityPlannerState') || '{}');
+                
+                navigate('/city-planner', { state: { 
+                  returnStep: 'review', 
+                  booking,
+                  // Pass the full state to restore selections
+                  fullState: {
+                    destinationsList: booking.plan?.itineraryByDest?.flights ? Object.keys(booking.plan.itineraryByDest.flights) : [],
+                    selectedFlightsByDest: booking.plan?.itineraryByDest?.flights || {},
+                    selectedHotelsByDest: booking.plan?.itineraryByDest?.hotels || {},
+                    travellerDetails: savedState.travellerDetails || [],
+                    numPeople: booking.plan?.numPeople,
+                    numDays: booking.plan?.numDays,
+                  }
+                } });
+              }}
               className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold glow-primary hover:scale-105 transition-all-smooth"
             >
               ← Back

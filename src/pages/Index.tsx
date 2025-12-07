@@ -142,15 +142,37 @@ const Index = () => {
 
     let totalAmount = 0;
     let totalDays = 0;
-    const itineraryByDest: any = { flights: {}, hotels: {}, days: {}, itineraries: {} };
+    const itineraryByDest: any = { flights: {}, hotels: {}, days: {} };
     packageResults.forEach((p) => {
       totalAmount += (p.budgetBreakdown?.total || 0);
       totalDays += (p.days || 0);
       const dest = p.destination || `Destination`;
-      itineraryByDest.flights[dest] = p.flights || null;
-      itineraryByDest.hotels[dest] = p.hotel || null;
+      
+      // Store flight - normalize AI format to match display expectations
+      if (p.flights) {
+        itineraryByDest.flights[dest] = {
+          airline: p.flights.airline,
+          class: p.flights.class || 'Economy',
+          departure: p.flights.departure,
+          arrival: p.flights.arrival,
+          price: p.flights.pricePerPersonPKR,
+          pricePerPersonPKR: p.flights.pricePerPersonPKR,
+        };
+      }
+      
+      // Store hotel as object (with normalized price field)
+      if (p.hotel) {
+        itineraryByDest.hotels[dest] = {
+          id: p.hotel.name?.toLowerCase().replace(/\s+/g, '-') || 'hotel',
+          name: p.hotel.name,
+          stars: p.hotel.stars,
+          price: String(p.hotel.pricePerNightPKR),
+          pricePerNightPKR: p.hotel.pricePerNightPKR,
+          totalStayPKR: p.hotel.totalStayPKR,
+        };
+      }
+      
       itineraryByDest.days[dest] = p.days || 0;
-      itineraryByDest.itineraries[dest] = p.itinerary || [];
     });
 
     const booking = {

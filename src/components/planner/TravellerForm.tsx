@@ -347,20 +347,14 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
             </Card>
           ))}
 
-          {/* Action Buttons */}
+          {/* Next Button */}
           <div className="flex gap-3 pt-6">
             <Button
               type="button"
-              onClick={(e) => handleSubmit(e as any, 'save')}
+              onClick={(e) => handleSubmit(e as any, 'pay')}
               className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
             >
-              Save Booking
-            </Button>
-            <Button
-              type="submit"
-              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all-smooth"
-            >
-              Pay Now →
+              Next →
             </Button>
           </div>
         </form>
