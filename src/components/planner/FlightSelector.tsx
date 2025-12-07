@@ -62,12 +62,6 @@ const FlightSelector = ({ destination, numPeople, onSelect, selectedFlightId }: 
     return flightsCopy;
   })();
 
-  const categories = {
-    Economy: sortedFlights.filter(f => f.class === "Economy"),
-    Business: sortedFlights.filter(f => f.class === "Business"),
-    "First Class": sortedFlights.filter(f => f.class === "First Class"),
-  };
-
   return (
     <div className="space-y-6">
       {/* Sort Options */}
@@ -86,88 +80,86 @@ const FlightSelector = ({ destination, numPeople, onSelect, selectedFlightId }: 
           </SelectContent>
         </Select>
       </div>
-      {Object.entries(categories).map(([className, classFlights]) => (
-        classFlights.length > 0 && (
-          <Card key={className}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Plane className="h-5 w-5" />
-                {className}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {classFlights.map((flight) => (
-                  <Card key={flight.id} className="transition-all hover:shadow-lg">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-bold text-lg">{flight.airline}</h3>
-                            <Badge 
-                              variant="secondary" 
-                              className={
-                                flight.class === "Economy" 
-                                  ? "bg-green-500 text-white" 
-                                  : flight.class === "Business"
-                                  ? "bg-red-500 text-white"
-                                  : flight.class === "First Class"
-                                  ? "bg-yellow-500 text-white"
-                                  : ""
-                              }
-                            >
-                              {flight.class}
-                            </Badge>
-                          </div>
-                          
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                            <Clock className="h-4 w-4" />
-                            <span>{flight.departure} - {flight.arrival} ({flight.duration})</span>
-                          </div>
 
-                          <div className="flex flex-wrap gap-2">
-                            {flight.features.map((feature, idx) => (
-                              <Badge key={idx} variant="outline" className="text-xs">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                {feature}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-primary mb-1">
-                            PKR {flight.price.toLocaleString()}
-                          </div>
-                          <div className="text-sm text-muted-foreground mb-2">
-                            per person
-                          </div>
-                          {numPeople > 1 && (
-                            <div className="text-sm font-semibold mb-2">
-                              Total: PKR {(flight.price * numPeople).toLocaleString()}
-                            </div>
-                          )}
-                          <div>
-                            {selectedFlightId === flight.id ? (
-                              <Button disabled className="opacity-100 bg-green-500 hover:bg-green-600 border-green-600 text-white font-semibold">
-                                Selected
-                              </Button>
-                            ) : (
-                              <Button onClick={() => onSelect(flight)}>
-                                Select Flight
-                              </Button>
-                            )}
-                          </div>
-                        </div>
+      {/* All Flights in One Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plane className="h-5 w-5" />
+            Available Flights
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {sortedFlights.map((flight) => (
+              <Card key={flight.id} className="transition-all hover:shadow-lg">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-bold text-lg">{flight.airline}</h3>
+                        <Badge 
+                          variant="secondary" 
+                          className={
+                            flight.class === "Economy" 
+                              ? "bg-green-500 text-white" 
+                              : flight.class === "Business"
+                              ? "bg-red-500 text-white"
+                              : flight.class === "First Class"
+                              ? "bg-yellow-500 text-white"
+                              : ""
+                          }
+                        >
+                          {flight.class}
+                        </Badge>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )
-      ))}
+                      
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                        <Clock className="h-4 w-4" />
+                        <span>{flight.departure} - {flight.arrival} ({flight.duration})</span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {flight.features.map((feature, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-primary mb-1">
+                        PKR {flight.price.toLocaleString()}
+                      </div>
+                      <div className="text-sm text-muted-foreground mb-2">
+                        per person
+                      </div>
+                      {numPeople > 1 && (
+                        <div className="text-sm font-semibold mb-2">
+                          Total: PKR {(flight.price * numPeople).toLocaleString()}
+                        </div>
+                      )}
+                      <div>
+                        {selectedFlightId === flight.id ? (
+                          <Button disabled className="opacity-100 bg-green-500 hover:bg-green-600 border-green-600 text-white font-semibold">
+                            Selected
+                          </Button>
+                        ) : (
+                          <Button onClick={() => onSelect(flight)}>
+                            Select Flight
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
