@@ -2,10 +2,8 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Utensils, MapPin, RefreshCw, ChevronDown, Star } from "lucide-react";
+import { Utensils, MapPin, Star } from "lucide-react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
 
 const tripData = {
   Dubai: {
@@ -114,8 +112,6 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
     return initial;
   });
 
-  const [expandedDay, setExpandedDay] = useState<number | null>(null);
-
   const changeActivity = (day: number) => {
     const currentAct = selectedPlan[day].activity;
     const availableActs = cityData.activities.filter(a => a.name !== currentAct.name);
@@ -141,25 +137,10 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
       {Array.from({ length: numDays }, (_, i) => i + 1).map((day) => {
         const plan = selectedPlan[day];
         return (
-          <Collapsible
-            key={day}
-            open={expandedDay === day}
-            onOpenChange={(open) => setExpandedDay(open ? day : null)}
-          >
-            <Card className="border-l-4 border-l-primary">
+          <Card className="border-l-4 border-l-primary">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-3">
                   <Badge className="text-base px-3 py-1">Day {day}</Badge>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 transition-transform",
-                          expandedDay === day && "rotate-180"
-                        )}
-                      />
-                    </Button>
-                  </CollapsibleTrigger>
                 </div>
 
                 <div className="space-y-3">
@@ -185,8 +166,8 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
                             }
                           }}
                         >
-                          <SelectTrigger className="w-40">
-                            <SelectValue placeholder="Change" />
+                          <SelectTrigger className="w-10">
+                            <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             {cityData.activities.map((act) => (
@@ -241,8 +222,8 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
                               }
                             }}
                           >
-                            <SelectTrigger className="w-40">
-                              <SelectValue placeholder="Change" />
+                            <SelectTrigger className="w-10">
+                              <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem key="none" value="__NONE__">None</SelectItem>
@@ -257,37 +238,8 @@ const TripPlan = ({ city, numPeople, numDays = 7, onFinalize }: TripPlanProps) =
                       </div>
                   </div>
                 </div>
-
-                <CollapsibleContent className="mt-3 pt-3 border-t">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Alternative Activities:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {cityData.activities
-                        .filter(a => a.name !== plan.activity.name)
-                        .slice(0, 3)
-                        .map((act, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">
-                            {act.name}
-                          </Badge>
-                        ))}
-                    </div>
-
-                    <p className="text-sm font-medium mt-3">Alternative Restaurants:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {cityData.restaurants
-                        .filter(r => r.name !== plan.restaurant?.name)
-                        .slice(0, 3)
-                        .map((rest, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">
-                            {rest.name}
-                          </Badge>
-                        ))}
-                    </div>
-                  </div>
-                </CollapsibleContent>
               </CardContent>
             </Card>
-          </Collapsible>
         );
       })}
 
