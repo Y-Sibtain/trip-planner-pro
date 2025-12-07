@@ -274,10 +274,10 @@ const TravellerForm = ({ numTravellers, onComplete, onBack }: TravellerFormProps
                     />
                   </div>
 
-                  {/* CNIC */}
+                  {/* Government-issued ID */}
                   <div>
                     <Label className="text-gray-900 dark:text-white font-semibold mb-2 block">
-                      CNIC *
+                      Government-issued ID *
                     </Label>
                     <Input
                       type="text"
