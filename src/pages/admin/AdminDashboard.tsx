@@ -224,7 +224,7 @@ const AdminDashboard = () => {
       <div className="mb-6">
         <Card>
           <CardHeader>
-            <CardTitle>Top users by saved itineraries</CardTitle>
+            <CardTitle>Top users by bookings</CardTitle>
           </CardHeader>
           <CardContent>
             {topUsers.length === 0 ? (
@@ -264,13 +264,6 @@ const AdminDashboard = () => {
           >
             <MapPin className="w-4 h-4 mr-2" />
             Manage Destinations
-          </Button>
-          <Button 
-            onClick={() => navigate("/admin/itineraries")}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all-smooth hover:scale-105"
-          >
-            <Calendar className="w-4 h-4 mr-2" />
-            Manage Itineraries
           </Button>
           <Button 
             onClick={() => navigate("/admin/users")}
