@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Plane, Clock, CheckCircle } from "lucide-react";
+import { Plane, Clock, CheckCircle, Check } from "lucide-react";
 
 const flightData = {
   Dubai: [
@@ -111,7 +111,7 @@ const FlightSelector = ({ destination, numPeople, onSelect, selectedFlightId }: 
         <CardContent>
           <div className="space-y-4">
             {sortedFlights.map((flight) => (
-              <Card key={flight.id} className="transition-all hover:shadow-lg">
+              <Card key={flight.id} className={`transition-all hover:shadow-lg ${selectedFlightId === flight.id ? 'ring-2 ring-primary border-primary' : ''}`}>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1">
@@ -152,8 +152,15 @@ const FlightSelector = ({ destination, numPeople, onSelect, selectedFlightId }: 
                     </div>
 
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-primary mb-1">
-                        PKR {flight.price.toLocaleString()}
+                      <div className="flex items-center justify-end gap-2 mb-2">
+                        <div className="text-2xl font-bold text-primary">
+                          PKR {flight.price.toLocaleString()}
+                        </div>
+                        {selectedFlightId === flight.id && (
+                          <div className="bg-primary text-primary-foreground rounded-full p-1">
+                            <Check className="h-5 w-5" />
+                          </div>
+                        )}
                       </div>
                       <div className="text-sm text-muted-foreground mb-2">
                         per person
@@ -164,18 +171,15 @@ const FlightSelector = ({ destination, numPeople, onSelect, selectedFlightId }: 
                         </div>
                       )}
                       <div>
-                        {selectedFlightId === flight.id ? (
-                          <Button disabled className="opacity-100 bg-green-500 hover:bg-green-600 border-green-600 text-white font-semibold">
-                            Selected
-                          </Button>
-                        ) : (
-                          <Button onClick={() => {
+                        <Button 
+                          onClick={() => {
                             const seats = generateSeats(flight.class, numPeople);
                             onSelect({...flight, seats});
-                          }}>
-                            Select Flight
-                          </Button>
-                        )}
+                          }}
+                          className={selectedFlightId === flight.id ? "bg-blue-500 hover:bg-blue-600 border-blue-600 text-white font-semibold" : ""}
+                        >
+                          {selectedFlightId === flight.id ? "Selected" : "Select Flight"}
+                        </Button>
                       </div>
                     </div>
                   </div>
