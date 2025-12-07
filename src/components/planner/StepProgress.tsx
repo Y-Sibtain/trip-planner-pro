@@ -4,9 +4,10 @@ interface StepProgressProps {
   currentStep: "city" | "flight" | "hotel" | "activity" | "traveller" | "review" | "plan";
   totalDestinations?: number;
   currentDestinationIndex?: number;
+  onStepClick?: (stepId: string) => void;
 }
 
-const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIndex = 0 }: StepProgressProps) => {
+const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIndex = 0, onStepClick }: StepProgressProps) => {
   const steps = [
     { id: "city", label: "Destination", icon: <MapPin /> },
     { id: "flight", label: "Flight", icon: <Plane /> },
@@ -62,12 +63,17 @@ const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIn
                 <div key={step.id} className="flex flex-col items-center relative z-10 flex-1">
                   {/* Circle Node */}
                   <div
+                    onClick={() => {
+                      if ((isCompleted || isCurrent) && onStepClick) {
+                        onStepClick(step.id);
+                      }
+                    }}
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2 ${
                       isCompleted
-                        ? "bg-blue-500 border-blue-600 text-white shadow-md"
+                        ? "bg-blue-500 border-blue-600 text-white shadow-md hover:shadow-lg hover:scale-110 cursor-pointer"
                         : isCurrent
-                        ? "bg-blue-500 border-blue-600 text-white shadow-lg ring-4 ring-blue-400/20"
-                        : "bg-transparent border-gray-300 dark:border-gray-600 text-gray-400"
+                        ? "bg-blue-500 border-blue-600 text-white shadow-lg ring-4 ring-blue-400/20 cursor-pointer"
+                        : "bg-transparent border-gray-300 dark:border-gray-600 text-gray-400 cursor-not-allowed"
                     }`}
                   >
                     {isCompleted ? (

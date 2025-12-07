@@ -498,6 +498,23 @@ const CityPlanner = () => {
         currentStep={step}
         totalDestinations={destinationsList.length || 1}
         currentDestinationIndex={currentDestIndex}
+        onStepClick={(stepId) => {
+          // Allow navigation to completed or current steps
+          const stepOrder = ["city", "flight", "hotel", "activity", "traveller", "review"];
+          const currentIndex = stepOrder.indexOf(step);
+          const targetIndex = stepOrder.indexOf(stepId as any);
+          
+          // If clicking "city" step, go back to home page to change destinations
+          if (stepId === "city") {
+            navigate('/');
+            return;
+          }
+          
+          // Only allow going back to completed steps or staying at current
+          if (targetIndex <= currentIndex) {
+            setStep(stepId as any);
+          }
+        }}
       />
 
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">
@@ -726,11 +743,15 @@ const CityPlanner = () => {
                                 const flight = itinerary.flights[dest];
                                 const flightClass = flight.class || (flight.departure ? `${flight.departure} → ${flight.arrival}` : 'Economy');
                                 const price = flight.price || flight.pricePerPersonPKR || 0;
+                                const seats = flight.seats || [];
                                 
                                 return (
                                   <>
-                                    <p className="text-gray-600 dark:text-gray-400">Flight: <span className="text-gray-900 dark:text-white font-medium">{flight.airline} ({flightClass})</span></p>
+                                    <p className="text-gray-600 dark:text-gray-400">Flight: <span className="text-gray-900 dark:text-white font-medium">{flight.airline} {flight.flightNumber} ({flightClass})</span></p>
                                     <p className="text-gray-500 dark:text-gray-400 mt-1">PKR {parseInt(String(price).replace(/[^\d]/g, '')).toLocaleString()}</p>
+                                    {seats.length > 0 && (
+                                      <p className="text-gray-500 dark:text-gray-400 mt-1">Seats: <span className="text-gray-900 dark:text-white font-medium">{seats.join(', ')}</span></p>
+                                    )}
                                   </>
                                 );
                               })()}
