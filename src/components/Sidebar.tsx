@@ -33,7 +33,6 @@ export const Sidebar = () => {
     { path: '/admin', icon: LayoutDashboard, label: t('admin_dashboard'), admin: true },
     { path: '/admin/admin-bookings', icon: BookOpen, label: t('manage_bookings'), admin: true },
     { path: '/admin/destinations', icon: MapPin, label: t('manage_destinations'), admin: true },
-    { path: '/admin/itineraries', icon: Calendar, label: t('manage_itineraries'), admin: true },
     { path: '/admin/users', icon: Users, label: t('manage_users'), admin: true },
   ];
 
@@ -109,7 +108,7 @@ export const Sidebar = () => {
           {!isCollapsed && isAuthenticated && (
             <>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-3">{user?.email}</p>
-              {isAdmin && <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-1">👑 Admin Access</p>}
+              {isAdmin && <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-1">Admin</p>}
             </>
           )}
         </div>
@@ -161,7 +160,7 @@ export const Sidebar = () => {
                 <Minus size={18} className="text-gray-700 dark:text-gray-300" />
               </button>
               <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                Decrease text size
+                Zoom Out
               </div>
             </div>
             {!isCollapsed && <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-1">A</span>}
@@ -174,7 +173,7 @@ export const Sidebar = () => {
                 <Plus size={18} className="text-gray-700 dark:text-gray-300" />
               </button>
               <div className="absolute left-12 top-1/2 -translate-y-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                Increase text size
+                Zoom In
               </div>
             </div>
           </div>

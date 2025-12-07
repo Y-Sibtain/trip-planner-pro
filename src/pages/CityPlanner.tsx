@@ -376,7 +376,6 @@ const CityPlanner = () => {
         currentStep={step}
         totalDestinations={destinationsList.length || 1}
         currentDestinationIndex={currentDestIndex}
-        onStepClick={handleStepClick}
       />
 
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative z-10">

@@ -11,7 +11,6 @@ import { ProtectedAdminRoute } from '@/components/ProtectedAdminRoute';
 import Index from './pages/Index';
 import AdminBookings from './pages/admin/AdminBookings';
 import Destinations from './pages/Destinations';
-import SavedItineraries from './pages/SavedItineraries';
 import Payment from './pages/Payment';
 import MyBookings from './pages/MyBookings';
 import NotFound from './pages/NotFound';
@@ -35,7 +34,6 @@ function AppRoutes() {
             
             <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
             <Route path="/admin/destinations" element={<ProtectedAdminRoute><ManageDestinations /></ProtectedAdminRoute>} />
-            <Route path="/admin/itineraries" element={<ProtectedAdminRoute><ManageItineraries /></ProtectedAdminRoute>} />
             <Route path="/admin/users" element={<ProtectedAdminRoute><AdminUsers /></ProtectedAdminRoute>} />
             <Route path="/admin/admin-bookings" element={<ProtectedAdminRoute><AdminBookings /></ProtectedAdminRoute>} />
             

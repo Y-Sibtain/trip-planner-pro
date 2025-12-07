@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { Check, X } from "lucide-react";
-=======
-import { Check, Plane, Hotel, Target, Users, ReceiptText, MapPin } from "lucide-react";
->>>>>>> 83e3c71f909884b2f2e7e58c49448f732c9c3992
+import { Check, Plane, Hotel, Target, Users, ReceiptText, MapPin, X } from "lucide-react";
 
 interface StepProgressProps {
   currentStep: "city" | "flight" | "hotel" | "activity" | "traveller" | "plan";
@@ -12,21 +8,12 @@ interface StepProgressProps {
 
 const StepProgress = ({ currentStep, totalDestinations = 1, currentDestinationIndex = 0 }: StepProgressProps) => {
   const steps = [
-<<<<<<< HEAD
-    { id: "city", label: "Destination" },
-    { id: "flight", label: "Flight" },
-    { id: "hotel", label: "Hotel" },
-    { id: "activity", label: "Activity" },
-    { id: "traveller", label: "Travelers" },
-    { id: "plan", label: "Review Plan" },
-=======
     { id: "city", label: "Destination", icon: <MapPin /> },
     { id: "flight", label: "Flight", icon: <Plane /> },
     { id: "hotel", label: "Hotel", icon: <Hotel /> },
     { id: "activity", label: "Activity", icon: <Target /> },
     { id: "traveller", label: "Travelers", icon: <Users /> },
     { id: "plan", label: "Review Plan", icon: <ReceiptText /> },
->>>>>>> 83e3c71f909884b2f2e7e58c49448f732c9c3992
   ];
 
   const stepOrder = ["city", "flight", "hotel", "activity", "traveller", "plan"];
