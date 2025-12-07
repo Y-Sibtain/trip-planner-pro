@@ -599,72 +599,91 @@ const CityPlanner = () => {
 
         {/* Summary Modal */}
         <Dialog open={showSummary} onOpenChange={setShowSummary}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto glass border border-blue-400/20 dark:border-blue-400/10 bg-gradient-to-b from-slate-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 backdrop-blur-sm shadow-2xl">
-            <DialogHeader>
-              <DialogTitle className="text-4xl font-bold text-gray-900 dark:text-white">Booking Summary</DialogTitle>
-              <DialogDescription className="text-blue-600 dark:text-white-400 text-base font-medium mt-2">Review your complete {selectedCity} trip</DialogDescription>
+          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl">
+            <DialogHeader className="border-b border-gray-200 dark:border-gray-700 pb-6 -mx-6 px-6 py-6 bg-gradient-to-r from-indigo-700 via-blue-700 to-cyan-600 dark:from-indigo-800 dark:via-blue-800 dark:to-cyan-700">
+              <DialogTitle className="text-3xl font-semibold text-white drop-shadow-sm">Booking Summary</DialogTitle>
+              <DialogDescription className="text-white/90 dark:text-white/85 text-sm mt-2">Review and confirm your complete trip details</DialogDescription>
             </DialogHeader>
             
-            <div className="space-y-4 mt-6">
-              <div className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
-                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-lg flex items-center gap-2"><Users className="w-5 h-5 text-blue-500" /> Travelers</h3>
-                <div className="inline-block px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold shadow-md">
-                  {numPeople} {numPeople === 1 ? "person" : "people"}
+            <div className="space-y-6 mt-6">
+              {/* Travelers Section */}
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/15 dark:to-teal-900/15 p-6 rounded-lg border border-emerald-200 dark:border-emerald-800/60">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-emerald-500 rounded-lg">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">Travelers</h3>
                 </div>
+                <p className="text-emerald-900 dark:text-emerald-50 font-medium text-base ml-11">{numPeople} {numPeople === 1 ? "person" : "people"}</p>
               </div>
-              {/* Render per-destination selections */}
+
+              {/* Destinations Section */}
               {destinationsList.map((dest, idx) => (
-                <div key={dest} className="group relative overflow-hidden p-5 rounded-xl bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all-smooth duration-300">
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">{idx + 1}. {dest} — {getDaysForDestination(idx)} day{getDaysForDestination(idx) > 1 ? 's' : ''}</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="font-semibold flex items-center gap-2"><Plane className="w-4 h-4 text-blue-500" /> Flight</h4>
+                <div key={dest} className="bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/15 dark:to-teal-900/15 p-6 rounded-lg border border-emerald-200 dark:border-emerald-800/60">
+                  <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-50 mb-5">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500 text-white text-sm font-bold mr-3">{idx + 1}</span>
+                    {dest} • {getDaysForDestination(idx)} day{getDaysForDestination(idx) > 1 ? 's' : ''}
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    {/* Flight */}
+                    <div className="bg-white dark:bg-gray-900/40 p-4 rounded-lg border border-emerald-100 dark:border-emerald-900/40">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded">
+                          <Plane className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
+                        </div>
+                        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">Flight</h4>
+                      </div>
                       {selectedFlightsByDest[dest] ? (
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-2">
-                          <p className="font-bold text-gray-900 dark:text-white text-lg">{selectedFlightsByDest[dest].airline}</p>
-                          <Badge className={
-                            selectedFlightsByDest[dest].class === "Economy"
-                              ? "bg-green-500 text-white font-semibold"
-                              : selectedFlightsByDest[dest].class === "Business"
-                              ? "bg-red-500 text-white font-semibold"
-                              : (selectedFlightsByDest[dest].class === "First Class" || selectedFlightsByDest[dest].class === "First")
-                              ? "bg-yellow-500 text-white font-semibold"
-                              : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-semibold"
-                          }>{selectedFlightsByDest[dest].class}</Badge>
-                          <div className="text-sm text-gray-700 dark:text-gray-300">Price: {selectedFlightsByDest[dest].price ? `${selectedFlightsByDest[dest].price}` : 'N/A'}</div>
+                        <div className="ml-6 space-y-2">
+                          <p className="text-gray-900 dark:text-white font-medium">{selectedFlightsByDest[dest].airline}</p>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-100 border border-emerald-300 dark:border-emerald-800">
+                              {selectedFlightsByDest[dest].class}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Price: {selectedFlightsByDest[dest].price ? `${selectedFlightsByDest[dest].price}` : 'N/A'}</p>
                         </div>
                       ) : (
-                        <div className="text-sm text-gray-500">No flight selected for {dest}</div>
+                        <div className="text-sm text-gray-500 ml-6">Not selected</div>
                       )}
                     </div>
-                    <div>
-                      <h4 className="font-semibold flex items-center gap-2"><Hotel className="w-4 h-4 text-blue-500" /> Hotel</h4>
+
+                    {/* Hotel */}
+                    <div className="bg-white dark:bg-gray-900/40 p-4 rounded-lg border border-emerald-100 dark:border-emerald-900/40">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded">
+                          <Hotel className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
+                        </div>
+                        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">Hotel</h4>
+                      </div>
                       {selectedHotelsByDest[dest] ? (
                         (() => {
                           const hotel = (hotels[dest as keyof typeof hotels] || []).find(h => h.id === selectedHotelsByDest[dest]);
                           return (
-                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700 space-y-2">
-                              <p className="font-bold text-gray-900 dark:text-white text-lg">{hotel?.name}</p>
-                              <div className="flex items-center gap-2">
+                            <div className="ml-6 space-y-2">
+                              <p className="text-gray-900 dark:text-white font-medium">{hotel?.name}</p>
+                              <div className="flex items-center gap-1">
                                 {Array.from({ length: hotel?.stars || 0 }).map((_, i) => (
-                                  <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                                 ))}
-                                <span className="text-sm text-gray-900 dark:text-white font-semibold ml-2">{hotel?.stars} Stars</span>
+                                <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">{hotel?.stars} Stars</span>
                               </div>
                             </div>
                           );
                         })()
                       ) : (
-                        <div className="text-sm text-gray-500">No hotel selected for {dest}</div>
+                        <div className="text-sm text-gray-500 ml-6">Not selected</div>
                       )}
                     </div>
                   </div>
                 </div>
               ))}
 
-              <div className="flex gap-3 pt-6">
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <Button 
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-base rounded-lg hover:scale-105 transition-all-smooth shadow-md"
+                  className="flex-1 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 font-semibold text-base rounded-lg transition-colors"
                   onClick={() => {
                     // Check if user is authenticated
                     if (!isAuthenticated) {
@@ -688,7 +707,8 @@ const CityPlanner = () => {
                 </Button>
                 <Button 
                   onClick={() => setShowSummary(false)}
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-base rounded-lg hover:scale-105 transition-all-smooth shadow-md"
+                  variant="outline"
+                  className="flex-1 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold text-base rounded-lg transition-colors"
                 >
                   Edit Trip
                 </Button>
